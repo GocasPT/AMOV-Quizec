@@ -64,6 +64,12 @@ fun QuestionCard(
                 text = question.type.name,
                 fontSize = 16.sp
             )
+            question.options.forEach { option ->
+                Text(
+                    text = option.text,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }

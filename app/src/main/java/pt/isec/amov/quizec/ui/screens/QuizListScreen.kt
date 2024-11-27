@@ -61,9 +61,15 @@ fun QuizCard(
                 fontSize = 20.sp
             )
             quiz.questions.forEach { question ->
-                Text(
+                /*Text(
                     text = question.title,
                     fontSize = 16.sp
+                )*/
+                QuestionCard(
+                    question = question,
+                    onSelectQuestion = { question ->
+                        //Log.d("Question selected", question.title)
+                    }
                 )
             }
         }

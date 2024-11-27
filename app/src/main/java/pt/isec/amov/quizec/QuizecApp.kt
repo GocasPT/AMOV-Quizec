@@ -3,6 +3,7 @@ package pt.isec.amov.quizec
 import android.app.Application
 import pt.isec.amov.quizec.model.Question
 import pt.isec.amov.quizec.model.QuestionList
+import pt.isec.amov.quizec.model.QuestionOption
 import pt.isec.amov.quizec.model.QuestionType
 import pt.isec.amov.quizec.model.Quiz
 import pt.isec.amov.quizec.model.QuizList
@@ -11,31 +12,108 @@ class QuizecApp : Application() {
     //TODO: add local data for testing (no database for now)
     private val _questionList: QuestionList by lazy {
         QuestionList().apply {
-            addQuestion(Question("Question 1", QuestionType.YES_NO))
-            addQuestion(Question("Question 2", QuestionType.MULTIPLE_CHOICE))
-            addQuestion(Question("Question 3", QuestionType.SINGLE_CHOICE))
-            addQuestion(Question("Question 4", QuestionType.FILL_BLANK))
-            addQuestion(Question("Question 5", QuestionType.ASSOCIATION))
+            addQuestion(
+                Question(
+                    "Question 1", QuestionType.YES_NO, null, listOf(
+                        QuestionOption("Batata"),
+                        QuestionOption("Cenoura"),
+                    )
+                )
+            )
+            addQuestion(
+                Question(
+                    "Question 2", QuestionType.MULTIPLE_CHOICE, null, listOf(
+                        QuestionOption("Batata"),
+                        QuestionOption("Cenoura"),
+                        QuestionOption("Ceboulra"),
+                        QuestionOption("Alface"),
+                    )
+                )
+            )
+            addQuestion(
+                Question(
+                    "Question 3", QuestionType.SINGLE_CHOICE, "batata.png", listOf(
+                        QuestionOption("Batata"),
+                        QuestionOption("Cenoura"),
+                        QuestionOption("Ceboulra"),
+                        QuestionOption("Alface"),
+                    )
+                )
+            )
+            addQuestion(Question("Question 4", QuestionType.FILL_BLANK, null, listOf()))
+            addQuestion(
+                Question(
+                    "Question 5", QuestionType.ASSOCIATION, null, listOf(
+                        QuestionOption("Batata"),
+                        QuestionOption("Cenoura"),
+                        QuestionOption("Ceboulra"),
+                        QuestionOption("Alface"),
+                    )
+                )
+            )
         }
     }
 
     private val _quizList: QuizList by lazy {
         QuizList().apply {
-            addQuiz(Quiz("Quiz 1", listOf(
-                Question("Question 1", QuestionType.YES_NO),
-                Question("Question 2", QuestionType.MULTIPLE_CHOICE),
-            )))
-            addQuiz(Quiz("Quiz 2", listOf(
-                Question("Question 1", QuestionType.SINGLE_CHOICE),
-                Question("Question 2", QuestionType.FILL_BLANK),
-                Question("Question 3", QuestionType.ASSOCIATION),
-            )))
-            addQuiz(Quiz("Quiz 3", listOf(
-                _questionList.getQuestionList()[0],
-                _questionList.getQuestionList()[1],
-                _questionList.getQuestionList()[2],
-                _questionList.getQuestionList()[3],
-            )))
+            addQuiz(
+                Quiz(
+                    "Quiz 1", null, listOf(
+                        Question(
+                            "Question 1", QuestionType.YES_NO, "yes.png", listOf(
+                                QuestionOption("Oui"),
+                                QuestionOption("Iuo"),
+                            )
+                        ),
+                        Question(
+                            "Question 2", QuestionType.MULTIPLE_CHOICE, null, listOf(
+                                QuestionOption("A"),
+                                QuestionOption("B"),
+                                QuestionOption("C"),
+                                QuestionOption("D"),
+                            )
+                        ),
+                    ), false, 420, false, false
+                )
+            )
+            addQuiz(
+                Quiz(
+                    "Quiz 2", "macaco.png", listOf(
+                        Question(
+                            "Question 1", QuestionType.SINGLE_CHOICE, "null.png", listOf(
+                                QuestionOption("Mamaco"),
+                                QuestionOption("Macaco"),
+                                QuestionOption("Cacaco"),
+                                QuestionOption("Momaca"),
+                            )
+                        ),
+                        Question(
+                            "Question 2", QuestionType.FILL_BLANK, null, listOf(
+                                QuestionOption("Banana"),
+                                QuestionOption("Coco"),
+                            )
+                        ),
+                        Question(
+                            "Question 3", QuestionType.ASSOCIATION, null, listOf(
+                                QuestionOption("Continent"),
+                                QuestionOption("Lidle"),
+                                QuestionOption("Vermelho"),
+                                QuestionOption("Amarelo/Azul"),
+                            )
+                        ),
+                    ), false, 69, true, true
+                )
+            )
+            addQuiz(
+                Quiz(
+                    "Quiz 3", null, listOf(
+                        _questionList.getQuestionList()[0],
+                        _questionList.getQuestionList()[1],
+                        _questionList.getQuestionList()[2],
+                        _questionList.getQuestionList()[3],
+                    ), false, 0, false, true
+                )
+            )
         }
     }
 
