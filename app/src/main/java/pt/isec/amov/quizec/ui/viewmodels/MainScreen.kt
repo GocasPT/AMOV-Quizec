@@ -32,7 +32,7 @@ fun MainScree(
                         color = Color(255, 0, 0, 50)
                     )
             )
-            viewModel.quizList.forEach {
+            viewModel.quizList?.getQuizList()?.forEach {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
