@@ -1,6 +1,5 @@
 package pt.isec.amov.quizec.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,37 +28,28 @@ fun QuestionListScreen(
     questionList: List<Question>,
     onSelectQuestion: (Question) -> Unit,
 ) {
-    CustomList(
-        items = questionList,
-        onSelectItem = { question -> onSelectQuestion(question as Question) }
-    ) { question, onSelect ->
-        QuestionCard(
-            question = question as Question,
-            onSelectQuestion = { onSelect(question) }
-        )
+    CustomList(items = questionList,
+        onSelectItem = { question -> onSelectQuestion(question as Question) }) { question, onSelect ->
+        QuestionCard(question = question as Question, onSelectQuestion = { onSelect(question) })
     }
 }
 
 @Composable
 fun QuestionCard(
-    question: Question,
-    onSelectQuestion: (Question) -> Unit
+    question: Question, onSelectQuestion: (Question) -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+    Card(modifier = Modifier
+        .fillMaxSize()
+        .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(192, 255, 255)
         ),
         onClick = {
             onSelectQuestion(question)
-        }
-    ) {
+        }) {
         Column(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier.padding(8.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom,
@@ -71,14 +61,12 @@ fun QuestionCard(
                     Spacer(modifier = Modifier.padding(8.dp))
                 }
                 Text(
-                    text = question.title,
-                    fontSize = 20.sp
+                    text = question.title, fontSize = 20.sp
                 )
             }
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = "Type ${question.type}",
-                fontSize = 16.sp
+                text = "Type ${question.type}", fontSize = 16.sp
             )
         }
     }
@@ -87,29 +75,22 @@ fun QuestionCard(
 @Preview
 @Composable
 fun QuestListPreview() {
-    QuestionListScreen(
-        questionList = listOf(
-            Question(
-                "Question 1",
-                QuestionType.YES_NO,
-                null,
-                listOf(QuestionOption("Yes"), QuestionOption("No"))
-            ),
-            Question(
-                "Question 2",
-                QuestionType.MULTIPLE_CHOICE,
-                null,
-                listOf(QuestionOption("Option 1"), QuestionOption("Option 2"))
-            ),
-            Question(
-                "Question 3",
-                QuestionType.MULTIPLE_CHOICE,
-                "batata.jpg",
-                listOf(QuestionOption("Option 1"), QuestionOption("Option 2"))
-            )
-        ),
-        onSelectQuestion = {
-            Log.d("Question selected", it.title)
-        }
-    )
+    QuestionListScreen(questionList = listOf(
+        Question(
+            "Question 1",
+            QuestionType.YES_NO,
+            null,
+            listOf(QuestionOption("Yes"), QuestionOption("No"))
+        ), Question(
+            "Question 2",
+            QuestionType.MULTIPLE_CHOICE,
+            null,
+            listOf(QuestionOption("Option 1"), QuestionOption("Option 2"))
+        ), Question(
+            "Question 3",
+            QuestionType.MULTIPLE_CHOICE,
+            "batata.jpg",
+            listOf(QuestionOption("Option 1"), QuestionOption("Option 2"))
+        )
+    ), onSelectQuestion = {})
 }

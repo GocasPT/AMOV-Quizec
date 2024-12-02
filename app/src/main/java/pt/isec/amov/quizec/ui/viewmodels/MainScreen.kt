@@ -36,62 +36,47 @@ fun MainScree(
         Log.d("Destination changed", destination.route.toString())
     }
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize(),
-        bottomBar = {
-            BottomAppBar(
-                contentPadding = PaddingValues(8.dp),
-                content = {
-                    IconButton(onClick = { navController.navigate("quiz") }) {
-                        Icon(Icons.AutoMirrored.Filled.List, null)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { navController.navigate("question") }) {
-                        Icon(Icons.AutoMirrored.Filled.List, null)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    when (currentScreen?.destination?.route) {
-                        "quiz" -> {
-                            Text("Quiz")
-                        }
-
-                        "question" -> {
-                            Text("Question")
-                        }
-                    }
+    Scaffold(modifier = modifier.fillMaxSize(), bottomBar = {
+        BottomAppBar(contentPadding = PaddingValues(8.dp), content = {
+            IconButton(onClick = { navController.navigate("quiz") }) {
+                Icon(Icons.AutoMirrored.Filled.List, null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = { navController.navigate("question") }) {
+                Icon(Icons.AutoMirrored.Filled.List, null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            when (currentScreen?.destination?.route) {
+                "quiz" -> {
+                    Text("Quiz")
                 }
-            )
-        }
-    ) { innerPadding ->
+
+                "question" -> {
+                    Text("Question")
+                }
+            }
+        })
+    }) { innerPadding ->
         NavHost(
             startDestination = "quiz",
             navController = navController,
-            modifier = modifier
-                .padding(innerPadding)
+            modifier = modifier.padding(innerPadding)
         ) {
             composable("quiz") {
-                QuizListScreen(
-                    quizList = viewModel.quizList.getQuizList(),
-                    onSelectQuiz = { quiz ->
-                        Log.d("Quiz selected", quiz.title)
-                    }
-                )
+                QuizListScreen(quizList = viewModel.quizList.getQuizList(), onSelectQuiz = { quiz ->
+                    Log.d("Quiz selected", quiz.title)
+                })
             }
             composable("show-quiz") {
                 viewModel.currentQuiz?.let {
-                    QuizShowScreen(
-                        quiz = viewModel.currentQuiz,
-                    )
+                    QuizShowScreen(quiz = viewModel.currentQuiz)
                 }
             }
             composable("question") {
-                QuestionListScreen(
-                    questionList = viewModel.questionList.getQuestionList(),
+                QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.title)
-                    }
-                )
+                    })
             }
         }
     }
