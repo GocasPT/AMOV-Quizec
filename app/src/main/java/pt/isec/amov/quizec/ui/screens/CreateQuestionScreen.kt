@@ -112,7 +112,7 @@ fun CreateQuestionScreen(
             }
             QuestionType.SINGLE_CHOICE -> {
                 var newAnswer by remember { mutableStateOf("") }
-                var answers = remember { mutableStateSetOf<String>() }
+                var answers by remember { mutableStateOf(setOf<String>()) }
                 var rightAnswer by remember { mutableStateOf("") }
 
                 LaunchedEffect(answers, rightAnswer) {
@@ -137,7 +137,7 @@ fun CreateQuestionScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            answers.add(newAnswer)
+                            answers = answers + newAnswer
                             newAnswer = ""
                         },
                         enabled = newAnswer.isNotBlank()
@@ -145,16 +145,67 @@ fun CreateQuestionScreen(
                         Text("+")
                     }
                 }
-                AnswerEntry(
+                AnswerEntry1(
                     answers = answers,
                     onClick = { rightAnswer = it },
                     onOptionDelete = { answer ->
-                        answers.remove(answer)
+                        answers = answers - answer
                         if (answer == rightAnswer) {
                             rightAnswer = ""
                         }
                     },
                     rightAnswer = rightAnswer,
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(scrollState)
+                )
+            }
+            QuestionType.MULTIPLE_CHOICE -> {
+                var newAnswer by remember { mutableStateOf("") }
+                var answers by remember { mutableStateOf(setOf<String>()) }
+                var rightAnswers by remember { mutableStateOf(setOf<String>()) }
+
+                LaunchedEffect(answers, rightAnswers) {
+                    questionAnswers = Answer.MultipleChoice(answers, rightAnswers)
+                    saveEnabled = answers.size >= 2 && rightAnswers.isNotEmpty() && rightAnswers.size >= 2
+                    Log.d("CreateQuestionScreen", "saveEnabled: $saveEnabled")
+                }
+
+                LaunchedEffect(answers) {
+                    rightAnswers.forEach { rightAnswer ->
+                        if (!answers.contains(rightAnswer)) rightAnswers = rightAnswers - rightAnswer
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = newAnswer,
+                        onValueChange = { newAnswer = it },
+                        label = { Text("Add Option") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            answers = answers + newAnswer
+                            newAnswer = ""
+                        },
+                        enabled = newAnswer.isNotBlank()
+                    ) {
+                        Text("+")
+                    }
+                }
+                AnswerEntry2(
+                    answers = answers,
+                    onClick = { rightAnswers = if (rightAnswers.contains(it)) rightAnswers - it else rightAnswers + it },
+                    onOptionDelete = { answer ->
+                        answers = answers - answer
+                        rightAnswers = rightAnswers - answer
+                    },
+                    rightAnswer = rightAnswers,
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(scrollState)
@@ -178,7 +229,7 @@ fun CreateQuestionScreen(
 }
 
 @Composable
-fun AnswerEntry(
+fun AnswerEntry1(
     answers: Set<String>,
     onClick: (String) -> Unit,
     onOptionDelete: (String) -> Unit,
@@ -190,6 +241,52 @@ fun AnswerEntry(
     ){
         answers.forEach { answer ->
             val backgroundColor = if (answer == rightAnswer) Color.Green else Color.Gray
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clickable { onClick(answer) },
+                colors = CardDefaults.cardColors(
+                    containerColor = backgroundColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = answer,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = { onOptionDelete(answer) }
+                    ) {
+                        Text("-")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AnswerEntry2(
+    answers: Set<String>,
+    onClick: (String) -> Unit,
+    onOptionDelete: (String) -> Unit,
+    rightAnswer : Set<String>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ){
+        answers.forEach { answer ->
+            val backgroundColor = if (rightAnswer.contains(answer)) Color.Green else Color.Gray
 
             Card(
                 modifier = Modifier

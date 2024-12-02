@@ -11,4 +11,9 @@ sealed class Answer {
             return rightAnswer
         }
     }
+    data class MultipleChoice(val answers: Set<String>, val rightAnswers: Set<String>) : Answer() {
+        override fun toString(): String {
+            return rightAnswers.joinToString(", ")
+        }
+    }
 }
