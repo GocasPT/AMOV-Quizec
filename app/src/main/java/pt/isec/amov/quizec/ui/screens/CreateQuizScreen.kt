@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.Question
@@ -48,7 +49,8 @@ fun CreateQuizScreen(
         Text(
             text = "New Quiz",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 24.dp),
+            fontWeight = FontWeight.Bold
         )
 
         OutlinedTextField(
@@ -108,6 +110,12 @@ fun CreateQuizScreen(
             )
         }
 
+        Text(
+            text = "Select Questions",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
         QuestionList(
             availableQuestions = questionList,
             selectedQuestions = selectedQuestions,
@@ -151,7 +159,7 @@ fun QuestionList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .height(400.dp)
+            .height(350.dp)
     ) {
         items(
             items = availableQuestions,
