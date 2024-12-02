@@ -1,12 +1,12 @@
 package pt.isec.amov.quizec
 
 import android.app.Application
-import pt.isec.amov.quizec.model.Question
-import pt.isec.amov.quizec.model.QuestionList
-import pt.isec.amov.quizec.model.QuestionOption
-import pt.isec.amov.quizec.model.QuestionType
-import pt.isec.amov.quizec.model.Quiz
-import pt.isec.amov.quizec.model.QuizList
+import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.question.QuestionList
+import pt.isec.amov.quizec.model.question.QuestionType
+import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.model.quiz.QuizList
 
 class QuizecApp : Application() {
     //TODO: add local data for testing (no database for now)
@@ -14,40 +14,8 @@ class QuizecApp : Application() {
         QuestionList().apply {
             addQuestion(
                 Question(
-                    "Question 1", QuestionType.YES_NO, null, listOf(
-                        QuestionOption("Batata"),
-                        QuestionOption("Cenoura"),
-                    )
-                )
-            )
-            addQuestion(
-                Question(
-                    "Question 2", QuestionType.MULTIPLE_CHOICE, null, listOf(
-                        QuestionOption("Batata"),
-                        QuestionOption("Cenoura"),
-                        QuestionOption("Ceboulra"),
-                        QuestionOption("Alface"),
-                    )
-                )
-            )
-            addQuestion(
-                Question(
-                    "Question 3", QuestionType.SINGLE_CHOICE, "batata.png", listOf(
-                        QuestionOption("Batata"),
-                        QuestionOption("Cenoura"),
-                        QuestionOption("Ceboulra"),
-                        QuestionOption("Alface"),
-                    )
-                )
-            )
-            addQuestion(Question("Question 4", QuestionType.FILL_BLANK, null, listOf()))
-            addQuestion(
-                Question(
-                    "Question 5", QuestionType.ASSOCIATION, null, listOf(
-                        QuestionOption("Batata"),
-                        QuestionOption("Cenoura"),
-                        QuestionOption("Ceboulra"),
-                        QuestionOption("Alface"),
+                    "Are you insane?", QuestionType.YES_NO, null, listOf(
+                        Answer.TrueFalse(true)
                     )
                 )
             )
@@ -59,10 +27,7 @@ class QuizecApp : Application() {
             addQuiz(
                 Quiz(
                     "Quiz 0", null, listOf(
-                        _questionList.getQuestionList()[0],
-                        _questionList.getQuestionList()[1],
-                        _questionList.getQuestionList()[2],
-                        _questionList.getQuestionList()[3],
+                        _questionList.getQuestionList()[0]
                     ), false, 0, false, true
                 )
             )

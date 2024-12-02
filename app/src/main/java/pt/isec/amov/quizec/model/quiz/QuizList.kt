@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.model
+package pt.isec.amov.quizec.model.quiz
 
 class QuizList {
     private val _list = mutableListOf<Quiz>()

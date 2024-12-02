@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.model.Question
-import pt.isec.amov.quizec.model.Quiz
+import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.quiz.Quiz
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,7 +176,7 @@ fun QuestionCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = question.title,
+                text = question.content,
                 modifier = Modifier.weight(1f)
             )
             Text(

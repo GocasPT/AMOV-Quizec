@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.model
+package pt.isec.amov.quizec.model.question
 
 enum class QuestionType {
     YES_NO,           // P01
