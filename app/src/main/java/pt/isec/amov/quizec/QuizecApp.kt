@@ -58,55 +58,7 @@ class QuizecApp : Application() {
         QuizList().apply {
             addQuiz(
                 Quiz(
-                    "Quiz 1", null, listOf(
-                        Question(
-                            "Question 1", QuestionType.YES_NO, "yes.png", listOf(
-                                QuestionOption("Oui"),
-                                QuestionOption("Iuo"),
-                            )
-                        ),
-                        Question(
-                            "Question 2", QuestionType.MULTIPLE_CHOICE, null, listOf(
-                                QuestionOption("A"),
-                                QuestionOption("B"),
-                                QuestionOption("C"),
-                                QuestionOption("D"),
-                            )
-                        ),
-                    ), false, 420, false, false
-                )
-            )
-            addQuiz(
-                Quiz(
-                    "Quiz 2", "macaco.png", listOf(
-                        Question(
-                            "Question 1", QuestionType.SINGLE_CHOICE, "null.png", listOf(
-                                QuestionOption("Mamaco"),
-                                QuestionOption("Macaco"),
-                                QuestionOption("Cacaco"),
-                                QuestionOption("Momaca"),
-                            )
-                        ),
-                        Question(
-                            "Question 2", QuestionType.FILL_BLANK, null, listOf(
-                                QuestionOption("Banana"),
-                                QuestionOption("Coco"),
-                            )
-                        ),
-                        Question(
-                            "Question 3", QuestionType.ASSOCIATION, null, listOf(
-                                QuestionOption("Continent"),
-                                QuestionOption("Lidle"),
-                                QuestionOption("Vermelho"),
-                                QuestionOption("Amarelo/Azul"),
-                            )
-                        ),
-                    ), false, 69, true, true
-                )
-            )
-            addQuiz(
-                Quiz(
-                    "Quiz 3", null, listOf(
+                    "Quiz 0", null, listOf(
                         _questionList.getQuestionList()[0],
                         _questionList.getQuestionList()[1],
                         _questionList.getQuestionList()[2],

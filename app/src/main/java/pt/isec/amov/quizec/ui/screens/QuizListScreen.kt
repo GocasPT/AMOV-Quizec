@@ -5,32 +5,49 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import pt.isec.amov.quizec.model.Quiz
+
 
 @Composable
 fun QuizListScreen(
     quizList: List<Quiz>,
     onSelectQuiz: (Quiz) -> Unit,
+    navController: NavController
 ) {
-    LazyColumn(
-        modifier = Modifier
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(
-            items = quizList,
-            key = { quiz -> quiz.hashCode() }
-        ) { quiz ->
-            QuizCard(
-                quiz = quiz,
-                onSelectQuiz = onSelectQuiz
-            )
+        Button(
+            onClick = { navController.navigate("createQuiz") },
+            modifier = Modifier.padding(16.dp),
+        ) {
+            Text(text = "Create Quiz")
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(
+                items = quizList,
+                key = { quiz -> quiz.hashCode() }
+            ) { quiz ->
+                QuizCard(
+                    quiz = quiz,
+                    onSelectQuiz = onSelectQuiz
+                )
+            }
         }
     }
 }

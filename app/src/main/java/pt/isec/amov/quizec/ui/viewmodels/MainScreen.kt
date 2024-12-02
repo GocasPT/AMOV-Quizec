@@ -14,11 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import pt.isec.amov.quizec.ui.screens.CreateQuizScreen
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.QuizListScreen
 
@@ -39,7 +41,7 @@ fun MainScree(
         bottomBar = {
             BottomAppBar(
                 containerColor = BottomAppBarDefaults.containerColor,
-                contentColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                contentColor = Color.Black,
                 content = {
                     IconButton(onClick = { navController.navigate("quiz") }) {
                         Icon(Icons.AutoMirrored.Filled.List, null)
@@ -71,6 +73,16 @@ fun MainScree(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
+                    },
+                    navController = navController
+                )
+            }
+            composable("createQuiz") {
+                CreateQuizScreen(
+                    questionList = viewModel.questionList.getQuestionList(),
+                    saveQuiz = { quiz ->
+                        viewModel.saveQuiz(quiz)
+                        navController.navigate("quiz")
                     }
                 )
             }
