@@ -57,7 +57,7 @@ fun QuestionCard(
                 question.image?.let {
                     //TODO: get image from string and "return" image/file
                     //PLACE_HOLDER
-                    Icon(Icons.Filled.AccountCircle, null)
+                    Icon(Icons.Filled.AccountCircle, "Question image")
                     Spacer(modifier = Modifier.padding(8.dp))
                 }
                 Text(
@@ -66,7 +66,7 @@ fun QuestionCard(
             }
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = "Type ${question.type}", fontSize = 16.sp
+                text = "Type: ${question.type.string}", fontSize = 16.sp
             )
         }
     }
