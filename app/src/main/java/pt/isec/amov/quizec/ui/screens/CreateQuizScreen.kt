@@ -3,7 +3,9 @@ package pt.isec.amov.quizec.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -14,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.Question
-import pt.isec.amov.quizec.model.QuestionOption
-import pt.isec.amov.quizec.model.QuestionType
 import pt.isec.amov.quizec.model.Quiz
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,42 +30,23 @@ fun CreateQuizScreen(
     var locationRestricted by remember { mutableStateOf(false) }
     var immediateResults by remember { mutableStateOf(true) }
     var selectedQuestions = remember { mutableStateListOf<Question>() }
+    val scrollState = rememberScrollState()
+    var newQuiz: Quiz? = null
 
-    val hardcodedQuiz = Quiz(
-        "Quiz ADD", "ADD.png", listOf(
-            Question(
-                "Question 1", QuestionType.SINGLE_CHOICE, "null.png", listOf(
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD"),
-                )
-            ),
-            Question(
-                "Question 2", QuestionType.FILL_BLANK, null, listOf(
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD2"),
-                )
-            ),
-            Question(
-                "Question 3", QuestionType.ASSOCIATION, null, listOf(
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD"),
-                    QuestionOption("ADD"),
-                    QuestionOption("REMOVE"),
-                )
-            ),
-        ), false, 69, true, true
-    )
+    fun isFormValid(): Boolean {
+        return quizTitle.isNotEmpty() && maxTimeMinutes.isNotEmpty() &&
+                maxTimeMinutes.all { it.isDigit() } && selectedQuestions.isNotEmpty()
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Create New Quiz",
+            text = "New Quiz",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -139,11 +120,23 @@ fun CreateQuizScreen(
             }
         )
 
+        Spacer(modifier = Modifier.weight(1f))
+
         Button(
             onClick = {
-                saveQuiz(hardcodedQuiz)
+                newQuiz = Quiz(
+                    title = quizTitle,
+                    image = null,
+                    questions = selectedQuestions,
+                    isActive = isActive,
+                    maxTime = maxTimeMinutes.toLongOrNull(),
+                    locationRestricted = locationRestricted,
+                    immediateResults = immediateResults
+                )
+                saveQuiz(newQuiz)
             },
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
+            enabled = isFormValid()
         ) {
             Text("Save Quiz")
         }
@@ -158,6 +151,7 @@ fun QuestionList(
 ) {
     LazyColumn(
         modifier = Modifier
+            .height(400.dp)
     ) {
         items(
             items = availableQuestions,
@@ -195,6 +189,10 @@ fun QuestionCard(
             Text(
                 text = question.title,
                 modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = question.type.toString(),
+                modifier = Modifier.padding(end = 16.dp)
             )
             IconButton(onClick = onToggle) {
                 Icon(
