@@ -2,10 +2,12 @@ package pt.isec.amov.quizec.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import pt.isec.amov.quizec.model.QuestionList
+import pt.isec.amov.quizec.model.Quiz
 import pt.isec.amov.quizec.model.QuizList
 
 class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : ViewModel() {
     //TODO: add data variables
+    val currentQuiz: Quiz? = null
 
     fun createQuestion() {
         //TODO: create question

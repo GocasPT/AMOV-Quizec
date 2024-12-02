@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +30,6 @@ fun QuestionListScreen(
     onSelectQuestion: (Question) -> Unit,
 ) {
     CustomList(
-        modifier = Modifier,
         items = questionList,
         onSelectItem = { question -> onSelectQuestion(question as Question) }
     ) { question, onSelect ->
@@ -86,7 +86,7 @@ fun QuestionCard(
 
 @Preview
 @Composable
-fun QLPreview() {
+fun QuestListPreview() {
     QuestionListScreen(
         questionList = listOf(
             Question(
@@ -108,6 +108,8 @@ fun QLPreview() {
                 listOf(QuestionOption("Option 1"), QuestionOption("Option 2"))
             )
         ),
-        onSelectQuestion = {}
+        onSelectQuestion = {
+            Log.d("Question selected", it.title)
+        }
     )
 }
