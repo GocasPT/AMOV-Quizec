@@ -57,6 +57,10 @@ fun MainScree(
                         "question" -> {
                             Text("Question")
                         }
+
+                        "createQuiz" -> {
+                            Text("Create Quiz")
+                        }
                     }
                 }
             )

@@ -35,8 +35,7 @@ fun CreateQuizScreen(
     var newQuiz: Quiz? = null
 
     fun isFormValid(): Boolean {
-        return quizTitle.isNotEmpty() && maxTimeMinutes.isNotEmpty() &&
-                maxTimeMinutes.all { it.isDigit() } && selectedQuestions.isNotEmpty()
+        return quizTitle.isNotEmpty() && maxTimeMinutes.isNotEmpty() && maxTimeMinutes.all { it.isDigit() } && selectedQuestions.isNotEmpty()
     }
 
     Column(
@@ -116,19 +115,24 @@ fun CreateQuizScreen(
             modifier = Modifier.padding(top = 16.dp)
         )
 
-        QuestionList(
-            availableQuestions = questionList,
-            selectedQuestions = selectedQuestions,
-            onToggleQuestion = { question ->
-                if (selectedQuestions.contains(question)) {
-                    selectedQuestions.remove(question)
-                } else {
-                    selectedQuestions.add(question)
-                }
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            items(
+                items = questionList,
+                key = { it.hashCode() }
+            ) { question ->
+                QuestionCard(
+                    question = question,
+                    isSelected = selectedQuestions.contains(question),
+                    onToggle = {
+                        if (selectedQuestions.contains(question)) selectedQuestions.remove(question)
+                        else selectedQuestions.add(question)
+                    }
+                )
             }
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
+        }
 
         Button(
             onClick = {
@@ -143,35 +147,12 @@ fun CreateQuizScreen(
                 )
                 saveQuiz(newQuiz)
             },
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(),
             enabled = isFormValid()
         ) {
             Text("Save Quiz")
-        }
-    }
-}
-
-@Composable
-fun QuestionList(
-    availableQuestions: List<Question>,
-    selectedQuestions: List<Question>,
-    onToggleQuestion: (Question) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .height(350.dp)
-    ) {
-        items(
-            items = availableQuestions,
-            key = { question -> question.hashCode() }
-        ) { question ->
-            val isSelected = selectedQuestions.contains(question)
-
-            QuestionCard(
-                question = question,
-                isSelected = isSelected,
-                onToggle = { onToggleQuestion(question) }
-            )
         }
     }
 }
