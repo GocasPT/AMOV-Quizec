@@ -68,8 +68,8 @@ fun QuestionCard(
                     //TODO: get image from string and "return" image/file
                     //PLACE_HOLDER
                     Icon(Icons.Filled.AccountCircle, null)
+                    Spacer(modifier = Modifier.padding(8.dp))
                 }
-                Spacer(modifier = Modifier.padding(8.dp))
                 Text(
                     text = question.title,
                     fontSize = 20.sp
