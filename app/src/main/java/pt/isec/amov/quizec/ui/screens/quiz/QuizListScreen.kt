@@ -98,6 +98,9 @@ fun QuizCard(
                     question = question,
                     onSelectQuestion = { _ ->
                         //Log.d("Question selected", question.title)
+                    },
+                    onEditQuestion = { _ ->
+                        //Log.d("Question edited", question.title)
                     }
                 )
             }

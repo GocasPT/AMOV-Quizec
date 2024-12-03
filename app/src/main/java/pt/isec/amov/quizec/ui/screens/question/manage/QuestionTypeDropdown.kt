@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons

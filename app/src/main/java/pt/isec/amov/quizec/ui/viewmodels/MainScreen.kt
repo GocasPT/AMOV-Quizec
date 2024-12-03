@@ -20,7 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pt.isec.amov.quizec.ui.screens.question.create.CreateQuestionScreen
+import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
@@ -63,8 +63,8 @@ fun MainScreen(
                             Text("Manage Quiz")
                         }
 
-                        "createQuestion" -> {
-                            Text("Create Question")
+                        "manageQuestion" -> {
+                            Text("Manage Question")
                         }
                     }
                 }
@@ -103,21 +103,29 @@ fun MainScreen(
                     }
                 )
             }
-            composable("createQuestion") {
-                CreateQuestionScreen(
-                    saveQuestion = { question ->
-                        viewModel.saveQuestion(question)
-                        navController.navigate("question")
-                    }
-                )
-            }
             composable("question") {
                 QuestionListScreen(
                     questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
                     },
-                    onCreateQuestion = { navController.navigate("createQuestion") }
+                    onCreateQuestion = {
+                        viewModel.createQuestion()
+                        navController.navigate("manageQuestion")
+                    },
+                    onEditQuestion = { question ->
+                        viewModel.selectQuestion(question)
+                        navController.navigate("manageQuestion")
+                    }
+                )
+            }
+            composable("manageQuestion") {
+                ManageQuestionScreen(
+                    question = viewModel.currentQuestion,
+                    saveQuestion = { question ->
+                        viewModel.saveQuestion(question)
+                        navController.navigate("question")
+                    }
                 )
             }
         }

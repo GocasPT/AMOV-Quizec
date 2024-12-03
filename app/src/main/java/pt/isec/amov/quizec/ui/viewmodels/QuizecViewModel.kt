@@ -10,18 +10,25 @@ import pt.isec.amov.quizec.model.quiz.QuizList
 class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : ViewModel() {
     //TODO: add data variables
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
+    private var _currentQuestion = mutableStateOf<Question?>(null)
     val currentQuiz: Quiz? get() = _currentQuiz.value
+    val currentQuestion: Question? get() = _currentQuestion.value
 
     fun createQuestion() {
-
+        _currentQuestion.value = null
     }
 
-    fun selectQuestion() {
-        //TODO: select question
+    fun selectQuestion(question: Question) {
+        _currentQuestion.value = question
     }
 
     fun saveQuestion(question: Question) {
-        questionList.addQuestion(question)
+        if (_currentQuestion.value != null) {
+            questionList.updateQuestion(question)
+        } else {
+            questionList.addQuestion(question)
+        }
+        _currentQuestion.value = null
     }
 
     fun createQuiz() {

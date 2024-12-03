@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import android.util.Log
 import androidx.compose.foundation.ScrollState
@@ -26,20 +26,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Answer.Ordering
 
 @Composable
 fun OrderingQuestion(
+    initialAnswer: Answer.Ordering,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
-    var answers by remember { mutableStateOf(listOf<String>()) }
+    var answers by remember { mutableStateOf(initialAnswer.order) }
 
     LaunchedEffect(answers) {
-        onAnswerChanged(Ordering(answers.toSet()))
+        Log.d("OrderingQuestion", "answers: $answers")
+        onAnswerChanged(Answer.Ordering(answers))
         saveEnabled(answers.size >= 2)
     }
 

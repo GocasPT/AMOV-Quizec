@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -13,20 +13,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Answer.Drag
 
 @Composable
 fun DragQuestion(
+    initialAnswer: Answer.Drag,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     questionTitle : String
 ) {
-    var selectedWords by remember { mutableStateOf<Set<Pair<Int, String>>>(emptySet()) }
+    var selectedWords by remember { mutableStateOf(initialAnswer.answers) }
     val scrollState = rememberScrollState()
 
+    LaunchedEffect(questionTitle) {
+        val newWords = questionTitle.split(" ").mapIndexed { index, word -> index to word }
+        selectedWords = selectedWords.filter { (_, word) -> newWords.any { it.second == word } }.toSet()
+    }
+
     LaunchedEffect(selectedWords) {
-        onAnswerChanged(Drag(selectedWords))
+        onAnswerChanged(Answer.Drag(selectedWords))
         saveEnabled(selectedWords.isNotEmpty())
     }
 

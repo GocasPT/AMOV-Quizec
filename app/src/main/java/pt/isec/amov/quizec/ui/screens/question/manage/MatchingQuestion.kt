@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
@@ -25,10 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Answer.Matching
 
 @Composable
 fun MatchingQuestion(
+    initialAnswer: Answer.Matching,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -36,10 +36,10 @@ fun MatchingQuestion(
 ) {
     var leftSide by remember { mutableStateOf("") }
     var rightSide by remember { mutableStateOf("") }
-    var matchingPairs by remember { mutableStateOf<Set<Pair<String, String>>>(emptySet()) }
+    var matchingPairs by remember { mutableStateOf(initialAnswer.pairs) }
 
     LaunchedEffect(matchingPairs) {
-        onAnswerChanged(Matching(matchingPairs))
+        onAnswerChanged(Answer.Matching(matchingPairs))
         saveEnabled(matchingPairs.isNotEmpty())
     }
 

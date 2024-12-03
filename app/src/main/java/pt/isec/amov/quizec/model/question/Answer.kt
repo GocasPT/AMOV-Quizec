@@ -26,7 +26,7 @@ sealed class Answer {
         }
     }
     //P05
-    data class Ordering(val order: Set<String>) : Answer() {
+    data class Ordering(val order: List<String>) : Answer() {
         override fun toString(): String {
             return order.joinToString(", ")
         }

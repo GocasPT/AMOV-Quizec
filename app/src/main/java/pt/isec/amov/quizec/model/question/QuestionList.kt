@@ -15,4 +15,11 @@ class QuestionList {
     fun removeQuestion(question: Question) {
         _list.remove(question)
     }
+
+    fun updateQuestion(question: Question) {
+        val index = _list.indexOfFirst { it.id == question.id }
+        if (index != -1) {
+            _list[index] = question
+        }
+    }
 }

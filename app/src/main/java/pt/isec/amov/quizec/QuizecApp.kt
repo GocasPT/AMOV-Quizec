@@ -3,6 +3,7 @@ package pt.isec.amov.quizec
 import android.app.Application
 import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.question.QuestionCounter
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.question.QuestionType
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -14,7 +15,7 @@ class QuizecApp : Application() {
         QuestionList().apply {
             addQuestion(
                 Question(
-                    "Are you insane?", QuestionType.YES_NO, null, listOf(
+                    QuestionCounter.getNextId(), "Are you insane?", QuestionType.YES_NO, null, listOf(
                         TrueFalse(true)
                     )
                 )

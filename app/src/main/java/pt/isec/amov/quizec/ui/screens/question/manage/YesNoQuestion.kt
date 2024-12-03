@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Switch
@@ -7,17 +7,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 
 @Composable
 fun YesNoQuestion(
+    initialAnswer: Answer.TrueFalse,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit
 ) {
-    var trueFalseAnswer by remember { mutableStateOf(false) }
+    var trueFalseAnswer by remember { mutableStateOf(initialAnswer.rightAnswer) }
 
     LaunchedEffect(trueFalseAnswer) {
-        onAnswerChanged(TrueFalse(trueFalseAnswer))
+        onAnswerChanged(Answer.TrueFalse(trueFalseAnswer))
         saveEnabled(true)
     }
 

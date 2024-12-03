@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.question.create
+package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -12,28 +12,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Answer.MultipleChoice
 
 @Composable
-fun MultipleChoiceQuestion(
+fun SingleChoiceQuestion(
+    initialAnswer: Answer.SingleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
-    var answers by remember { mutableStateOf(setOf<String>()) }
-    var rightAnswers by remember { mutableStateOf(setOf<String>()) }
+    var answers by remember { mutableStateOf(initialAnswer.answers) }
+    var rightAnswer by remember { mutableStateOf(initialAnswer.rightAnswer) }
 
-    LaunchedEffect(answers, rightAnswers) {
-        onAnswerChanged(MultipleChoice(answers, rightAnswers))
-        saveEnabled(answers.size >= 2 && rightAnswers.isNotEmpty() && rightAnswers.size >= 2)
+    LaunchedEffect(answers, rightAnswer) {
+        onAnswerChanged(Answer.SingleChoice(answers, rightAnswer))
+        saveEnabled(answers.size >= 2 && rightAnswer.isNotBlank())
     }
 
     LaunchedEffect(answers) {
-        rightAnswers.forEach { rightAnswer ->
-            if (!answers.contains(rightAnswer)) rightAnswers = rightAnswers - rightAnswer
-        }
+        if (rightAnswer.isNotBlank() && !answers.contains(rightAnswer)) rightAnswer = ""
     }
 
     Row(
@@ -57,28 +55,28 @@ fun MultipleChoiceQuestion(
             Text("+")
         }
     }
-    AnswerEntryMultipleChoice(
+
+    AnswerEntrySingleChoice(
         answers = answers,
-        onClick = { answer ->
-            if (rightAnswers.contains(answer)) rightAnswers = rightAnswers - answer
-            else rightAnswers = rightAnswers + answer
-        },
+        onClick = { rightAnswer = it },
         onOptionDelete = { answer ->
             answers = answers - answer
-            rightAnswers = rightAnswers - answer
+            if (answer == rightAnswer) {
+                rightAnswer = ""
+            }
         },
-        rightAnswers = rightAnswers,
+        rightAnswer = rightAnswer,
         modifier = modifier,
         scrollState = scrollState
     )
 }
 
 @Composable
-fun AnswerEntryMultipleChoice(
+fun AnswerEntrySingleChoice(
     answers: Set<String>,
     onClick: (String) -> Unit,
     onOptionDelete: (String) -> Unit,
-    rightAnswers: Set<String>,
+    rightAnswer: String,
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
@@ -91,9 +89,9 @@ fun AnswerEntryMultipleChoice(
                     .clickable { onClick(answer) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(
-                    checked = rightAnswers.contains(answer),
-                    onCheckedChange = { onClick(answer) }
+                RadioButton(
+                    selected = answer == rightAnswer,
+                    onClick = { onClick(answer) }
                 )
                 Text(
                     text = answer,
@@ -108,4 +106,5 @@ fun AnswerEntryMultipleChoice(
             }
         }
     }
+
 }
