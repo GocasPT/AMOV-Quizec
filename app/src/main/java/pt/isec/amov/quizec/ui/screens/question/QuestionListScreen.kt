@@ -30,7 +30,8 @@ fun QuestionListScreen(
     questionList: List<Question>,
     onSelectQuestion: (Question) -> Unit,
     onCreateQuestion: () -> Unit,
-    onEditQuestion: (Question) -> Unit
+    onEditQuestion: (Question) -> Unit,
+    onDeleteQuestion: (Question) -> Unit
 ) {
 
     Column(
@@ -54,7 +55,8 @@ fun QuestionListScreen(
                 QuestionCard(
                     question = question,
                     onSelectQuestion = onSelectQuestion,
-                    onEditQuestion = onEditQuestion
+                    onEditQuestion = onEditQuestion,
+                    onDeleteQuestion = onDeleteQuestion
                 )
             }
         }
@@ -66,7 +68,8 @@ fun QuestionListScreen(
 fun QuestionCard(
     question: Question,
     onSelectQuestion: (Question) -> Unit,
-    onEditQuestion: (Question) -> Unit
+    onEditQuestion: (Question) -> Unit,
+    onDeleteQuestion: (Question) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -116,9 +119,10 @@ fun QuestionCard(
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Delete TODO") },
+                    text = { Text("Delete") },
                     onClick = {
                         expanded = false
+                        onDeleteQuestion(question)
                     }
                 )
             }

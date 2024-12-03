@@ -30,6 +30,7 @@ fun QuizListScreen(
     onSelectQuiz: (Quiz) -> Unit,
     onCreateQuiz : () -> Unit,
     onEditQuiz: (Quiz) -> Unit,
+    onDeleteQuiz: (Quiz) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -52,7 +53,8 @@ fun QuizListScreen(
                 QuizCard(
                     quiz = quiz,
                     onSelectQuiz = onSelectQuiz,
-                    onEditQuiz = onEditQuiz
+                    onEditQuiz = onEditQuiz,
+                    onDeleteQuiz = onDeleteQuiz
                 )
             }
         }
@@ -64,7 +66,8 @@ fun QuizListScreen(
 fun QuizCard(
     quiz: Quiz,
     onSelectQuiz: (Quiz) -> Unit,
-    onEditQuiz: (Quiz) -> Unit
+    onEditQuiz: (Quiz) -> Unit,
+    onDeleteQuiz: (Quiz) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -101,6 +104,9 @@ fun QuizCard(
                     },
                     onEditQuestion = { _ ->
                         //Log.d("Question edited", question.title)
+                    },
+                    onDeleteQuestion = { _ ->
+                        //Log.d("Question deleted", question.title)
                     }
                 )
             }
@@ -123,9 +129,10 @@ fun QuizCard(
                 }
             )
             DropdownMenuItem(
-                text = { Text("Delete TODO") },
+                text = { Text("Delete") },
                 onClick = {
                     expanded = false
+                    onDeleteQuiz(quiz)
                 }
             )
         }

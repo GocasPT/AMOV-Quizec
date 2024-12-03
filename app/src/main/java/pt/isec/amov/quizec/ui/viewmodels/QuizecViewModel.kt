@@ -31,6 +31,10 @@ class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : 
         _currentQuestion.value = null
     }
 
+    fun deleteQuestion(question: Question) {
+        questionList.removeQuestion(question)
+    }
+
     fun createQuiz() {
         _currentQuiz.value  = null
     }
@@ -46,5 +50,9 @@ class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : 
             quizList.addQuiz(quiz)
         }
         _currentQuiz.value = null
+    }
+
+    fun deleteQuiz(quiz: Quiz) {
+        quizList.removeQuiz(quiz)
     }
 }
