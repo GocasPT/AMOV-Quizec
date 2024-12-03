@@ -3,7 +3,7 @@ package pt.isec.amov.quizec.model.quiz
 import pt.isec.amov.quizec.model.question.Question
 
 data class Quiz(
-    //val id: String,
+    val id: String,
     //val creatorId: String,
     val title: String,
     val image: String?,

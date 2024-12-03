@@ -29,6 +29,7 @@ fun QuizListScreen(
     quizList: List<Quiz>,
     onSelectQuiz: (Quiz) -> Unit,
     onCreateQuiz : () -> Unit,
+    onEditQuiz: (Quiz) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +51,8 @@ fun QuizListScreen(
             ) { quiz ->
                 QuizCard(
                     quiz = quiz,
-                    onSelectQuiz = onSelectQuiz
+                    onSelectQuiz = onSelectQuiz,
+                    onEditQuiz = onEditQuiz
                 )
             }
         }
@@ -61,7 +63,8 @@ fun QuizListScreen(
 @Composable
 fun QuizCard(
     quiz: Quiz,
-    onSelectQuiz: (Quiz) -> Unit
+    onSelectQuiz: (Quiz) -> Unit,
+    onEditQuiz: (Quiz) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -99,22 +102,29 @@ fun QuizCard(
                 )
             }
         }
-    }
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text("Quiz Option 1") },
-            onClick = {
-                expanded = false
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Quiz Option 2") },
-            onClick = {
-                expanded = false
-            }
-        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("View TODO") },
+                onClick = {
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Edit") },
+                onClick = {
+                    expanded = false
+                    onEditQuiz(quiz)
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Delete TODO") },
+                onClick = {
+                    expanded = false
+                }
+            )
+        }
     }
 }

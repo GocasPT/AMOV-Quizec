@@ -26,7 +26,7 @@ class QuizecApp : Application() {
         QuizList().apply {
             addQuiz(
                 Quiz(
-                    "Quiz 0", null, listOf(
+                    "XXXXX", "Quiz 0", null, listOf(
                         _questionList.getQuestionList()[0]
                     ), false, 0, false, true
                 )

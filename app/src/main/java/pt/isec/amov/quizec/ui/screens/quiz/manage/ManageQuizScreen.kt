@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.quiz
+package pt.isec.amov.quizec.ui.screens.quiz.manage
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,23 +19,34 @@ import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 
-@OptIn(ExperimentalMaterial3Api::class)
+private fun generateRandomCode(length: Int = 5): String {
+    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+    return (1..length)
+        .map { allowedChars.random() }
+        .joinToString("")
+}
+
 @Composable
-fun CreateQuizScreen(
-    questionList : List<Question>,
+fun ManageQuizScreen(
+    quiz: Quiz?,
+    questionList: List<Question>,
     saveQuiz: (Quiz) -> Unit
 ) {
-    var quizTitle by remember { mutableStateOf("") }
-    var maxTimeMinutes by remember { mutableStateOf("") }
-    var isActive by remember { mutableStateOf(true) }
-    var locationRestricted by remember { mutableStateOf(false) }
-    var immediateResults by remember { mutableStateOf(true) }
-    var selectedQuestions = remember { mutableStateListOf<Question>() }
+    var quizTitle by remember { mutableStateOf(quiz?.title ?: "") }
+    var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
+    var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
+    var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
+    var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
+    val selectedQuestions = remember { mutableStateListOf<Question>().apply {
+        quiz?.questions?.let { addAll(it) }
+    }}
     val scrollState = rememberScrollState()
-    var newQuiz: Quiz? = null
 
     fun isFormValid(): Boolean {
-        return quizTitle.isNotEmpty() && maxTimeMinutes.isNotEmpty() && maxTimeMinutes.all { it.isDigit() } && selectedQuestions.isNotEmpty()
+        return quizTitle.isNotEmpty() &&
+                maxTimeMinutes.isNotEmpty() &&
+                maxTimeMinutes.all { it.isDigit() } &&
+                selectedQuestions.isNotEmpty()
     }
 
     Column(
@@ -46,7 +57,7 @@ fun CreateQuizScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "New Quiz",
+            text = if (quiz == null) "New Quiz" else "Edit Quiz",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp),
             fontWeight = FontWeight.Bold
@@ -116,8 +127,7 @@ fun CreateQuizScreen(
         )
 
         LazyColumn(
-            modifier = Modifier
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             items(
                 items = questionList,
@@ -127,8 +137,11 @@ fun CreateQuizScreen(
                     question = question,
                     isSelected = selectedQuestions.contains(question),
                     onToggle = {
-                        if (selectedQuestions.contains(question)) selectedQuestions.remove(question)
-                        else selectedQuestions.add(question)
+                        if (selectedQuestions.contains(question)) {
+                            selectedQuestions.remove(question)
+                        } else {
+                            selectedQuestions.add(question)
+                        }
                     }
                 )
             }
@@ -136,7 +149,15 @@ fun CreateQuizScreen(
 
         Button(
             onClick = {
-                newQuiz = Quiz(
+                val updatedQuiz = quiz?.copy(
+                    title = quizTitle,
+                    questions = selectedQuestions,
+                    isActive = isActive,
+                    maxTime = maxTimeMinutes.toLongOrNull(),
+                    locationRestricted = locationRestricted,
+                    immediateResults = immediateResults
+                ) ?: Quiz(
+                    id = generateRandomCode(),
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,
@@ -145,14 +166,14 @@ fun CreateQuizScreen(
                     locationRestricted = locationRestricted,
                     immediateResults = immediateResults
                 )
-                saveQuiz(newQuiz)
+                saveQuiz(updatedQuiz)
             },
             modifier = Modifier
                 .padding(top = 16.dp)
                 .fillMaxWidth(),
             enabled = isFormValid()
         ) {
-            Text("Save Quiz")
+            Text(if (quiz == null) "Create Quiz" else "Save Changes")
         }
     }
 }

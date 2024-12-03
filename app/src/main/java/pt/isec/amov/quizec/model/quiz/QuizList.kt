@@ -12,6 +12,17 @@ class QuizList {
         _list.add(quiz)
     }
 
+    fun getQuiz(id: String): Quiz? {
+        return _list.find { it.id == id }
+    }
+
+    fun updateQuiz(quiz: Quiz) {
+        val index = _list.indexOfFirst { it.id == quiz.id }
+        if (index != -1) {
+            _list[index] = quiz
+        }
+    }
+
     fun removeQuiz(quiz: Quiz) {
         _list.remove(quiz)
     }
