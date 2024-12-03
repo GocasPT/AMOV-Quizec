@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.ui.screens.question.QuestionCard
 
 
 @Composable

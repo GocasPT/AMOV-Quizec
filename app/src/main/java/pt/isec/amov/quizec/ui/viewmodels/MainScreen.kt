@@ -20,9 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pt.isec.amov.quizec.ui.screens.CreateQuestionScreen
+import pt.isec.amov.quizec.ui.screens.question.create.CreateQuestionScreen
 import pt.isec.amov.quizec.ui.screens.CreateQuizScreen
-import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.QuizListScreen
 
 @Composable
