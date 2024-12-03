@@ -6,7 +6,7 @@ enum class QuestionType {
     MULTIPLE_CHOICE,  // P03
     MATCHING,         // P04
     ORDERING,         // P05
-    FILL_BLANK,       // P06
-    ASSOCIATION,      // P07
-    MISSING_WORDS     // P08
+    DRAG,             // P06
+    //ASSOCIATION,      // P07
+    FILL_BLANK        // P08
 }

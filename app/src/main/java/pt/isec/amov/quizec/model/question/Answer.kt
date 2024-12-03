@@ -32,9 +32,11 @@ sealed class Answer {
         }
     }
     //P06
-    // TODO
-    //P07
-    // TODO
+    data class Drag(val answers: Set<Pair<Int, String>>) : Answer() {
+        override fun toString(): String {
+            return answers.joinToString(", ") { it.second }
+        }
+    }
     //P08
     data class FillBlank(val answers: Set<Pair<Int, String>>) : Answer() {
         override fun toString(): String {

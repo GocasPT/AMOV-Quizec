@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.quiz
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.question.QuestionCard
-
 
 @Composable
 fun QuizListScreen(

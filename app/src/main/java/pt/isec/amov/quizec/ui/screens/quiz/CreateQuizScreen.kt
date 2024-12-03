@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.quiz
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

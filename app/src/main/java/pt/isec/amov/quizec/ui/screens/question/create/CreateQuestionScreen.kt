@@ -83,15 +83,19 @@ fun CreateQuestionScreen(
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
+
+            QuestionType.DRAG -> DragQuestion(
+                onAnswerChanged = { questionAnswers = it },
+                saveEnabled = { saveEnabled = it },
+                modifier = Modifier.weight(1f),
+                questionTitle = questionTitle
+            )
             QuestionType.FILL_BLANK -> FillBlankQuestion(
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 questionTitle = questionTitle
             )
-            else -> {
-                // TODO: Handle other question types
-            }
         }
 
         Button(
