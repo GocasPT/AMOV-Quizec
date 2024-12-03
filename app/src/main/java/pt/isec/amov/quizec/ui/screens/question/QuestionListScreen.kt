@@ -23,14 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import pt.isec.amov.quizec.model.question.Question
 
 @Composable
 fun QuestionListScreen(
     questionList: List<Question>,
     onSelectQuestion: (Question) -> Unit,
-    navController: NavController
+    onCreateQuestion: () -> Unit,
 ) {
 
     Column(
@@ -38,7 +37,7 @@ fun QuestionListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { navController.navigate("createQuestion") },
+            onClick = onCreateQuestion,
             modifier = Modifier.padding(16.dp),
         ) {
             Text(text = "Create Question")

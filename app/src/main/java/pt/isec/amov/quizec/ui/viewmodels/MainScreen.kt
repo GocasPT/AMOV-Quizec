@@ -26,7 +26,7 @@ import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 
 @Composable
-fun MainScree(
+fun MainScreen(
     viewModel: QuizecViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
@@ -83,7 +83,7 @@ fun MainScree(
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
                     },
-                    navController = navController
+                    onCreateQuiz = { navController.navigate("createQuiz") },
                 )
             }
             composable("createQuiz") {
@@ -109,7 +109,7 @@ fun MainScree(
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
                     },
-                    navController = navController
+                    onCreateQuestion = { navController.navigate("createQuestion") }
                 )
             }
         }

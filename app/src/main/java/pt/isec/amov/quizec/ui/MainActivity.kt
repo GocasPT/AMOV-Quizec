@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isec.amov.quizec.QuizecApp
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
-import pt.isec.amov.quizec.ui.viewmodels.MainScree
+import pt.isec.amov.quizec.ui.viewmodels.MainScreen
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelFactory
 
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QuizecTheme {
-                MainScree(viewModel)
+                MainScreen(viewModel)
             }
         }
 

@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.question.QuestionCard
 
@@ -29,14 +28,14 @@ import pt.isec.amov.quizec.ui.screens.question.QuestionCard
 fun QuizListScreen(
     quizList: List<Quiz>,
     onSelectQuiz: (Quiz) -> Unit,
-    navController: NavController
+    onCreateQuiz : () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { navController.navigate("createQuiz") },
+            onClick = onCreateQuiz,
             modifier = Modifier.padding(16.dp),
         ) {
             Text(text = "Create Quiz")
@@ -94,7 +93,7 @@ fun QuizCard(
                 )*/
                 QuestionCard(
                     question = question,
-                    onSelectQuestion = { question ->
+                    onSelectQuestion = { _ ->
                         //Log.d("Question selected", question.title)
                     }
                 )
