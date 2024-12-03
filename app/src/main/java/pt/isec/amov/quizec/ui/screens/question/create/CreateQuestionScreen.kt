@@ -77,6 +77,12 @@ fun CreateQuestionScreen(
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
+            QuestionType.ORDERING -> OrderingQuestion(
+                onAnswerChanged = { questionAnswers = it },
+                saveEnabled = { saveEnabled = it },
+                modifier = Modifier.weight(1f),
+                scrollState = scrollState
+            )
             else -> {
                 // TODO: Handle other question types
             }

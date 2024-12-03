@@ -21,4 +21,9 @@ sealed class Answer {
             return pairs.joinToString(", ") { "${it.first} -> ${it.second}" }
         }
     }
+    data class Ordering(val order: Set<String>) : Answer() {
+        override fun toString(): String {
+            return order.joinToString(", ")
+        }
+    }
 }
