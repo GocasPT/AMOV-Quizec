@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.Ordering
 
 @Composable
 fun OrderingQuestion(
@@ -38,7 +39,7 @@ fun OrderingQuestion(
     var answers by remember { mutableStateOf(listOf<String>()) }
 
     LaunchedEffect(answers) {
-        onAnswerChanged(Answer.Ordering(answers.toSet()))
+        onAnswerChanged(Ordering(answers.toSet()))
         saveEnabled(answers.size >= 2)
     }
 

@@ -1,7 +1,7 @@
 package pt.isec.amov.quizec
 
 import android.app.Application
-import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.question.QuestionType
@@ -15,7 +15,7 @@ class QuizecApp : Application() {
             addQuestion(
                 Question(
                     "Are you insane?", QuestionType.YES_NO, null, listOf(
-                        Answer.TrueFalse(true)
+                        TrueFalse(true)
                     )
                 )
             )

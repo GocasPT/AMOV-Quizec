@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.MultipleChoice
 
 @Composable
 fun MultipleChoiceQuestion(
@@ -25,7 +26,7 @@ fun MultipleChoiceQuestion(
     var rightAnswers by remember { mutableStateOf(setOf<String>()) }
 
     LaunchedEffect(answers, rightAnswers) {
-        onAnswerChanged(Answer.MultipleChoice(answers, rightAnswers))
+        onAnswerChanged(MultipleChoice(answers, rightAnswers))
         saveEnabled(answers.size >= 2 && rightAnswers.isNotEmpty() && rightAnswers.size >= 2)
     }
 
