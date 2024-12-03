@@ -16,4 +16,9 @@ sealed class Answer {
             return rightAnswers.joinToString(", ")
         }
     }
+    data class Matching(val pairs: Set<Pair<String, String>>) : Answer() {
+        override fun toString(): String {
+            return pairs.joinToString(", ") { "${it.first} -> ${it.second}" }
+        }
+    }
 }

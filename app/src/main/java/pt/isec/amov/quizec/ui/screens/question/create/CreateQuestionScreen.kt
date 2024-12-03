@@ -6,7 +6,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
@@ -67,6 +66,12 @@ fun CreateQuestionScreen(
                 scrollState = scrollState
             )
             QuestionType.MULTIPLE_CHOICE -> MultipleChoiceQuestion(
+                onAnswerChanged = { questionAnswers = it },
+                saveEnabled = { saveEnabled = it },
+                modifier = Modifier.weight(1f),
+                scrollState = scrollState
+            )
+            QuestionType.MATCHING -> MatchingQuestion(
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),

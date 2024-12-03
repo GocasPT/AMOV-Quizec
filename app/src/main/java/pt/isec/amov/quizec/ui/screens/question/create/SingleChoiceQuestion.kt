@@ -1,6 +1,5 @@
 package pt.isec.amov.quizec.ui.screens.question.create
 
-import android.widget.Scroller
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
