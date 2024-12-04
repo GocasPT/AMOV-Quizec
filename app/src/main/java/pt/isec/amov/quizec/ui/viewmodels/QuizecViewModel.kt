@@ -1,20 +1,22 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import pt.isec.amov.quizec.model.Question
 import pt.isec.amov.quizec.model.QuestionList
 import pt.isec.amov.quizec.model.Quiz
 import pt.isec.amov.quizec.model.QuizList
 
 class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : ViewModel() {
     //TODO: add data variables
-    val currentQuiz: Quiz? = null
+    var currentQuestion: Question? = null
+    var currentQuiz: Quiz? = null
 
     fun createQuestion() {
         //TODO: create question
     }
 
-    fun selectQuestion() {
-        //TODO: select question
+    fun selectQuestion(question: Question) {
+        currentQuestion = question
     }
 
     fun saveQuestion() {
@@ -25,8 +27,8 @@ class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : 
         //TODO: create quiz
     }
 
-    fun selectQuiz() {
-        //TODO: select quiz
+    fun selectQuiz(quiz: Quiz) {
+        currentQuiz = quiz
     }
 
     fun saveQuiz() {

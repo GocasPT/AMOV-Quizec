@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.QuizShowScreen
 
@@ -65,18 +66,27 @@ fun MainScree(
             composable("quiz") {
                 QuizListScreen(quizList = viewModel.quizList.getQuizList(), onSelectQuiz = { quiz ->
                     Log.d("Quiz selected", quiz.title)
+                    viewModel.selectQuiz(quiz)
+                    navController.navigate("show-quiz")
                 })
             }
             composable("show-quiz") {
                 viewModel.currentQuiz?.let {
-                    QuizShowScreen(quiz = viewModel.currentQuiz)
+                    QuizShowScreen(quiz = viewModel.currentQuiz!!)
                 }
             }
             composable("question") {
                 QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.title)
+                        viewModel.selectQuestion(question)
+                        navController.navigate("show-question")
                     })
+            }
+            composable("show-question") {
+                viewModel.currentQuestion?.let {
+                    QuestionShowScreen(question = viewModel.currentQuestion!!)
+                }
             }
         }
     }
