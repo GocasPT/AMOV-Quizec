@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,10 +36,17 @@ fun QuizListScreen(
     quizList: List<Quiz>,
     onSelectQuiz: (Quiz) -> Unit,
 ) {
-    CustomList(
-        items = quizList,
-        onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
-        QuizCard(quiz = quiz as Quiz, onSelectQuiz = { onSelect(quiz) })
+    Column(modifier = Modifier.fillMaxSize()) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { /*TODO: go to "ManageQuiz" to create new quiz*/ }) {
+            Text("+")
+        }
+        CustomList(
+            items = quizList,
+            onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
+            QuizCard(quiz = quiz as Quiz, onSelectQuiz = { onSelect(quiz) })
+        }
     }
 }
 
