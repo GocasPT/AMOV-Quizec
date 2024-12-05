@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.model
+package pt.isec.amov.quizec.model.quiz
 
 class QuizList {
     private val _list = mutableListOf<Quiz>()
@@ -10,6 +10,17 @@ class QuizList {
 
     fun addQuiz(quiz: Quiz) {
         _list.add(quiz)
+    }
+
+    fun getQuiz(id: String): Quiz? {
+        return _list.find { it.id == id }
+    }
+
+    fun updateQuiz(quiz: Quiz) {
+        val index = _list.indexOfFirst { it.id == quiz.id }
+        if (index != -1) {
+            _list[index] = quiz
+        }
     }
 
     fun removeQuiz(quiz: Quiz) {
