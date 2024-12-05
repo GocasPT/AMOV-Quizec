@@ -6,7 +6,7 @@ enum class QuestionType(val string: String) {
     MULTIPLE_CHOICE("Multiple choice"),     // P03
     MATCHING("Matching"),                   // P04
     ORDERING("Ordering"),                   // P05
-    FILL_BLANK("Fill black"),               // P06
-    //ASSOCIATION("Association"),             // P07
-    MISSING_WORDS("Missing words")          // P08
+    DRAG("Dragging"),                       // P06
+    //ASSOCIATION("Association"),           // P07
+    FILL_BLANK("Fill the missing words")    // P08
 }

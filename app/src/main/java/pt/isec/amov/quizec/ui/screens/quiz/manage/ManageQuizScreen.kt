@@ -18,13 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-
-private fun generateRandomCode(length: Int = 5): String {
-    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-    return (1..length)
-        .map { allowedChars.random() }
-        .joinToString("")
-}
+import pt.isec.amov.quizec.model.quiz.QuizIDGenerator
 
 @Composable
 fun ManageQuizScreen(
@@ -157,7 +151,7 @@ fun ManageQuizScreen(
                     locationRestricted = locationRestricted,
                     immediateResults = immediateResults
                 ) ?: Quiz(
-                    id = generateRandomCode(),
+                    id = QuizIDGenerator.generateRandomCode(),
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,

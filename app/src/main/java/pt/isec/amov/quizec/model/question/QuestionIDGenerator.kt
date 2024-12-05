@@ -1,6 +1,6 @@
 package pt.isec.amov.quizec.model.question
 
-class QuestionCounter {
+class QuestionIDGenerator {
     companion object {
         private var currentId = 0
 

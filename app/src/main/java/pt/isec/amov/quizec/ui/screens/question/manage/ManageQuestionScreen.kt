@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.question.QuestionCounter
+import pt.isec.amov.quizec.model.question.QuestionIDGenerator
 import pt.isec.amov.quizec.model.question.QuestionType
 
 @Composable
@@ -125,7 +125,7 @@ fun ManageQuestionScreen(
                         type = questionType,
                         answers = listOf(questionAnswers)
                     ) ?: Question(
-                        id = QuestionCounter.getNextId(),
+                        id = QuestionIDGenerator.getNextId(),
                         image = null,
                         content = questionContent,
                         type = questionType,
