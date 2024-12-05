@@ -21,12 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pt.isec.amov.quizec.ui.screens.QuestionListScreen
-import pt.isec.amov.quizec.ui.screens.QuizListScreen
-import pt.isec.amov.quizec.ui.screens.QuizShowScreen
+import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
+import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
+import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 
 @Composable
-fun MainScree(
+fun MainScreen(
     viewModel: QuizecViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
@@ -59,6 +60,14 @@ fun MainScree(
                         "question" -> {
                             Text("Question")
                         }
+
+                        "manageQuiz" -> {
+                            Text("Manage Quiz")
+                        }
+
+                        "manageQuestion" -> {
+                            Text("Manage Question")
+                        }
                     }
                 }
             )
@@ -75,21 +84,57 @@ fun MainScree(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
+                    },
+                    onCreateQuiz = {
+                        viewModel.createQuiz()
+                        navController.navigate("manageQuiz")
+                    },
+                    onEditQuiz = { quiz ->
+                        viewModel.selectQuiz(quiz)
+                        navController.navigate("manageQuiz")
+                    },
+                    onDeleteQuiz = { quiz ->
+                        viewModel.deleteQuiz(quiz)
+                        navController.navigate("quiz") //There's no recomposition after deleteQuiz so we need to navigate to refresh the screen (Most likely the wrong way to do it)
                     }
                 )
             }
-            composable("show-quiz") {
-                viewModel.currentQuiz?.let {
-                    QuizShowScreen(
-                        quiz = viewModel.currentQuiz,
-                    )
-                }
+            composable("manageQuiz") {
+                ManageQuizScreen(
+                    quiz = viewModel.currentQuiz,
+                    questionList = viewModel.questionList.getQuestionList(),
+                    saveQuiz = { quiz ->
+                        viewModel.saveQuiz(quiz)
+                        navController.navigate("quiz")
+                    }
+                )
             }
             composable("question") {
                 QuestionListScreen(
                     questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
-                        Log.d("Question selected", question.title)
+                        Log.d("Question selected", question.content)
+                    },
+                    onCreateQuestion = {
+                        viewModel.createQuestion()
+                        navController.navigate("manageQuestion")
+                    },
+                    onEditQuestion = { question ->
+                        viewModel.selectQuestion(question)
+                        navController.navigate("manageQuestion")
+                    },
+                    onDeleteQuestion = { question ->
+                        viewModel.deleteQuestion(question)
+                        navController.navigate("question") //There's no recomposition after deleteQuestion so we need to navigate to refresh the screen (Most likely the wrong way to do it)
+                    }
+                )
+            }
+            composable("manageQuestion") {
+                ManageQuestionScreen(
+                    question = viewModel.currentQuestion,
+                    saveQuestion = { question ->
+                        viewModel.saveQuestion(question)
+                        navController.navigate("question")
                     }
                 )
             }
