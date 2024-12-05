@@ -1,12 +1,13 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
 import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,6 +26,9 @@ import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
+import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.QuizListScreen
+import pt.isec.amov.quizec.ui.screens.QuizShowScreen
 
 @Composable
 fun MainScreen(
@@ -41,15 +46,16 @@ fun MainScreen(
             .fillMaxSize(),
         bottomBar = {
             BottomAppBar(
-                containerColor = BottomAppBarDefaults.containerColor,
-                contentColor = Color.Black,
+                contentPadding = PaddingValues(8.dp),
                 content = {
                     IconButton(onClick = { navController.navigate("quiz") }) {
                         Icon(Icons.AutoMirrored.Filled.List, null)
                     }
+                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { navController.navigate("question") }) {
                         Icon(Icons.AutoMirrored.Filled.List, null)
                     }
+                    Spacer(modifier = Modifier.weight(1f))
                     when (currentScreen?.destination?.route) {
                         "quiz" -> {
                             Text("Quiz")
