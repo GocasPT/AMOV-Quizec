@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,9 +25,6 @@ import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
-import pt.isec.amov.quizec.ui.screens.QuestionListScreen
-import pt.isec.amov.quizec.ui.screens.QuizListScreen
-import pt.isec.amov.quizec.ui.screens.QuizShowScreen
 
 @Composable
 fun MainScreen(
