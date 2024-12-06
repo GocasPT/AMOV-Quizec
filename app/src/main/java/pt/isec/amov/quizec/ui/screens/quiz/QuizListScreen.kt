@@ -3,26 +3,37 @@ package pt.isec.amov.quizec.ui.screens.quiz
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.ui.screens.question.QuestionCard
+import pt.isec.amov.quizec.ui.components.CustomList
 
 @Composable
 fun QuizListScreen(
@@ -32,31 +43,21 @@ fun QuizListScreen(
     onEditQuiz: (Quiz) -> Unit,
     onDeleteQuiz: (Quiz) -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Button(
-            onClick = onCreateQuiz,
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Text(text = "Create Quiz")
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onCreateQuiz() }) {
+            Text("+")
         }
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(
-                items = quizList,
-                key = { quiz -> quiz.hashCode() }
-            ) { quiz ->
-                QuizCard(
-                    quiz = quiz,
-                    onSelectQuiz = onSelectQuiz,
-                    onEditQuiz = onEditQuiz,
-                    onDeleteQuiz = onDeleteQuiz
-                )
-            }
+        CustomList(
+            items = quizList,
+            onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
+            QuizCard(
+                quiz = quiz as Quiz,
+                onSelectQuiz = { onSelect(quiz) },
+                onEditQuiz = { onEditQuiz(quiz) },
+                onDeleteQuiz = { onDeleteQuiz(quiz) }
+            )
         }
     }
 }
@@ -85,30 +86,43 @@ fun QuizCard(
         )
     ) {
         Column(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier.padding(8.dp),
         ) {
-            Text(
-                text = quiz.title,
-                fontSize = 20.sp
-            )
-            quiz.questions.forEach { question ->
-                /*Text(
-                    text = question.title,
-                    fontSize = 16.sp
-                )*/
-                QuestionCard(
-                    question = question,
-                    onSelectQuestion = { _ ->
-                        //Log.d("Question selected", question.title)
-                    },
-                    onEditQuestion = { _ ->
-                        //Log.d("Question edited", question.title)
-                    },
-                    onDeleteQuestion = { _ ->
-                        //Log.d("Question deleted", question.title)
-                    }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                quiz.image?.let {
+                    //TODO: get image from string and "return" image/file
+                    //PLACE_HOLDER
+                    Icon(Icons.Filled.AccountCircle, it)
+                    Spacer(modifier = Modifier.padding(8.dp))
+                }
+                Text(
+                    text = quiz.title, fontSize = 20.sp
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                quiz.maxTime?.let {
+                    Text(text = "$it min", fontSize = 16.sp)
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    Icon(Icons.Rounded.Info, "Max Time", Modifier.size(18.dp))
+                }
+                if (quiz.locationRestricted)
+                    Icon(Icons.Filled.LocationOn, "Location Restricted", Modifier.size(18.dp))
+                if (quiz.immediateResults)
+                    Icon(Icons.Filled.Menu, "Immediate Results", Modifier.size(18.dp))
+            }
+            quiz.questions.forEach { question ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Icon(Icons.Filled.PlayArrow, "Bullet Point", Modifier.size(18.dp))
+                    Text(
+                        text = "${question.content} - Type ${question.answers.type.displayName}", fontSize = 16.sp
+                    )
+                }
             }
         }
         DropdownMenu(

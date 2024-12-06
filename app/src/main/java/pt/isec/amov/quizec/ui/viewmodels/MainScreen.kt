@@ -21,10 +21,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
-import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
-import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
+//import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
+import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 
 @Composable
 fun MainScreen(
@@ -37,42 +39,35 @@ fun MainScreen(
         Log.d("Destination changed", destination.route.toString())
     }
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize(),
-        bottomBar = {
-            BottomAppBar(
-                contentPadding = PaddingValues(8.dp),
-                content = {
-                    IconButton(onClick = { navController.navigate("quiz") }) {
-                        Icon(Icons.AutoMirrored.Filled.List, null)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { navController.navigate("question") }) {
-                        Icon(Icons.AutoMirrored.Filled.List, null)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    when (currentScreen?.destination?.route) {
-                        "quiz" -> {
-                            Text("Quiz")
-                        }
-
-                        "question" -> {
-                            Text("Question")
-                        }
-
-                        "manageQuiz" -> {
-                            Text("Manage Quiz")
-                        }
-
-                        "manageQuestion" -> {
-                            Text("Manage Question")
-                        }
-                    }
+    Scaffold(modifier = modifier.fillMaxSize(), bottomBar = {
+        BottomAppBar(contentPadding = PaddingValues(8.dp), content = {
+            IconButton(onClick = { navController.navigate("quiz") }) {
+                Icon(Icons.AutoMirrored.Filled.List, null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = { navController.navigate("question") }) {
+                Icon(Icons.AutoMirrored.Filled.List, null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            when (currentScreen?.destination?.route) {
+                "quiz" -> {
+                    Text("Quiz")
                 }
-            )
-        }
-    ) { innerPadding ->
+
+                "question" -> {
+                    Text("Question")
+                }
+
+                "manageQuiz" -> {
+                    Text("Manage Quiz")
+                }
+
+                "manageQuestion" -> {
+                    Text("Manage Question")
+                }
+            }
+        })
+    }) { innerPadding ->
         NavHost(
             startDestination = "quiz",
             navController = navController,
@@ -84,6 +79,8 @@ fun MainScreen(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
+                        viewModel.selectQuiz(quiz)
+                        navController.navigate("show-quiz")
                     },
                     onCreateQuiz = {
                         viewModel.createQuiz()
@@ -99,6 +96,11 @@ fun MainScreen(
                     }
                 )
             }
+            composable("show-quiz") {
+                viewModel.currentQuiz?.let {
+                    //QuizShowScreen(quiz = viewModel.currentQuiz!!)
+                }
+            }
             composable("manageQuiz") {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
@@ -110,10 +112,11 @@ fun MainScreen(
                 )
             }
             composable("question") {
-                QuestionListScreen(
-                    questionList = viewModel.questionList.getQuestionList(),
+                QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
+                        viewModel.selectQuestion(question)
+                        navController.navigate("show-question")
                     },
                     onCreateQuestion = {
                         viewModel.createQuestion()
@@ -129,6 +132,14 @@ fun MainScreen(
                     }
                 )
             }
+
+            composable("show-question") {
+                viewModel.currentQuestion?.let {
+                    Log.d("Question selected", viewModel.currentQuestion!!.content)
+                    QuestionShowScreen(question = viewModel.currentQuestion!!)
+                }
+            }
+
             composable("manageQuestion") {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,
