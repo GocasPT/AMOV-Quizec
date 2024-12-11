@@ -2,12 +2,17 @@ package pt.isec.amov.quizec.ui.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import io.github.jan.supabase.SupabaseClient
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
 
-class QuizecViewModel(val questionList: QuestionList, val quizList: QuizList) : ViewModel() {
+class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
+    //TODO: PLACE_HOLDER
+    val questionList: QuestionList = QuestionList()
+    val quizList: QuizList = QuizList()
+
     //TODO: add data variables
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
     private var _currentQuestion = mutableStateOf<Question?>(null)

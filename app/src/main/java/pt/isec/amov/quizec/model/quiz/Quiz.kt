@@ -1,7 +1,9 @@
 package pt.isec.amov.quizec.model.quiz
 
+import kotlinx.serialization.Serializable
 import pt.isec.amov.quizec.model.question.Question
 
+@Serializable
 data class Quiz(
     val id: String,
     //val creatorId: String,

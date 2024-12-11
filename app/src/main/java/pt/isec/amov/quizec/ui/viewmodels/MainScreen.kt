@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +22,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
@@ -31,7 +35,6 @@ import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 
 @Composable
 fun MainScreen(
-    dbClient: SupabaseClient,
     viewModel: QuizecViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
@@ -39,6 +42,16 @@ fun MainScreen(
     val currentScreen by navController.currentBackStackEntryAsState()
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Destination changed", destination.route.toString())
+    }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            viewModel.dbClient.from("question").select().decodeList<Question>().let { list ->
+                list.forEach {
+                    viewModel.questionList.addQuestion(it)
+                }
+            }
+        }
     }
 
     Scaffold(modifier = modifier.fillMaxSize(), bottomBar = {
