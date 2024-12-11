@@ -21,10 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
-import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
-import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
+import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
+//import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
+import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 
 @Composable
 fun MainScreen(
@@ -52,18 +55,24 @@ fun MainScreen(
                     Text("Quiz")
                 }
 
-                        "question" -> {
-                            Text("Question")
-                        }
+                "show-quiz" -> {
+                    Text("Show Quiz")
+                }
 
-                        "manageQuiz" -> {
-                            Text("Manage Quiz")
-                        }
+                "manageQuiz" -> {
+                    Text("Manage Quiz")
+                }
 
-                        "manageQuestion" -> {
-                            Text("Manage Question")
-                        }
-                    }
+                "question" -> {
+                    Text("Question")
+                }
+
+                "show-question" -> {
+                    Text("Show Question")
+                }
+
+                "manageQuestion" -> {
+                    Text("Manage Question")
                 }
             }
         })
@@ -79,7 +88,7 @@ fun MainScreen(
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
                         viewModel.selectQuiz(quiz)
-                        navController.navigate("manageQuiz")
+                        navController.navigate("show-quiz")
                     },
                     onCreateQuiz = {
                         viewModel.createQuiz()
@@ -95,6 +104,12 @@ fun MainScreen(
                     }
                 )
             }
+            composable("show-quiz") {
+                viewModel.currentQuiz?.let {
+                    Log.d("Quiz selected", viewModel.currentQuiz!!.title)
+                    QuizShowScreen(quiz = viewModel.currentQuiz!!)
+                }
+            }
             composable("manageQuiz") {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
@@ -109,8 +124,8 @@ fun MainScreen(
                 QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
-                        viewModel.selectQuiz(question)
-                        navController.navigate("manageQuestion")
+                        viewModel.selectQuestion(question)
+                        navController.navigate("show-question")
                     },
                     onCreateQuestion = {
                         viewModel.createQuestion()
@@ -126,6 +141,14 @@ fun MainScreen(
                     }
                 )
             }
+
+            composable("show-question") {
+                viewModel.currentQuestion?.let {
+                    Log.d("Question selected", viewModel.currentQuestion!!.content)
+                    QuestionShowScreen(question = viewModel.currentQuestion!!)
+                }
+            }
+
             composable("manageQuestion") {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,

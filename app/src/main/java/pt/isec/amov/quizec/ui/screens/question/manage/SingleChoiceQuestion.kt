@@ -12,10 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.*
 
 @Composable
 fun SingleChoiceQuestion(
-    initialAnswer: Answer.SingleChoice,
+    initialAnswer: SingleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -23,15 +24,10 @@ fun SingleChoiceQuestion(
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.answers) }
-    var rightAnswer by remember { mutableStateOf(initialAnswer.rightAnswer) }
-
-    LaunchedEffect(answers, rightAnswer) {
-        onAnswerChanged(Answer.SingleChoice(answers, rightAnswer))
-        saveEnabled(answers.size >= 2 && rightAnswer.isNotBlank())
-    }
 
     LaunchedEffect(answers) {
-        if (rightAnswer.isNotBlank() && !answers.contains(rightAnswer)) rightAnswer = ""
+        onAnswerChanged(SingleChoice(answers))
+        saveEnabled(answers.size > 1 && answers.any { it.first })
     }
 
     Row(
@@ -47,7 +43,7 @@ fun SingleChoiceQuestion(
         Spacer(modifier = Modifier.width(8.dp))
         Button(
             onClick = {
-                answers = answers + newAnswer
+                answers = answers + Pair(false, newAnswer)
                 newAnswer = ""
             },
             enabled = newAnswer.isNotBlank()
@@ -58,14 +54,15 @@ fun SingleChoiceQuestion(
 
     AnswerEntrySingleChoice(
         answers = answers,
-        onClick = { rightAnswer = it },
+        onClick = { answer ->
+            answers = answers.map {
+                if (it.second == answer.second) it.copy(first = true)
+                else it.copy(first = false)
+            }.toSet()
+        },
         onOptionDelete = { answer ->
             answers = answers - answer
-            if (answer == rightAnswer) {
-                rightAnswer = ""
-            }
         },
-        rightAnswer = rightAnswer,
         modifier = modifier,
         scrollState = scrollState
     )
@@ -73,10 +70,9 @@ fun SingleChoiceQuestion(
 
 @Composable
 fun AnswerEntrySingleChoice(
-    answers: Set<String>,
-    onClick: (String) -> Unit,
-    onOptionDelete: (String) -> Unit,
-    rightAnswer: String,
+    answers: Set<Pair<Boolean, String>>,
+    onClick: (Pair<Boolean, String>) -> Unit,
+    onOptionDelete: (Pair<Boolean, String>) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
@@ -90,11 +86,11 @@ fun AnswerEntrySingleChoice(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = answer == rightAnswer,
+                    selected = answer.first,
                     onClick = { onClick(answer) }
                 )
                 Text(
-                    text = answer,
+                    text = answer.second,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = { onOptionDelete(answer) }) {
@@ -106,5 +102,4 @@ fun AnswerEntrySingleChoice(
             }
         }
     }
-
 }

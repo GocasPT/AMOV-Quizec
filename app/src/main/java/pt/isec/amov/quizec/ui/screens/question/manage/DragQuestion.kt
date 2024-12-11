@@ -13,10 +13,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.Drag
 
 @Composable
 fun DragQuestion(
-    initialAnswer: Answer.Drag,
+    initialAnswer: Drag,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -31,7 +32,7 @@ fun DragQuestion(
     }
 
     LaunchedEffect(selectedWords) {
-        onAnswerChanged(Answer.Drag(selectedWords))
+        onAnswerChanged(Drag(selectedWords))
         saveEnabled(selectedWords.isNotEmpty())
     }
 

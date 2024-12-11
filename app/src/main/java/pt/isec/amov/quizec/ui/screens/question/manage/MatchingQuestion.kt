@@ -25,10 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.Matching
 
 @Composable
 fun MatchingQuestion(
-    initialAnswer: Answer.Matching,
+    initialAnswer: Matching,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +40,7 @@ fun MatchingQuestion(
     var matchingPairs by remember { mutableStateOf(initialAnswer.pairs) }
 
     LaunchedEffect(matchingPairs) {
-        onAnswerChanged(Answer.Matching(matchingPairs))
+        onAnswerChanged(Matching(matchingPairs))
         saveEnabled(matchingPairs.isNotEmpty())
     }
 

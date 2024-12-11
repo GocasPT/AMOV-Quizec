@@ -13,10 +13,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.FillBlank
 
 @Composable
 fun FillBlankQuestion(
-    initialAnswer: Answer.FillBlank,
+    initialAnswer: FillBlank,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -31,7 +32,7 @@ fun FillBlankQuestion(
     }
 
     LaunchedEffect(selectedWords) {
-        onAnswerChanged(Answer.FillBlank(selectedWords))
+        onAnswerChanged(FillBlank(selectedWords))
         saveEnabled(selectedWords.isNotEmpty())
     }
 

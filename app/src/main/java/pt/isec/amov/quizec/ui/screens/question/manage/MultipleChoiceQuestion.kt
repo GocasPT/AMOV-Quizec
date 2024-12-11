@@ -12,10 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.MultipleChoice
 
 @Composable
 fun MultipleChoiceQuestion(
-    initialAnswer : Answer.MultipleChoice,
+    initialAnswer : MultipleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -23,17 +24,10 @@ fun MultipleChoiceQuestion(
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.answers) }
-    var rightAnswers by remember { mutableStateOf(initialAnswer.rightAnswers) }
-
-    LaunchedEffect(answers, rightAnswers) {
-        onAnswerChanged(Answer.MultipleChoice(answers, rightAnswers))
-        saveEnabled(answers.size >= 2 && rightAnswers.isNotEmpty() && rightAnswers.size >= 2)
-    }
 
     LaunchedEffect(answers) {
-        rightAnswers.forEach { rightAnswer ->
-            if (!answers.contains(rightAnswer)) rightAnswers = rightAnswers - rightAnswer
-        }
+        onAnswerChanged(MultipleChoice(answers))
+        saveEnabled(answers.count { it.first } >= 2)
     }
 
     Row(
@@ -49,7 +43,7 @@ fun MultipleChoiceQuestion(
         Spacer(modifier = Modifier.width(8.dp))
         Button(
             onClick = {
-                answers = answers + newAnswer
+                answers = answers + Pair(false, newAnswer)
                 newAnswer = ""
             },
             enabled = newAnswer.isNotBlank()
@@ -60,14 +54,13 @@ fun MultipleChoiceQuestion(
     AnswerEntryMultipleChoice(
         answers = answers,
         onClick = { answer ->
-            if (rightAnswers.contains(answer)) rightAnswers = rightAnswers - answer
-            else rightAnswers = rightAnswers + answer
+            answers = answers.map {
+                if (it.second == answer.second) it.copy(first = !it.first) else it
+            }.toSet()
         },
         onOptionDelete = { answer ->
             answers = answers - answer
-            rightAnswers = rightAnswers - answer
         },
-        rightAnswers = rightAnswers,
         modifier = modifier,
         scrollState = scrollState
     )
@@ -75,10 +68,9 @@ fun MultipleChoiceQuestion(
 
 @Composable
 fun AnswerEntryMultipleChoice(
-    answers: Set<String>,
-    onClick: (String) -> Unit,
-    onOptionDelete: (String) -> Unit,
-    rightAnswers: Set<String>,
+    answers: Set<Pair<Boolean, String>>,
+    onClick: (Pair<Boolean, String>) -> Unit,
+    onOptionDelete: (Pair<Boolean, String>) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
@@ -92,11 +84,11 @@ fun AnswerEntryMultipleChoice(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = rightAnswers.contains(answer),
+                    checked = answer.first,
                     onCheckedChange = { onClick(answer) }
                 )
                 Text(
-                    text = answer,
+                    text = answer.second,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = { onOptionDelete(answer) }) {

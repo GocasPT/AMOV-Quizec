@@ -1,12 +1,12 @@
 package pt.isec.amov.quizec.model.question
 
-enum class QuestionType(val string: String) {
-    YES_NO("Yes or No"),                    // P01
-    SINGLE_CHOICE("Single choice"),         // P02
-    MULTIPLE_CHOICE("Multiple choice"),     // P03
-    MATCHING("Matching"),                   // P04
-    ORDERING("Ordering"),                   // P05
-    DRAG("Dragging"),                       // P06
-    //ASSOCIATION("Association"),           // P07
-    FILL_BLANK("Fill the missing words")    // P08
+enum class QuestionType(val displayName: String) {
+    TRUE_FALSE("True or False"),
+    SINGLE_CHOICE("Single Choice"),
+    MULTIPLE_CHOICE("Multiple Choice"),
+    MATCHING("Matching"),
+    ORDERING("Ordering"),
+    DRAG("Drag"),
+    //ASSOCIATION("Association"),
+    FILL_BLANK("Fill in the blank"),
 }

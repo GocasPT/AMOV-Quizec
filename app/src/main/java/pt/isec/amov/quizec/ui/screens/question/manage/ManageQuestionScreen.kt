@@ -8,9 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.question.QuestionIDGenerator
+import pt.isec.amov.quizec.utils.QuestionIDGenerator
+import pt.isec.amov.quizec.model.question.Answer.*
 import pt.isec.amov.quizec.model.question.QuestionType
 
 @Composable
@@ -19,8 +19,7 @@ fun ManageQuestionScreen(
     saveQuestion: (Question) -> Unit
 ) {
     var questionContent by remember { mutableStateOf(question?.content ?: "") }
-    var questionType by remember { mutableStateOf(question?.type ?: QuestionType.YES_NO) }
-    var questionAnswers by remember { mutableStateOf(question?.answers?.firstOrNull() ?: Answer.TrueFalse(false)) }
+    var questionAnswers by remember { mutableStateOf(question?.answers ?: TrueFalse(false)) }
 
     var isExpanded by remember { mutableStateOf(false) }
     var saveEnabled by remember { mutableStateOf(true) }
@@ -49,67 +48,66 @@ fun ManageQuestionScreen(
         )
 
         QuestionTypeDropdown(
-            questionType = questionType,
+            currentAnswer = questionAnswers,
             isExpanded = isExpanded,
             onExpandedChange = { isExpanded = it },
-            onTypeSelected = { selectedType ->
-                questionType = selectedType
-
-                questionAnswers = when (selectedType) {
-                    QuestionType.YES_NO -> Answer.TrueFalse(false)
-                    QuestionType.SINGLE_CHOICE -> Answer.SingleChoice(setOf(), "")
-                    QuestionType.MULTIPLE_CHOICE -> Answer.MultipleChoice(setOf(), setOf())
-                    QuestionType.MATCHING -> Answer.Matching(setOf())
-                    QuestionType.ORDERING -> Answer.Ordering(listOf())
-                    QuestionType.DRAG -> Answer.Drag(setOf())
-                    QuestionType.FILL_BLANK -> Answer.FillBlank(setOf())
+            onAnswerSelected = {
+                questionAnswers = when(it) {
+                    QuestionType.TRUE_FALSE -> TrueFalse(false)
+                    QuestionType.SINGLE_CHOICE -> SingleChoice(emptySet())
+                    QuestionType.MULTIPLE_CHOICE -> MultipleChoice(emptySet())
+                    QuestionType.MATCHING -> Matching(emptySet())
+                    QuestionType.ORDERING -> Ordering(emptyList())
+                    QuestionType.DRAG -> Drag(emptySet())
+                    //P07 - Not implemented
+                    QuestionType.FILL_BLANK -> FillBlank(emptySet())
                 }
             }
         )
 
-        when (questionType) {
-            QuestionType.YES_NO -> YesNoQuestion(
-                initialAnswer = questionAnswers as Answer.TrueFalse,
+        when (questionAnswers) {
+            is TrueFalse -> YesNoQuestion(
+                initialAnswer = questionAnswers as TrueFalse,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it }
             )
-            QuestionType.SINGLE_CHOICE -> SingleChoiceQuestion(
-                initialAnswer = questionAnswers as Answer.SingleChoice,
+            is SingleChoice -> SingleChoiceQuestion(
+                initialAnswer = questionAnswers as SingleChoice,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
-            QuestionType.MULTIPLE_CHOICE -> MultipleChoiceQuestion(
-                initialAnswer = questionAnswers as Answer.MultipleChoice,
+            is MultipleChoice -> MultipleChoiceQuestion(
+                initialAnswer = questionAnswers as MultipleChoice,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
-            QuestionType.MATCHING -> MatchingQuestion(
-                initialAnswer = questionAnswers as Answer.Matching,
+            is Matching -> MatchingQuestion(
+                initialAnswer = questionAnswers as Matching,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
-            QuestionType.ORDERING -> OrderingQuestion(
-                initialAnswer = questionAnswers as Answer.Ordering,
+            is Ordering -> OrderingQuestion(
+                initialAnswer = questionAnswers as Ordering,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 scrollState = scrollState
             )
-            QuestionType.DRAG -> DragQuestion(
-                initialAnswer = questionAnswers as Answer.Drag,
+            is Drag -> DragQuestion(
+                initialAnswer = questionAnswers as Drag,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
                 questionTitle = questionContent
             )
-            QuestionType.FILL_BLANK -> FillBlankQuestion(
-                initialAnswer = questionAnswers as Answer.FillBlank,
+            is FillBlank -> FillBlankQuestion(
+                initialAnswer = questionAnswers as FillBlank,
                 onAnswerChanged = { questionAnswers = it },
                 saveEnabled = { saveEnabled = it },
                 modifier = Modifier.weight(1f),
@@ -122,14 +120,12 @@ fun ManageQuestionScreen(
                 saveQuestion(
                     question?.copy(
                         content = questionContent,
-                        type = questionType,
-                        answers = listOf(questionAnswers)
+                        answers = questionAnswers
                     ) ?: Question(
                         id = QuestionIDGenerator.getNextId(),
                         image = null,
                         content = questionContent,
-                        type = questionType,
-                        answers = listOf(questionAnswers)
+                        answers = questionAnswers
                     )
                 )
             },

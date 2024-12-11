@@ -26,10 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.Ordering
 
 @Composable
 fun OrderingQuestion(
-    initialAnswer: Answer.Ordering,
+    initialAnswer: Ordering,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -40,7 +41,7 @@ fun OrderingQuestion(
 
     LaunchedEffect(answers) {
         Log.d("OrderingQuestion", "answers: $answers")
-        onAnswerChanged(Answer.Ordering(answers))
+        onAnswerChanged(Ordering(answers))
         saveEnabled(answers.size >= 2)
     }
 

@@ -6,22 +6,23 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.QuestionType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestionTypeDropdown(
-    questionType: QuestionType,
+    currentAnswer: Answer,
     isExpanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    onTypeSelected: (QuestionType) -> Unit
+    onAnswerSelected: (QuestionType) -> Unit
 ) {
     ExposedDropdownMenuBox(
         expanded = isExpanded,
         onExpandedChange = onExpandedChange
     ) {
         OutlinedTextField(
-            value = questionType.name,
+            value = currentAnswer.type.displayName,
             onValueChange = {},
             readOnly = true,
             label = { Text("Question Type") },
@@ -40,10 +41,10 @@ fun QuestionTypeDropdown(
         ) {
             QuestionType.entries.forEach { type ->
                 DropdownMenuItem(
-                    text = { Text(type.name) },
+                    text = { Text(type.displayName) },
                     onClick = {
-                        onTypeSelected(type)
                         onExpandedChange(false)
+                        onAnswerSelected(type)
                     }
                 )
             }

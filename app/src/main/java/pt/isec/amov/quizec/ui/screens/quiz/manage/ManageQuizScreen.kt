@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.model.quiz.QuizIDGenerator
+import pt.isec.amov.quizec.utils.QuizIDGenerator.Companion.generateRandomCode
 
 @Composable
 fun ManageQuizScreen(
@@ -195,7 +195,7 @@ fun QuestionCard(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = question.type.toString(),
+                text = question.answers.type.displayName,
                 modifier = Modifier.padding(end = 16.dp)
             )
             IconButton(onClick = onToggle) {
