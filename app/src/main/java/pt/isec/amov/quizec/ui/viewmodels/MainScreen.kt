@@ -80,8 +80,7 @@ fun MainScreen(
         NavHost(
             startDestination = "quiz",
             navController = navController,
-            modifier = modifier
-                .padding(innerPadding)
+            modifier = modifier.padding(innerPadding)
         ) {
             composable("quiz") {
                 QuizListScreen(

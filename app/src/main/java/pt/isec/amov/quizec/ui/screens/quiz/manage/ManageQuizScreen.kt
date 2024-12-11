@@ -151,7 +151,7 @@ fun ManageQuizScreen(
                     locationRestricted = locationRestricted,
                     immediateResults = immediateResults
                 ) ?: Quiz(
-                    id = generateRandomCode(),
+                    id = QuizIDGenerator.generateRandomCode(),
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,
