@@ -25,6 +25,7 @@ import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
+import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 //import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 
@@ -54,12 +55,20 @@ fun MainScreen(
                     Text("Quiz")
                 }
 
-                "question" -> {
-                    Text("Question")
+                "show-quiz" -> {
+                    Text("Show Quiz")
                 }
 
                 "manageQuiz" -> {
                     Text("Manage Quiz")
+                }
+
+                "question" -> {
+                    Text("Question")
+                }
+
+                "show-question" -> {
+                    Text("Show Question")
                 }
 
                 "manageQuestion" -> {
@@ -98,7 +107,8 @@ fun MainScreen(
             }
             composable("show-quiz") {
                 viewModel.currentQuiz?.let {
-                    //QuizShowScreen(quiz = viewModel.currentQuiz!!)
+                    Log.d("Quiz selected", viewModel.currentQuiz!!.title)
+                    QuizShowScreen(quiz = viewModel.currentQuiz!!)
                 }
             }
             composable("manageQuiz") {
