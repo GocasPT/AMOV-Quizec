@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,6 +67,12 @@ fun MainScreen(
                 Icon(Icons.AutoMirrored.Filled.List, null)
             }
             Spacer(modifier = Modifier.weight(1f))
+            //PLACE_HOLDER /*
+            IconButton(onClick = { viewModel.createLobby() }) {
+                Icon(Icons.Filled.Add, null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            //PLACE_HOLDER */
             when (currentScreen?.destination?.route) {
                 "quiz" -> {
                     Text("Quiz")
