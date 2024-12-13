@@ -89,7 +89,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     "quiz_id" to "$quizId"
                 )
                 Log.d("QuizecViewModel", "createLobby: $lobby")
-                val response = dbClient.from("lobbies").insert(lobby) { select() }
+                val response = dbClient.from("lobby").insert(lobby) { select() }
                 Log.d("QuizecViewModel", "createLobby: $response")
             } catch (e: Exception) {
                 Log.e("QuizecViewModel", "createLobby: ${e.message}")
