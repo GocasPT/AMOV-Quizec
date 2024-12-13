@@ -1,12 +1,19 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.launch
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
+import kotlin.random.Random
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
@@ -41,7 +48,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     }
 
     fun createQuiz() {
-        _currentQuiz.value  = null
+        _currentQuiz.value = null
     }
 
     fun selectQuiz(quiz: Quiz) {
@@ -59,5 +66,35 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun deleteQuiz(quiz: Quiz) {
         quizList.removeQuiz(quiz)
+    }
+
+    //TODO: PLACE_HOLDER
+    fun createLobby() {
+        viewModelScope.launch {
+            try {
+                dbClient.auth.signInWith(Email) {
+                    email = "batata@gmail.com"
+                    password = "1234"
+                }
+
+                val currentUser = dbClient.auth.currentUserOrNull()
+                    ?: throw Exception("User not logged in")
+
+                val lobbyCode = Random.nextInt(1000, 9999)
+                val quizId: Long = 1
+
+                val lobby = hashMapOf(
+                    "lobby_code" to "$lobbyCode",
+                    "user_id" to currentUser.id,
+                    "quiz_id" to "$quizId"
+                )
+                Log.d("QuizecViewModel", "createLobby: $lobby")
+                val response = dbClient.from("lobbies").insert(lobby) { select() }
+                Log.d("QuizecViewModel", "createLobby: $response")
+            } catch (e: Exception) {
+                Log.e("QuizecViewModel", "createLobby: ${e.message}")
+            }
+        }
+
     }
 }
