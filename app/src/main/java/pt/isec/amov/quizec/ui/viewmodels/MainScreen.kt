@@ -44,6 +44,7 @@ fun MainScreen(
         Log.d("Destination changed", destination.route.toString())
     }
 
+    //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             viewModel.dbClient.from("question").select().decodeList<Question>().let { list ->
