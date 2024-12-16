@@ -1,10 +1,37 @@
 package pt.isec.amov.quizec.ui.screens.question.manage
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -16,8 +43,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import coil3.compose.AsyncImage
+import pt.isec.a2021138502.contacts_storage.utils.FileUtils
+import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.Drag
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
 import pt.isec.amov.quizec.model.question.Answer.Matching
@@ -28,14 +62,46 @@ import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionType
 import pt.isec.amov.quizec.utils.QuestionIDGenerator
+import java.io.File
 
 @Composable
 fun ManageQuestionScreen(
+    //TODO: receive question OR received each field of question? (MutableState<?>)
     question: Question?,
     saveQuestion: (Question) -> Unit
 ) {
-    var questionContent by remember { mutableStateOf(question?.content ?: "") }
-    var questionAnswers by remember { mutableStateOf(question?.answers ?: TrueFalse(false)) }
+    val context = LocalContext.current
+    var questionContent: String by remember { mutableStateOf(question?.content ?: "") }
+    val picture: MutableState<String?> =
+        remember { mutableStateOf(null) } //TODO: maybe change this...
+    val imagePath: String by lazy { FileUtils.getTempFilename(context) }
+    var questionAnswers: Answer by remember {
+        mutableStateOf(
+            question?.answers ?: TrueFalse(false)
+        )
+    }
+
+    val pickImage =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri ->
+                uri?.let {
+                    //question?.image = FileUtils.createFileFromUri(context, it)
+                    picture.value = FileUtils.createFileFromUri(context, it)
+                    Log.d(
+                        "ManageQuestionScreen",
+                        "File: ${FileUtils.createFileFromUri(context, it)}"
+                    )
+                }
+            })
+    val takePicture =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture(),
+            onResult = { success ->
+                if (success)
+                //question?.image.value = FileUtils.copyFile(context, imagePath)
+                    picture.value = FileUtils.copyFile(context, imagePath)
+                Log.d("ManageQuestionScreen", "File: ${FileUtils.copyFile(context, imagePath)}")
+
+            })
 
     var isExpanded by remember { mutableStateOf(false) }
     var saveEnabled by remember { mutableStateOf(true) }
@@ -54,14 +120,58 @@ fun ManageQuestionScreen(
             fontWeight = FontWeight.Bold
         )
 
-        OutlinedTextField(
-            value = questionContent,
-            onValueChange = { questionContent = it },
-            label = { Text("Question Text") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            OutlinedTextField(
+                value = questionContent,
+                onValueChange = { questionContent = it },
+                label = { Text("Question Text") },
+                /*modifier = Modifier
+                    .padding(16.dp)*/
+            )
+            IconButton(
+                onClick = {
+                    pickImage.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                },
+                modifier = Modifier.padding(16.dp),
+            ) {
+                Icon(Icons.Filled.Image, contentDescription = "Pick Image")
+            }
+            IconButton(
+                onClick = {
+                    takePicture.launch(
+                        FileProvider.getUriForFile(
+                            context,
+                            "pt.isec.amov.quizec.android.fileprovider",
+                            File(imagePath)
+                        )
+                    )
+                },
+                modifier = Modifier.padding(16.dp),
+            ) {
+                Icon(Icons.Filled.AddAPhoto, contentDescription = "Take Picture")
+            }
+        }
+
+        //TODO: image view (small) with delete button
+        //question?.image?.let { picture ->
+        picture.value?.let { picture ->
+            AsyncImage(
+                model = picture,
+                contentDescription = "Contact's picture",
+                modifier = Modifier
+                    .fillMaxSize(0.5f)
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .align(Alignment.CenterHorizontally),
+            )
+        }
 
         QuestionTypeDropdown(
             currentAnswer = questionAnswers,
@@ -145,7 +255,7 @@ fun ManageQuestionScreen(
                         answers = questionAnswers
                     ) ?: Question(
                         id = QuestionIDGenerator.getNextId(),
-                        image = null,
+                        image = picture.value,
                         content = questionContent,
                         answers = questionAnswers
                     )
