@@ -2,11 +2,30 @@ package pt.isec.amov.quizec.utils
 
 import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.realtime.Realtime
+import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.storage.storage
 import java.io.InputStream
 
 class SStorageUtil {
     companion object {
+        //TODO: how to share the dbClient between classes?
+        private val _dbClient: SupabaseClient by lazy {
+            createSupabaseClient(
+                supabaseUrl = "https://vivtabksraqgsyzulwgz.supabase.co",
+                supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpdnRhYmtzcmFxZ3N5enVsd2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4NzIyMTEsImV4cCI6MjA0OTQ0ODIxMX0.ZH3W7Ar1L7HGAmifvFdkJ7UuQiVRrNk8ndS5viBfKrc"
+            ) {
+                install(Auth)
+                install(Storage)
+                install(Realtime)
+                install(Postgrest)
+            }
+        }
+
         val quiz = hashMapOf(
             "title" to "Quiz X",
         )
@@ -79,8 +98,18 @@ class SStorageUtil {
             return inputStream
         }
 
-        fun uploadFile(inputStream: InputStream, imgFile: String) {
+        //TODO: return ByteArray OR save in local cache + InputStream?
+        suspend fun downloadFile(inputStream: InputStream, imgFile: String): ByteArray {
+            val bucket = _dbClient.storage.from("images")
+            val bytes = bucket.downloadAuthenticated(imgFile)
+            return bytes
+        }
 
+        suspend fun uploadFile(inputStream: InputStream, imgFile: String) {
+            val bucket = _dbClient.storage.from("images")
+            bucket.upload(imgFile, inputStream.readBytes()) {
+                upsert = false
+            }
         }
     }
 }
