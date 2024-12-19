@@ -48,9 +48,11 @@ fun ManageQuizScreen(
     var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
     var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
     var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
-    val selectedQuestions = remember { mutableStateListOf<Question>().apply {
-        quiz?.questions?.let { addAll(it) }
-    }}
+    val selectedQuestions = remember {
+        mutableStateListOf<Question>().apply {
+            quiz?.questions?.let { addAll(it) }
+        }
+    }
     val scrollState = rememberScrollState()
 
     fun isFormValid(): Boolean {
@@ -212,7 +214,7 @@ fun QuestionCard(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = question.answers.type.displayName,
+                text = question.answers.answerType.displayName,
                 modifier = Modifier.padding(end = 16.dp)
             )
             IconButton(onClick = onToggle) {

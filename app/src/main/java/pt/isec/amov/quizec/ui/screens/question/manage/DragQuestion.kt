@@ -1,10 +1,21 @@
 package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -21,14 +32,15 @@ fun DragQuestion(
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    questionTitle : String
+    questionTitle: String
 ) {
     var selectedWords by remember { mutableStateOf(initialAnswer.answers) }
     val scrollState = rememberScrollState()
 
     LaunchedEffect(questionTitle) {
         val newWords = questionTitle.split(" ").mapIndexed { index, word -> index to word }
-        selectedWords = selectedWords.filter { (_, word) -> newWords.any { it.second == word } }.toSet()
+        selectedWords =
+            selectedWords.filter { (_, word) -> newWords.any { it.second == word } }.toSet()
     }
 
     LaunchedEffect(selectedWords) {
