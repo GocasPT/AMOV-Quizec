@@ -39,7 +39,7 @@ import pt.isec.amov.quizec.ui.components.CustomList
 fun QuizListScreen(
     quizList: List<Quiz>,
     onSelectQuiz: (Quiz) -> Unit,
-    onCreateQuiz : () -> Unit,
+    onCreateQuiz: () -> Unit,
     onEditQuiz: (Quiz) -> Unit,
     onDeleteQuiz: (Quiz) -> Unit
 ) {
@@ -120,7 +120,8 @@ fun QuizCard(
                 ) {
                     Icon(Icons.Filled.PlayArrow, "Bullet Point", Modifier.size(18.dp))
                     Text(
-                        text = "${question.content} - Type ${question.answers.type.displayName}", fontSize = 16.sp
+                        text = "${question.content} - Type ${question.answers.answerType.displayName}",
+                        fontSize = 16.sp
                     )
                 }
             }

@@ -41,7 +41,8 @@ fun QuestionListScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onCreateQuestion ) {
+            onClick = onCreateQuestion
+        ) {
             Text("+")
         }
         CustomList(items = questionList,
@@ -96,7 +97,7 @@ fun QuestionCard(
             }
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = "Type: ${question.answers.type.displayName}", fontSize = 16.sp
+                text = "Type: ${question.answers.answerType.displayName}", fontSize = 16.sp
             )
         }
         DropdownMenu(

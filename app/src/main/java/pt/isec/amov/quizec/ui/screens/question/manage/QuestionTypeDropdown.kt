@@ -3,7 +3,13 @@ package pt.isec.amov.quizec.ui.screens.question.manage
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pt.isec.amov.quizec.model.question.Answer
@@ -22,7 +28,7 @@ fun QuestionTypeDropdown(
         onExpandedChange = onExpandedChange
     ) {
         OutlinedTextField(
-            value = currentAnswer.type.displayName,
+            value = currentAnswer.answerType.displayName,
             onValueChange = {},
             readOnly = true,
             label = { Text("Question Type") },

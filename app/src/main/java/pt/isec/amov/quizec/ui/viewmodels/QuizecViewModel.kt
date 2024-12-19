@@ -41,7 +41,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     }
 
     fun createQuiz() {
-        _currentQuiz.value  = null
+        _currentQuiz.value = null
     }
 
     fun selectQuiz(quiz: Quiz) {

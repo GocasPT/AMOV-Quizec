@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Question (
+data class Question(
     val id: Int,
     val content: String,
     @SerialName("image_url")

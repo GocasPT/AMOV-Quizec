@@ -5,13 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Answer {
-    abstract val type: QuestionType
+    //The 'type' field is used in kotlinx.serialization to determine the type of the object
+    abstract val answerType: QuestionType
 
     //P01
     @Serializable
+    @SerialName("TrueFalse")
     data class TrueFalse(val rightAnswer: Boolean) : Answer() {
-        @SerialName("TrueFalse")
-        override val type: QuestionType = QuestionType.TRUE_FALSE
+        override val answerType: QuestionType = QuestionType.TRUE_FALSE
         override fun toString(): String {
             return if (rightAnswer) "True" else "False"
         }
@@ -19,8 +20,9 @@ sealed class Answer {
 
     //P02
     @Serializable
+    @SerialName("SingleChoice")
     data class SingleChoice(val answers: Set<Pair<Boolean, String>>) : Answer() {
-        override val type: QuestionType = QuestionType.SINGLE_CHOICE
+        override val answerType: QuestionType = QuestionType.SINGLE_CHOICE
         override fun toString(): String {
             return answers.joinToString(", ") { it.second }
         }
@@ -28,8 +30,9 @@ sealed class Answer {
 
     //P03
     @Serializable
+    @SerialName("MultipleChoice")
     data class MultipleChoice(val answers: Set<Pair<Boolean, String>>) : Answer() {
-        override val type: QuestionType = QuestionType.MULTIPLE_CHOICE
+        override val answerType: QuestionType = QuestionType.MULTIPLE_CHOICE
         override fun toString(): String {
             return answers.joinToString(", ") { it.second }
         }
@@ -37,8 +40,9 @@ sealed class Answer {
 
     //P04
     @Serializable
+    @SerialName("Matching")
     data class Matching(val pairs: Set<Pair<String, String>>) : Answer() {
-        override val type: QuestionType = QuestionType.MATCHING
+        override val answerType: QuestionType = QuestionType.MATCHING
         override fun toString(): String {
             return pairs.joinToString(", ") { "${it.first} -> ${it.second}" }
         }
@@ -46,8 +50,9 @@ sealed class Answer {
 
     //P05
     @Serializable
+    @SerialName("Ordering")
     data class Ordering(val order: List<String>) : Answer() {
-        override val type: QuestionType = QuestionType.ORDERING
+        override val answerType: QuestionType = QuestionType.ORDERING
         override fun toString(): String {
             return order.joinToString(", ")
         }
@@ -55,8 +60,9 @@ sealed class Answer {
 
     //P06
     @Serializable
+    @SerialName("Drag")
     data class Drag(val answers: Set<Pair<Int, String>>) : Answer() {
-        override val type: QuestionType = QuestionType.DRAG
+        override val answerType: QuestionType = QuestionType.DRAG
         override fun toString(): String {
             return answers.joinToString(", ") { it.second }
         }
@@ -66,8 +72,9 @@ sealed class Answer {
 
     //P08
     @Serializable
+    @SerialName("FillBlank")
     data class FillBlank(val answers: Set<Pair<Int, String>>) : Answer() {
-        override val type: QuestionType = QuestionType.FILL_BLANK
+        override val answerType: QuestionType = QuestionType.FILL_BLANK
         override fun toString(): String {
             return answers.joinToString(", ") { it.second }
         }
