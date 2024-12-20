@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -24,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
@@ -43,6 +45,8 @@ fun MainScreen(
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Destination changed", destination.route.toString())
     }
+
+    val saveOnDBResult = rememberCoroutineScope()
 
     //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
@@ -168,7 +172,9 @@ fun MainScreen(
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,
                     saveQuestion = { question ->
-                        viewModel.saveQuestion(question)
+                        saveOnDBResult.launch {
+                            viewModel.saveQuestion(question)
+                        }
                         navController.navigate("question")
                     }
                 )

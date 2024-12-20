@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Question(
-    val id: Int,
+    val id: Int? = null,
     val content: String,
     @SerialName("image_url")
     val image: String?,

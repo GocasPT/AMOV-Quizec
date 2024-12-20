@@ -3,10 +3,13 @@ package pt.isec.amov.quizec.ui.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
+import java.io.File
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
@@ -27,11 +30,18 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         _currentQuestion.value = question
     }
 
-    fun saveQuestion(question: Question) {
+    suspend fun saveQuestion(question: Question) {
         if (_currentQuestion.value != null) {
             questionList.updateQuestion(question)
         } else {
             questionList.addQuestion(question)
+            dbClient.from("question").insert(question)
+            if (question.image != null) {
+                dbClient.storage.from("questions").upload(
+                    question.image,
+                    File(question.image).readBytes()
+                )
+            }
         }
         _currentQuestion.value = null
     }
