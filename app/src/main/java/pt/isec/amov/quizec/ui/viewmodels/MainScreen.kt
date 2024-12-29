@@ -37,6 +37,7 @@ import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 fun MainScreen(
     viewModel: QuizecViewModel,
     navController: NavHostController = rememberNavController(),
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val currentScreen by navController.currentBackStackEntryAsState()
