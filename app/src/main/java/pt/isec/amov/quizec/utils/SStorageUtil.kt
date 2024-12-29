@@ -87,6 +87,7 @@ class SStorageUtil {
          */
 
         //TODO: Flow VS .channel()
+        //TODO: Bucket VS Folder VS File
 
         fun getFileFromAsset(assetManager: AssetManager, strName: String): InputStream? {
             var inputStream: InputStream? = null
@@ -96,6 +97,15 @@ class SStorageUtil {
                 e.printStackTrace()
             }
             return inputStream
+        }
+
+        fun fetchImageUrl(bucketName: String, path: String): String? {
+            return try {
+                _dbClient.storage.from(bucketName).publicUrl(path)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
 
         //TODO: return ByteArray OR save in local cache + InputStream?
