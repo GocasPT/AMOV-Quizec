@@ -13,7 +13,9 @@ import pt.isec.amov.quizec.QuizecApp
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
 import pt.isec.amov.quizec.ui.viewmodels.MainScreen
+import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
+import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelAuthFactory
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -23,6 +25,7 @@ class MainActivity : ComponentActivity() {
     }
     private val app: QuizecApp by lazy { application as QuizecApp }
     private val viewModel: QuizecViewModel by viewModels { QuizecViewModelFactory(app.dbClient) }
+    private val viewModelAuth: QuizecAuthViewModel by viewModels { QuizecViewModelAuthFactory(app.dbClient) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,19 +40,20 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(LOGIN_SCREEN) {
                             LoginScreen(
-                                viewModel,
+                                viewModelAuth,
                                 onSuccess = {
                                     navController.navigate(MAIN_SCREEN) {
                                         popUpTo(LOGIN_SCREEN) { inclusive = true }
                                     }
-                                }
+                                },
+                                //onRegister = {}
                             )
                         }
                         composable(MAIN_SCREEN) {
                             MainScreen(
                                 viewModel = viewModel,
                                 onSignOut = {
-                                    viewModel.signOut()
+                                    viewModelAuth.signOut()
                                     navController.navigate(LOGIN_SCREEN) {
                                         popUpTo(MAIN_SCREEN) { inclusive = true }
                                     }
