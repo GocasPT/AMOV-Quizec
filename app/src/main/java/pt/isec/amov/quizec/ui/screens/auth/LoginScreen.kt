@@ -1,6 +1,7 @@
 package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,13 +72,11 @@ fun LoginScreenPortrait(
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-
     var showPassword by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-
 
     LaunchedEffect(viewModel.user.value) {
         if (viewModel.user.value != null && viewModel.error.value == null) {
+            Log.d("LoginScreen", "going to enter in with ${viewModel.user.value} and ${password.value}")
             onSuccess()
         }
     }
