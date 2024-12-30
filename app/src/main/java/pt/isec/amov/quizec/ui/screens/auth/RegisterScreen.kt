@@ -2,12 +2,9 @@ package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,76 +32,60 @@ import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun RegisterScreen(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
-    onSuccess: () -> Unit,
+    onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onSuccess = onSuccess, onBack = onBack, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onBack = onBack, errorMessageText = errorMessageText)
     else
-        RegisterScreenPortrait(modifier = modifier, onSuccess = onSuccess, onBack = onBack, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onBack = onBack, errorMessageText = errorMessageText)
 
 }
 
 @Composable
 fun RegisterScreenLandscape(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
-    onSuccess: () -> Unit,
+    onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
 
 }
 
 @Composable
 fun RegisterScreenPortrait(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
-    onSuccess: () -> Unit,
+    onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    var repeatPassword by remember { mutableStateOf("") }
+    var repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
     var showRepeatPassword by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(viewModel.user.value) {
-        if (viewModel.user.value != null && viewModel.error.value == null) {
-            onSuccess()
-        }
+    LaunchedEffect(errorMessageText) {
+        errorMessage = errorMessageText
     }
 
     Box(
@@ -202,8 +183,8 @@ fun RegisterScreenPortrait(
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
-                value = repeatPassword,
-                onValueChange = { newText -> repeatPassword = newText },
+                value = repeatPassword.value,
+                onValueChange = { newText -> repeatPassword.value = newText },
                 label = { Text("Repeat Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -235,9 +216,10 @@ fun RegisterScreenPortrait(
                     }
                 }
             )
-            if (viewModel.error.value != null) {
+
+            if (errorMessage != null) {
                 Text(
-                    text = "Error: ${viewModel.error.value}",
+                    text = "Error: $errorMessage",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier
@@ -248,7 +230,7 @@ fun RegisterScreenPortrait(
 
         Button(
             onClick = {
-                viewModel.createUserWithEmail(email.value, password.value, repeatPassword, name.value)
+                onRegister(name.value, email.value, password.value, repeatPassword.value)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D0B0D)),
             modifier = Modifier

@@ -9,6 +9,8 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class SAuthUtil {
     companion object {
@@ -30,10 +32,13 @@ class SAuthUtil {
         val currentUser: UserInfo?
             get() = auth.currentUserOrNull()
 
-        suspend fun createUserWithEmail(email: String, password: String) {
+        suspend fun signUpWithEmail(email: String, password: String, username: String) {
             auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
+                data = buildJsonObject {
+                    put("username", username)
+                }
             }
         }
 

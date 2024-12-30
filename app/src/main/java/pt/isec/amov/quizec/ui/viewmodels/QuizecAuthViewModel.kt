@@ -1,13 +1,11 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
 import pt.isec.amov.quizec.model.User
@@ -28,7 +26,7 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
     val error: MutableState<String?>
         get() = _error
 
-    fun createUserWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
+    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
         if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
             _error.value = "Please fill in the blanks."
             return
@@ -41,8 +39,9 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
 
         viewModelScope.launch {
             try {
-                SAuthUtil.createUserWithEmail(email, password)
+                SAuthUtil.signUpWithEmail(email, password, name)
                 _user.value = SAuthUtil.currentUser?.toUser()
+                _error.value = null
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -59,6 +58,7 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
             try {
                 SAuthUtil.signInWithEmail(email, password)
                 _user.value = SAuthUtil.currentUser?.toUser()
+                _error.value = null
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -72,5 +72,4 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
             _error.value = null
         }
     }
-
 }

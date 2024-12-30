@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.QuizecApp
-import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
@@ -47,7 +46,7 @@ class MainActivity : ComponentActivity() {
                                 viewModelAuth,
                                 onSuccess = {
                                     navController.navigate(MAIN_SCREEN) {
-                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                                        popUpTo(MAIN_SCREEN) { inclusive = true }
                                     }
                                 },
                                 onRegister = {
@@ -57,16 +56,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(REGISTER_SCREEN) {
                             RegisterScreen(
-                                viewModelAuth,
-                                playerInfo = User("", ""),
-                                onSuccess = {
+                                onRegister = { name, email, password, repeatPassword ->
+                                    viewModelAuth.signUpWithEmail(email, password, repeatPassword, name)
+                                    if (viewModelAuth.user.value != null) {
+                                        navController.navigate(LOGIN_SCREEN)
+                                    }
+                                },
+                                onBack = {
                                     navController.navigate(LOGIN_SCREEN) {
                                         popUpTo(LOGIN_SCREEN) { inclusive = true }
                                     }
                                 },
-                                onBack = {
-                                    navController.popBackStack()
-                                }
+                                errorMessageText = viewModelAuth.error.value
                             )
                         }
                         composable(MAIN_SCREEN) {
