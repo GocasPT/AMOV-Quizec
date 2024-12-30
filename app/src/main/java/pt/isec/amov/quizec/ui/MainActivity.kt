@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
+import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -57,9 +58,11 @@ class MainActivity : ComponentActivity() {
                         composable(REGISTER_SCREEN) {
                             RegisterScreen(
                                 onRegister = { name, email, password, repeatPassword ->
-                                    viewModelAuth.signUpWithEmail(email, password, repeatPassword, name)
-                                    if (viewModelAuth.user.value != null) {
-                                        navController.navigate(LOGIN_SCREEN)
+                                    val resultLiveData = viewModelAuth.signUpWithEmail(email, password, repeatPassword, name)
+                                    resultLiveData.observe(this@MainActivity) { result ->
+                                        if (result) {
+                                            navController.navigate(LOGIN_SCREEN)
+                                        }
                                     }
                                 },
                                 onBack = {
@@ -76,7 +79,7 @@ class MainActivity : ComponentActivity() {
                                 onSignOut = {
                                     viewModelAuth.signOut()
                                     navController.navigate(LOGIN_SCREEN) {
-                                        popUpTo(MAIN_SCREEN) { inclusive = true }
+                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
                                     }
                                 }
                             )

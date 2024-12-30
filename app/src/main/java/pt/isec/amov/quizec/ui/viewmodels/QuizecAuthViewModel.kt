@@ -2,6 +2,8 @@ package pt.isec.amov.quizec.ui.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
@@ -26,26 +28,28 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
     val error: MutableState<String?>
         get() = _error
 
-    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
+    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) : LiveData<Boolean> {
+        val success = MutableLiveData(false)
         if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
             _error.value = "Please fill in the blanks."
-            return
+            return success
         }
 
         if (password != repeatedPassword) {
             _error.value = "Passwords do not match."
-            return
+            return success
         }
 
         viewModelScope.launch {
             try {
                 SAuthUtil.signUpWithEmail(email, password, name)
-                _user.value = SAuthUtil.currentUser?.toUser()
                 _error.value = null
+                success.value = true
             } catch (e: Exception) {
                 _error.value = e.message
             }
         }
+        return success
     }
 
     fun signInWithEmail(email: String, password: String) {
