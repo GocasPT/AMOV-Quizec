@@ -6,13 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -34,39 +35,55 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: QuizecAuthViewModel,
     onSuccess: () -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        LoginScreenLandscape(modifier = modifier, onSuccess = onSuccess, viewModel = viewModel)
+        LoginScreenLandscape(modifier = modifier, onSuccess = onSuccess, onRegister = onRegister, viewModel = viewModel)
     else
-        LoginScreenPortrait(modifier = modifier, onSuccess = onSuccess, viewModel = viewModel)
-
+        LoginScreenPortrait(modifier = modifier, onSuccess = onSuccess, onRegister = onRegister, viewModel = viewModel)
 }
 
 @Composable
 fun LoginScreenLandscape(
     viewModel: QuizecAuthViewModel,
     onSuccess: () -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
-) {}
+) {
+}
 
 @Composable
 fun LoginScreenPortrait(
     viewModel: QuizecAuthViewModel,
     onSuccess: () -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -74,9 +91,14 @@ fun LoginScreenPortrait(
     val password = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
+    val gradientColors = listOf(Cyan, Blue)
+
     LaunchedEffect(viewModel.user.value) {
         if (viewModel.user.value != null && viewModel.error.value == null) {
-            Log.d("LoginScreen", "going to enter in with ${viewModel.user.value} and ${password.value}")
+            Log.d(
+                "LoginScreen",
+                "going to enter in with ${viewModel.user.value} and ${password.value}"
+            )
             onSuccess()
         }
     }
@@ -84,7 +106,7 @@ fun LoginScreenPortrait(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
         Box(
             modifier = Modifier
@@ -158,10 +180,8 @@ fun LoginScreenPortrait(
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier
-                        .background(Color(255, 0, 0))
                         .padding(16.dp)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
             Button(
                 onClick = {
@@ -174,11 +194,33 @@ fun LoginScreenPortrait(
             }
         }
 
-        Text(
-            text = "Don't have an account? Click here to register.",
+        BasicText(
+            text = buildAnnotatedString {
+                append("Don't have an account? ")
+                withStyle(
+                    SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        brush = Brush.linearGradient(
+                            colors = gradientColors
+                        )
+                    )
+                ) {
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "register",
+                            linkInteractionListener = {
+                                onRegister()
+                            }
+                        )
+                    ) {
+                        append("Click here to register.")
+                    }
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 32.dp),
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

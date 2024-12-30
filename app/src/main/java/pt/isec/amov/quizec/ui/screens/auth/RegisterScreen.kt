@@ -1,10 +1,13 @@
 package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,25 +33,43 @@ import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun RegisterScreen(
     viewModel: QuizecAuthViewModel,
     playerInfo: User,
     onSuccess: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onSuccess = onSuccess, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenLandscape(modifier = modifier, onSuccess = onSuccess, onBack = onBack, playerInfo = playerInfo, viewModel = viewModel)
     else
-        RegisterScreenPortrait(modifier = modifier, onSuccess = onSuccess, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenPortrait(modifier = modifier, onSuccess = onSuccess, onBack = onBack, playerInfo = playerInfo, viewModel = viewModel)
 
 }
 
@@ -57,6 +78,7 @@ fun RegisterScreenLandscape(
     viewModel: QuizecAuthViewModel,
     playerInfo: User,
     onSuccess: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -67,6 +89,7 @@ fun RegisterScreenPortrait(
     viewModel: QuizecAuthViewModel,
     playerInfo: User,
     onSuccess: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val name = remember { mutableStateOf("") }
@@ -84,12 +107,36 @@ fun RegisterScreenPortrait(
         }
     }
 
-
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            BasicText(
+                text = buildAnnotatedString {
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "register",
+                            linkInteractionListener = {
+                                onBack()
+                            }
+                        )
+                    ) {
+                        append("< Back to Login")
+                    }
+                },
+                modifier = Modifier
+                    .padding(top = 32.dp),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,7 +157,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = email.value,
                 onValueChange = { newText -> email.value = newText },
-                label = { Text("Name") },
+                label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(percent = 20),
                 singleLine = true,
@@ -157,7 +204,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = repeatPassword,
                 onValueChange = { newText -> repeatPassword = newText },
-                label = { Text("Password") },
+                label = { Text("Repeat Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -188,40 +235,29 @@ fun RegisterScreenPortrait(
                     }
                 }
             )
-
-        }
-
-        if (viewModel.error.value != null) {
-            Text(
-                text = "Error: ${viewModel.error.value}",
-                modifier = Modifier
-                    .background(Color(255, 0, 0))
-                    .padding(16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                onClick = {
-                    viewModel.createUserWithEmail(name.value, email.value, password.value)
-
-//
-//                    if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && repeatPassword.isNotBlank() && (password.equals(repeatPassword))) {
-//                        User(name, email, password, repeatPassword)
-//                    } else {
-//                        errorMessage = "Please fill in the blanks."
-//                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("REGISTER")
+            if (viewModel.error.value != null) {
+                Text(
+                    text = "Error: ${viewModel.error.value}",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
             }
         }
+
+        Button(
+            onClick = {
+                viewModel.createUserWithEmail(email.value, password.value, repeatPassword, name.value)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D0B0D)),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(),
+        ) {
+            Text("REGISTER")
+        }
+
     }
 }

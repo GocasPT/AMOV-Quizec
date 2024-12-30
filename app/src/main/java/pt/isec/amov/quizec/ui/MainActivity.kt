@@ -10,7 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.QuizecApp
+import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
+import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
 import pt.isec.amov.quizec.ui.viewmodels.MainScreen
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
@@ -22,7 +24,9 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val LOGIN_SCREEN = "Login"
         const val MAIN_SCREEN = "Main"
+        const val REGISTER_SCREEN = "Register"
     }
+
     private val app: QuizecApp by lazy { application as QuizecApp }
     private val viewModel: QuizecViewModel by viewModels { QuizecViewModelFactory(app.dbClient) }
     private val viewModelAuth: QuizecAuthViewModel by viewModels { QuizecViewModelAuthFactory(app.dbClient) }
@@ -46,7 +50,23 @@ class MainActivity : ComponentActivity() {
                                         popUpTo(LOGIN_SCREEN) { inclusive = true }
                                     }
                                 },
-                                //onRegister = {}
+                                onRegister = {
+                                    navController.navigate(REGISTER_SCREEN)
+                                }
+                            )
+                        }
+                        composable(REGISTER_SCREEN) {
+                            RegisterScreen(
+                                viewModelAuth,
+                                playerInfo = User("", ""),
+                                onSuccess = {
+                                    navController.navigate(LOGIN_SCREEN) {
+                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                                    }
+                                },
+                                onBack = {
+                                    navController.popBackStack()
+                                }
                             )
                         }
                         composable(MAIN_SCREEN) {
@@ -64,7 +84,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
         //TODO: add permissions requests checkers
     }
 }
