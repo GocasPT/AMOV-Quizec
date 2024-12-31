@@ -14,9 +14,10 @@ import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.utils.SAuthUtil
 
 fun UserInfo.toUser(): User {
+    val id = this.id.toString()
     val displayName = this.userMetadata.toString()
     val strEmail = this.email ?: "n.d."
-    return User(displayName, strEmail)
+    return User(id, displayName, strEmail)
 }
 
 class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {

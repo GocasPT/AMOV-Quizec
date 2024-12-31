@@ -9,5 +9,7 @@ data class Question(
     val content: String,
     @SerialName("image_url")
     val image: String?,
-    val answers: Answer
+    val answers: Answer,
+    @SerialName("user_id")
+    val user: String
 )

@@ -16,7 +16,6 @@ import pt.isec.amov.quizec.model.quiz.QuizList
 import pt.isec.amov.quizec.utils.SAuthUtil
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
-
     //TODO: PLACE_HOLDER
     val questionList: QuestionList = QuestionList()
     val quizList: QuizList = QuizList()

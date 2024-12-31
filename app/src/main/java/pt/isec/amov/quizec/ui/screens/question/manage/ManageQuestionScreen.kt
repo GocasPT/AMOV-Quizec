@@ -147,7 +147,8 @@ fun ManageQuestionScreen(
                         id = QuestionIDGenerator.getNextId(),
                         image = null,
                         content = questionContent,
-                        answers = questionAnswers
+                        answers = questionAnswers,
+                        user = "1"  //TODO: get user id from auth (not implemented yet) (User -> 0030@gmail.com Pass -> 123123)
                     )
                 )
             },

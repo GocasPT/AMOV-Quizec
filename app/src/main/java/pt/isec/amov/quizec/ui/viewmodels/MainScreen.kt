@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
@@ -36,6 +37,7 @@ import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 @Composable
 fun MainScreen(
     viewModel: QuizecViewModel,
+    user: User,
     navController: NavHostController = rememberNavController(),
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,7 +50,14 @@ fun MainScreen(
     //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            viewModel.dbClient.from("question").select().decodeList<Question>().let { list ->
+            viewModel.dbClient
+                .from("question")
+                .select() {
+                    filter {
+                        eq("user_id", user.id)
+                    }
+                }
+                .decodeList<Question>().let { list ->
                 list.forEach {
                     viewModel.questionList.addQuestion(it)
                 }

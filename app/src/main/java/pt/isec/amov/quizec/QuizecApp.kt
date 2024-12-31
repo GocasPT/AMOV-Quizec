@@ -31,6 +31,7 @@ class QuizecApp : Application() {
     val dbClient: SupabaseClient
         get() = _dbClient
 
+    /*
     //TODO: add local data for testing (no database for now)
     private val _questionList: QuestionList by lazy {
         QuestionList().apply {
@@ -59,4 +60,6 @@ class QuizecApp : Application() {
 
     val questionList: QuestionList
         get() = _questionList
+
+     */
 }
