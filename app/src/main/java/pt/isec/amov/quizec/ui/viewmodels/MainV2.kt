@@ -84,6 +84,9 @@ fun MainV2(
     modifier: Modifier = Modifier,
 ) {
     val currentScreen by navController.currentBackStackEntryAsState()
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        Log.d("Destination changed", destination.route.toString())
+    }
     var selectedItem by remember { mutableStateOf<BottomNavBarItem>(BottomNavBarItem.Home) }
 
     val items = listOf(
