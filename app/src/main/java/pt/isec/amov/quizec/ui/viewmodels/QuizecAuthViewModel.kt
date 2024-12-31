@@ -2,8 +2,6 @@ package pt.isec.amov.quizec.ui.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
@@ -14,7 +12,7 @@ import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.utils.SAuthUtil
 
 fun UserInfo.toUser(): User {
-    val id = this.id.toString()
+    val id = this.id
     val displayName = this.userMetadata.toString()
     val strEmail = this.email ?: "n.d."
     return User(id, displayName, strEmail)

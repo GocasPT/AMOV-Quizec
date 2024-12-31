@@ -175,6 +175,7 @@ fun MainScreen(
             composable("manageQuestion") {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,
+                    userId = user.id,
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
                         navController.navigate("question")

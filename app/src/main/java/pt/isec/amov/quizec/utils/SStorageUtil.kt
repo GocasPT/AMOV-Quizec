@@ -3,6 +3,7 @@ package pt.isec.amov.quizec.utils
 import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import pt.isec.amov.quizec.model.question.Question
 import java.io.InputStream
 
 class SStorageUtil {
@@ -10,6 +11,30 @@ class SStorageUtil {
         val quiz = hashMapOf(
             "title" to "Quiz X",
         )
+
+        suspend fun saveQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?, Question?) -> Unit) {
+            try {
+                val updatedQuestion = dbClient.from("question").insert(question.copy(id = null)) {
+                    select()
+                }.decodeSingle<Question>()
+                onResult(null, updatedQuestion)
+            } catch (e: Throwable) {
+                onResult(e, null)
+            }
+        }
+
+        suspend fun updateQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+            try {
+                val updatedQuestion = dbClient.from("question").update(question) {
+                    filter {
+                        eq("id", question.id!!)
+                    }
+                }
+                onResult(null)
+            } catch (e: Throwable) {
+                onResult(e)
+            }
+        }
 
         //TODO: improve onResult handler
         suspend fun addDataToSupabase(dbClient: SupabaseClient, onResult: (Throwable?) -> Unit) {

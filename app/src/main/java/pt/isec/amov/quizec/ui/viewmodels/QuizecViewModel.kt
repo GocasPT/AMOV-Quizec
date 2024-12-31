@@ -1,19 +1,16 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
-import androidx.compose.runtime.MutableState
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
-import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
-import pt.isec.amov.quizec.utils.SAuthUtil
+import pt.isec.amov.quizec.utils.SStorageUtil
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
@@ -36,9 +33,33 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun saveQuestion(question: Question) {
         if (_currentQuestion.value != null) {
-            questionList.updateQuestion(question)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.updateQuestionDatabase(dbClient, question) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error updating question: $e")
+                        } else {
+                            questionList.updateQuestion(question)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error updating question: $e")
+                }
+            }
         } else {
-            questionList.addQuestion(question)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveQuestionDatabase(dbClient, question) { e, updatedQuestion ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving question: $e")
+                        } else {
+                            questionList.addQuestion(updatedQuestion!!)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving question: $e")
+                }
+            }
         }
         _currentQuestion.value = null
     }
