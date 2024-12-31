@@ -6,7 +6,7 @@ import pt.isec.amov.quizec.model.question.Question
 
 @Serializable
 data class Quiz(
-    val id: Int,
+    var id: Int? = null,
     val title: String,
     @SerialName("image_url")
     val image: String?,

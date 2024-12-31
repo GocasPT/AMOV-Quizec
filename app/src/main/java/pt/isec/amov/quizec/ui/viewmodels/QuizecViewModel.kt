@@ -90,14 +90,50 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun saveQuiz(quiz: Quiz) {
         if (_currentQuiz.value != null) {
-            quizList.updateQuiz(quiz)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.updateQuizDatabase(dbClient, quiz) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error updating quiz: $e")
+                        } else {
+                            quizList.updateQuiz(quiz)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error updating quiz: $e")
+                }
+            }
         } else {
-            quizList.addQuiz(quiz)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveQuizDatabase(dbClient, quiz) { e, updatedQuiz ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving quiz: $e")
+                        } else {
+                            quizList.addQuiz(updatedQuiz!!)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving quiz: $e")
+                }
+            }
         }
         _currentQuiz.value = null
     }
 
     fun deleteQuiz(quiz: Quiz) {
-        quizList.removeQuiz(quiz)
+        viewModelScope.launch {
+            try {
+                SStorageUtil.deleteQuizDatabase(dbClient, quiz) { e ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error deleting quiz 1: $e")
+                    } else {
+                        quizList.removeQuiz(quiz)
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error deleting quiz 2: $e")
+            }
+        }
     }
 }

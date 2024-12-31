@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -39,6 +36,7 @@ import pt.isec.amov.quizec.model.quiz.Quiz
 @Composable
 fun ManageQuizScreen(
     quiz: Quiz?,
+    userId : String,
     questionList: List<Question>,
     saveQuiz: (Quiz) -> Unit
 ) {
@@ -171,11 +169,11 @@ fun ManageQuizScreen(
                     //locationRestricted = locationRestricted,
                     //immediateResults = immediateResults
                 ) ?: Quiz(
-                    id = 0,
+                    id = null,
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,
-                    owner = "TODO"
+                    owner = userId
                     //isActive = isActive,
                     //maxTime = maxTimeMinutes.toLongOrNull(),
                     //locationRestricted = locationRestricted,

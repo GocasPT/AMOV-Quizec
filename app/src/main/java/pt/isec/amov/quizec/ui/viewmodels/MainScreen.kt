@@ -63,7 +63,7 @@ fun MainScreen(
                             .from("question")
                             .select(Columns.raw("*, quiz_question!inner(*)")) {
                                 filter {
-                                    eq("quiz_question.quiz_id", quiz.id)
+                                    eq("quiz_question.quiz_id", quiz.id!!)
                                 }
                             }
                             .decodeList<Question>()
@@ -162,6 +162,7 @@ fun MainScreen(
             composable("manageQuiz") {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
+                    userId = user.id,
                     questionList = viewModel.questionList.getQuestionList(),
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)

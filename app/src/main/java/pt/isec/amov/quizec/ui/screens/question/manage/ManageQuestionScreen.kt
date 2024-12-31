@@ -144,7 +144,7 @@ fun ManageQuestionScreen(
                         content = questionContent,
                         answers = questionAnswers
                     ) ?: Question(
-                        id = 0,
+                        id = null,
                         image = null,
                         content = questionContent,
                         answers = questionAnswers,
