@@ -116,7 +116,6 @@ fun MainScreen(
                     },
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
-                        navController.navigate("quiz") //There's no recomposition after deleteQuiz so we need to navigate to refresh the screen (Most likely the wrong way to do it)
                     }
                 )
             }
@@ -153,7 +152,6 @@ fun MainScreen(
                     },
                     onDeleteQuestion = { question ->
                         viewModel.deleteQuestion(question)
-                        navController.navigate("question") //There's no recomposition after deleteQuestion so we need to navigate to refresh the screen (Most likely the wrong way to do it)
                     }
                 )
             }
