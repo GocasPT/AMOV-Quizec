@@ -36,6 +36,19 @@ class SStorageUtil {
             }
         }
 
+        suspend fun deleteQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+            try {
+                dbClient.from("question").delete {
+                    filter {
+                        eq("id", question.id!!)
+                    }
+                }
+                onResult(null)
+            } catch (e: Throwable) {
+                onResult(e)
+            }
+        }
+
         //TODO: improve onResult handler
         suspend fun addDataToSupabase(dbClient: SupabaseClient, onResult: (Throwable?) -> Unit) {
             dbClient.from("quiz").insert(quiz)

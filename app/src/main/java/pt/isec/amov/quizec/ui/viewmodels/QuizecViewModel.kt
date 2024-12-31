@@ -65,7 +65,19 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     }
 
     fun deleteQuestion(question: Question) {
-        questionList.removeQuestion(question)
+        viewModelScope.launch {
+            try {
+                SStorageUtil.deleteQuestionDatabase(dbClient, question) { e ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error deleting question: $e")
+                    } else {
+                        questionList.removeQuestion(question)
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error deleting question: $e")
+            }
+        }
     }
 
     fun createQuiz() {
