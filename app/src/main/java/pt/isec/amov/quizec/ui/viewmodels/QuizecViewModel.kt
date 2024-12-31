@@ -1,19 +1,12 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.launch
-import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
-import pt.isec.amov.quizec.utils.SAuthUtil
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 

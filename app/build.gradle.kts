@@ -62,5 +62,9 @@ dependencies {
     implementation(libs.supabase.realtime.kt)
     implementation(libs.supabase.storage.kt)
     implementation(libs.ktor.client.android)
+
+    //ui
+    implementation("androidx.compose.material3:material3:1.4.0-alpha02")
+    
     debugImplementation(libs.androidx.ui.tooling)
 }
