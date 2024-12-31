@@ -1,7 +1,7 @@
 package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +27,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.model.User
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
@@ -41,20 +39,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun RegisterScreen(
     onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
+    onSuccess : () -> Unit,
     modifier: Modifier = Modifier,
     errorMessageText : String?
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onBack = onBack, errorMessageText = errorMessageText)
+        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
     else
-        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onBack = onBack, errorMessageText = errorMessageText)
+        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
 
 }
 
@@ -62,6 +63,7 @@ fun RegisterScreen(
 fun RegisterScreenLandscape(
     onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
+    onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     errorMessageText : String?
 ) {
@@ -72,20 +74,25 @@ fun RegisterScreenLandscape(
 fun RegisterScreenPortrait(
     onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
+    onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     errorMessageText : String?
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    var repeatPassword = remember { mutableStateOf("") }
+    val repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
-
     var showRepeatPassword by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(errorMessageText) {
         errorMessage = errorMessageText
+        if(errorMessage.equals("Success")) {
+            showDialog = true
+        }
     }
 
     Box(
@@ -217,7 +224,7 @@ fun RegisterScreenPortrait(
                 }
             )
 
-            if (errorMessage != null) {
+            if (errorMessage != null && !errorMessage.equals("Success")) {
                 Text(
                     text = "Error: $errorMessage",
                     color = MaterialTheme.colorScheme.error,
@@ -225,6 +232,40 @@ fun RegisterScreenPortrait(
                     modifier = Modifier
                         .padding(16.dp)
                 )
+            }
+
+            if (showDialog) {
+                Dialog(onDismissRequest = { }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Registration Successful",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    showDialog = false
+                                    onSuccess()
+                                },
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -240,6 +281,5 @@ fun RegisterScreenPortrait(
         ) {
             Text("REGISTER")
         }
-
     }
 }

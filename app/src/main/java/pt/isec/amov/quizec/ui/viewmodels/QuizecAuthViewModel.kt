@@ -28,28 +28,25 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
     val error: MutableState<String?>
         get() = _error
 
-    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) : LiveData<Boolean> {
-        val success = MutableLiveData(false)
+    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
         if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
             _error.value = "Please fill in the blanks."
-            return success
+            return
         }
 
         if (password != repeatedPassword) {
             _error.value = "Passwords do not match."
-            return success
+            return
         }
 
         viewModelScope.launch {
             try {
                 SAuthUtil.signUpWithEmail(email, password, name)
-                _error.value = null
-                success.value = true
+                _error.value = "Success"
             } catch (e: Exception) {
                 _error.value = e.message
             }
         }
-        return success
     }
 
     fun signInWithEmail(email: String, password: String) {
@@ -75,5 +72,9 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
             _user.value = null
             _error.value = null
         }
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 }
