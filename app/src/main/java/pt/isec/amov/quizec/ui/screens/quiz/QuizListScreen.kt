@@ -104,6 +104,7 @@ fun QuizCard(
                     text = quiz.title, fontSize = 20.sp
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                /*
                 quiz.maxTime?.let {
                     Text(text = "$it min", fontSize = 16.sp)
                     Spacer(modifier = Modifier.padding(2.dp))
@@ -113,8 +114,9 @@ fun QuizCard(
                     Icon(Icons.Filled.LocationOn, "Location Restricted", Modifier.size(18.dp))
                 if (quiz.immediateResults)
                     Icon(Icons.Filled.Menu, "Immediate Results", Modifier.size(18.dp))
+                 */
             }
-            quiz.questions.forEach { question ->
+            quiz.questions?.forEach { question ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {

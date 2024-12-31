@@ -23,10 +23,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
@@ -51,6 +53,29 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             viewModel.dbClient
+                .from("quiz")
+                .select {
+                    filter { eq("owner", user.id) }
+                }
+                .decodeList<Quiz>().let { quizList ->
+                    quizList.forEach { quiz ->
+                        val questions = viewModel.dbClient
+                            .from("question")
+                            .select(Columns.raw("*, quiz_question!inner(*)")) {
+                                filter {
+                                    eq("quiz_question.quiz_id", quiz.id)
+                                }
+                            }
+                            .decodeList<Question>()
+
+                        quiz.questions = questions
+                        viewModel.quizList.addQuiz(quiz)
+                    }
+                }
+        }
+
+        withContext(Dispatchers.IO) {
+            viewModel.dbClient
                 .from("question")
                 .select() {
                     filter {
@@ -58,10 +83,10 @@ fun MainScreen(
                     }
                 }
                 .decodeList<Question>().let { list ->
-                list.forEach {
-                    viewModel.questionList.addQuestion(it)
+                    list.forEach {
+                        viewModel.questionList.addQuestion(it)
+                    }
                 }
-            }
         }
     }
 

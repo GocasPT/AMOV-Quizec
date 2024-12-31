@@ -35,7 +35,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.utils.QuizIDGenerator
 
 @Composable
 fun ManageQuizScreen(
@@ -44,10 +43,10 @@ fun ManageQuizScreen(
     saveQuiz: (Quiz) -> Unit
 ) {
     var quizTitle by remember { mutableStateOf(quiz?.title ?: "") }
-    var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
-    var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
-    var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
-    var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
+    //var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
+    //var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
+    //var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
+    //var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
     val selectedQuestions = remember {
         mutableStateListOf<Question>().apply {
             quiz?.questions?.let { addAll(it) }
@@ -57,8 +56,8 @@ fun ManageQuizScreen(
 
     fun isFormValid(): Boolean {
         return quizTitle.isNotEmpty() &&
-                maxTimeMinutes.isNotEmpty() &&
-                maxTimeMinutes.all { it.isDigit() } &&
+                //maxTimeMinutes.isNotEmpty() &&
+                //maxTimeMinutes.all { it.isDigit() } &&
                 selectedQuestions.isNotEmpty()
     }
 
@@ -84,6 +83,7 @@ fun ManageQuizScreen(
             singleLine = true
         )
 
+        /*
         OutlinedTextField(
             value = maxTimeMinutes,
             onValueChange = {
@@ -96,6 +96,7 @@ fun ManageQuizScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -132,7 +133,7 @@ fun ManageQuizScreen(
                 onCheckedChange = { immediateResults = it }
             )
         }
-
+        */
         Text(
             text = "Select Questions",
             style = MaterialTheme.typography.bodyMedium,
@@ -165,19 +166,20 @@ fun ManageQuizScreen(
                 val updatedQuiz = quiz?.copy(
                     title = quizTitle,
                     questions = selectedQuestions,
-                    isActive = isActive,
-                    maxTime = maxTimeMinutes.toLongOrNull(),
-                    locationRestricted = locationRestricted,
-                    immediateResults = immediateResults
+                    //isActive = isActive,
+                    //maxTime = maxTimeMinutes.toLongOrNull(),
+                    //locationRestricted = locationRestricted,
+                    //immediateResults = immediateResults
                 ) ?: Quiz(
-                    id = QuizIDGenerator.generateRandomCode(),
+                    id = 0,
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,
-                    isActive = isActive,
-                    maxTime = maxTimeMinutes.toLongOrNull(),
-                    locationRestricted = locationRestricted,
-                    immediateResults = immediateResults
+                    owner = "TODO"
+                    //isActive = isActive,
+                    //maxTime = maxTimeMinutes.toLongOrNull(),
+                    //locationRestricted = locationRestricted,
+                    //immediateResults = immediateResults
                 )
                 saveQuiz(updatedQuiz)
             },

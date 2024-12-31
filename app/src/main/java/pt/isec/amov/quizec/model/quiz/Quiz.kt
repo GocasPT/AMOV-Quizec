@@ -1,20 +1,22 @@
 package pt.isec.amov.quizec.model.quiz
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import pt.isec.amov.quizec.model.question.Question
 
 @Serializable
 data class Quiz(
-    val id: String,
-    //val creatorId: String,
+    val id: Int,
     val title: String,
+    @SerialName("image_url")
     val image: String?,
-    val questions: List<Question>,
-    val isActive: Boolean,
-    val maxTime: Long?,
-    val locationRestricted: Boolean,
+    val owner: String,
+    var questions: List<Question>? = null,
+    //val isActive: Boolean,
+    //val maxTime: Long?,
+    //val locationRestricted: Boolean,
     //val creatorLocation: GeoPoint?,
-    val immediateResults: Boolean
+    //val immediateResults: Boolean
 )
 
 //TODO: check this later
