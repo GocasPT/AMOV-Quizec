@@ -8,6 +8,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
@@ -68,7 +69,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         quizList.removeQuiz(quiz)
     }
 
-    //TODO: PLACE_HOLDER
+    //!PLACE_HOLDER
     fun createLobby() {
         viewModelScope.launch {
             try {
@@ -88,13 +89,43 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     "user_id" to currentUser.id,
                     "quiz_id" to "$quizId"
                 )
-                Log.d("QuizecViewModel", "createLobby: $lobby")
-                val response = dbClient.from("lobby").insert(lobby) { select() }
-                Log.d("QuizecViewModel", "createLobby: $response")
+
+                dbClient.from("lobby").insert(lobby) { select() }
             } catch (e: Exception) {
                 Log.e("QuizecViewModel", "createLobby: ${e.message}")
             }
         }
+    }
 
+    //!PLACE_HOLDER
+    fun joinLobby(lobbyCode: Int) {
+        viewModelScope.launch {
+            try {
+                dbClient.auth.signInWith(Email) {
+                    email = "quizec@isec.pt"
+                    password = "quizec"
+                }
+
+                val currentUser = dbClient.auth.currentUserOrNull()
+                    ?: throw Exception("User not logged in")
+
+                val lobby = dbClient.from("lobby").select(
+                    columns = Columns.list("id, lobby_code")
+                ) {
+                    filter {
+                        eq("lobby_code", lobbyCode)
+                    }
+                }.decodeSingleOrNull<Map<String, String>>() ?: throw Exception("Lobby not found")
+
+                dbClient.from("lobby_users").insert(
+                    hashMapOf(
+                        "lobby_id" to lobby["id"],
+                        "user_id" to currentUser.id //TODO: user_id OR user_email?
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e("QuizecViewModel", "joinLobby: ${e.message}")
+            }
+        }
     }
 }
