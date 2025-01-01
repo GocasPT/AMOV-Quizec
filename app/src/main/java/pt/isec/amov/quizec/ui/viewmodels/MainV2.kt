@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -35,6 +36,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.ui.screens.HomeScreen
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
@@ -76,11 +78,14 @@ sealed class BottomNavBarItem(
         )
 }
 
+@Preview(showBackground = true)
 @Composable
 fun MainV2(
-    viewModel: QuizecViewModel,
+    viewModel: QuizecViewModel = QuizecViewModel(
+        dbClient = TODO()
+    ),
     navController: NavHostController = rememberNavController(),
-    onSignOut: () -> Unit,
+    onSignOut: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val currentScreen by navController.currentBackStackEntryAsState()
@@ -115,7 +120,7 @@ fun MainV2(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("quiz")
+                        "Home" -> navController.navigate("home")
                         "Quiz" -> navController.navigate("quiz")
                         "Question" -> navController.navigate("question")
                         "History" -> navController.navigate("history")
@@ -126,10 +131,13 @@ fun MainV2(
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "quiz",
+            startDestination = "home",
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
+            composable("home") {
+                HomeScreen()
+            }
             composable("quiz") {
                 QuizListScreen(
                     quizList = viewModel.quizList.getQuizList(),
