@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +37,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+            val user by viewModelAuth.user
+
+            LaunchedEffect(user) {
+                if (user != null) {
+                    navController.navigate(MAIN_SCREEN) {
+                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                    }
+                }
+            }
+
             QuizecTheme {
                 Surface {
                     NavHost(
@@ -44,10 +56,8 @@ class MainActivity : ComponentActivity() {
                         composable(LOGIN_SCREEN) {
                             LoginScreen(
                                 viewModelAuth,
-                                onSuccess = {
-                                    navController.navigate(MAIN_SCREEN) {
-                                        popUpTo(MAIN_SCREEN) { inclusive = true }
-                                    }
+                                onLogin = { email, password ->
+                                    viewModelAuth.signInWithEmail(email, password)
                                 },
                                 onRegister = {
                                     navController.navigate(REGISTER_SCREEN)
@@ -61,12 +71,12 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onBack = {
                                     navController.navigate(LOGIN_SCREEN) {
-                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                                        popUpTo(REGISTER_SCREEN) { inclusive = true }
                                     }
                                 },
                                 onSuccess = {
                                     navController.navigate(LOGIN_SCREEN) {
-                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                                        popUpTo(REGISTER_SCREEN) { inclusive = true }
                                     }
                                     viewModelAuth.clearError()
                                 },
@@ -80,7 +90,7 @@ class MainActivity : ComponentActivity() {
                                 onSignOut = {
                                     viewModelAuth.signOut()
                                     navController.navigate(LOGIN_SCREEN) {
-                                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                                        popUpTo(MAIN_SCREEN) { inclusive = true }
                                     }
                                 }
                             )
