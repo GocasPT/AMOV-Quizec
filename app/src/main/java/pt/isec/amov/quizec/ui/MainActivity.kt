@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                         composable(MAIN_SCREEN) {
                             MainScreen(
                                 viewModel = viewModel,
-                                user = viewModelAuth.user.value!!,
+                                user = viewModelAuth.user.value,
                                 onSignOut = {
                                     viewModelAuth.signOut()
                                     navController.navigate(LOGIN_SCREEN) {

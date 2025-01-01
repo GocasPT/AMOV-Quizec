@@ -80,7 +80,7 @@ sealed class BottomNavBarItem(
 @Composable
 fun MainScreen(
     viewModel: QuizecViewModel,
-    user: User,
+    user: User?,
     navController: NavHostController = rememberNavController(),
     onSignOut: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -104,7 +104,7 @@ fun MainScreen(
             viewModel.dbClient
                 .from("quiz")
                 .select {
-                    filter { eq("owner", user.id) }
+                    filter { eq("owner", user!!.id) }
                 }
                 .decodeList<Quiz>().let { quizList ->
                     quizList.forEach { quiz ->
@@ -128,7 +128,7 @@ fun MainScreen(
                 .from("question")
                 .select() {
                     filter {
-                        eq("user_id", user.id)
+                        eq("user_id", user!!.id)
                     }
                 }
                 .decodeList<Question>().let { list ->
@@ -195,7 +195,7 @@ fun MainScreen(
             composable("manageQuiz") {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
-                    userId = user.id,
+                    userId = user!!.id,
                     questionList = viewModel.questionList.getQuestionList(),
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
@@ -234,7 +234,7 @@ fun MainScreen(
             composable("manageQuestion") {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,
-                    userId = user.id,
+                    userId = user!!.id,
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
                         navController.navigate("question")
