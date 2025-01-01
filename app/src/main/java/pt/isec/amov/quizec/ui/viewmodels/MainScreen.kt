@@ -35,6 +35,7 @@ import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.ui.screens.HomeScreen
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
@@ -47,29 +48,29 @@ sealed class BottomNavBarItem(
     var title: String,
     var icon: ImageVector
 ) {
-    object Home :
+    data object Home :
         BottomNavBarItem(
             "Home",
             Icons.Filled.Home
         )
 
-    object Quiz :
+    data object Quiz :
         BottomNavBarItem(
             "Quiz",
             Icons.Filled.ContentPaste
         )
 
-    object Question :
+    data object Question :
         BottomNavBarItem(
             "Question",
             Icons.Filled.Checklist
         )
-    object History :
+    data object History :
         BottomNavBarItem(
             "History",
             Icons.Filled.History
         )
-    object Logout :
+    data object Logout :
         BottomNavBarItem(
             "Logout",
             Icons.AutoMirrored.Filled.Logout
@@ -81,7 +82,7 @@ fun MainScreen(
     viewModel: QuizecViewModel,
     user: User,
     navController: NavHostController = rememberNavController(),
-    onSignOut: () -> Unit,
+    onSignOut: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val currentScreen by navController.currentBackStackEntryAsState()
@@ -146,7 +147,7 @@ fun MainScreen(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("quiz")
+                        "Home" -> navController.navigate("home")
                         "Quiz" -> navController.navigate("quiz")
                         "Question" -> navController.navigate("question")
                         "History" -> navController.navigate("history")
@@ -157,10 +158,13 @@ fun MainScreen(
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "quiz",
+            startDestination = "home",
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
+            composable("home") {
+                HomeScreen()
+            }
             composable("quiz") {
                 QuizListScreen(
                     quizList = viewModel.quizList.getQuizList(),
