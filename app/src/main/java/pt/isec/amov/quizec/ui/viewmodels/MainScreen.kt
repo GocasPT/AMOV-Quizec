@@ -7,6 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,11 +36,45 @@ import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
+import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
+
+sealed class BottomNavBarItem(
+    var title: String,
+    var icon: ImageVector
+) {
+    object Home :
+        BottomNavBarItem(
+            "Home",
+            Icons.Filled.Home
+        )
+
+    object Quiz :
+        BottomNavBarItem(
+            "Quiz",
+            Icons.Filled.ContentPaste
+        )
+
+    object Question :
+        BottomNavBarItem(
+            "Question",
+            Icons.Filled.Checklist
+        )
+    object History :
+        BottomNavBarItem(
+            "History",
+            Icons.Filled.History
+        )
+    object Logout :
+        BottomNavBarItem(
+            "Logout",
+            Icons.AutoMirrored.Filled.Logout
+        )
+}
 
 @Composable
 fun MainScreen(
@@ -48,6 +88,14 @@ fun MainScreen(
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Destination changed", destination.route.toString())
     }
+
+    val items = listOf(
+        BottomNavBarItem.Home,
+        BottomNavBarItem.Quiz,
+        BottomNavBarItem.Question,
+        BottomNavBarItem.History,
+        BottomNavBarItem.Logout
+    )
 
     //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
@@ -90,43 +138,24 @@ fun MainScreen(
         }
     }
 
-    Scaffold(modifier = modifier.fillMaxSize(), bottomBar = {
-        BottomAppBar(contentPadding = PaddingValues(8.dp), content = {
-            IconButton(onClick = { navController.navigate("quiz") }) {
-                Icon(Icons.AutoMirrored.Filled.List, null)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { navController.navigate("question") }) {
-                Icon(Icons.AutoMirrored.Filled.List, null)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            when (currentScreen?.destination?.route) {
-                "quiz" -> {
-                    Text("Quiz")
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        bottomBar = {
+            BottomNavBar(
+                items = items,
+                currentScreen = currentScreen?.destination?.route,
+                onItemSelected = { selected ->
+                    when (selected.title) {
+                        "Home" -> navController.navigate("quiz")
+                        "Quiz" -> navController.navigate("quiz")
+                        "Question" -> navController.navigate("question")
+                        "History" -> navController.navigate("history")
+                        "Logout" -> onSignOut()
+                    }
                 }
-
-                "show-quiz" -> {
-                    Text("Show Quiz")
-                }
-
-                "manageQuiz" -> {
-                    Text("Manage Quiz")
-                }
-
-                "question" -> {
-                    Text("Question")
-                }
-
-                "show-question" -> {
-                    Text("Show Question")
-                }
-
-                "manageQuestion" -> {
-                    Text("Manage Question")
-                }
-            }
-        })
-    }) { innerPadding ->
+            )
+        }
+    ) { innerPadding ->
         NavHost(
             startDestination = "quiz",
             navController = navController,

@@ -14,7 +14,6 @@ import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
 import pt.isec.amov.quizec.ui.viewmodels.MainScreen
-import pt.isec.amov.quizec.ui.viewmodels.MainV2
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelAuthFactory
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(MAIN_SCREEN) {
-                            MainV2(
+                            MainScreen(
                                 viewModel = viewModel,
                                 user = viewModelAuth.user.value!!,
                                 onSignOut = {
