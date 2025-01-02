@@ -70,6 +70,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         quizList.removeQuiz(quiz)
     }
 
+    //TODO: separate event handling and data manipulation (viewmodel and util)
     fun createLobby(
         quizId: Long,
         duration: Long
@@ -92,6 +93,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
+    //TODO: separate event handling and data manipulation (viewmodel and util)
     fun joinLobby(lobbyCode: String) {
         viewModelScope.launch {
             try {

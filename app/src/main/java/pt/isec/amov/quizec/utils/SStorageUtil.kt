@@ -6,6 +6,10 @@ import io.github.jan.supabase.postgrest.from
 import java.io.InputStream
 
 class SStorageUtil {
+    //TODO: improve this util class
+    // - use Result → Result.success/Result.failure → onSuccess/onFailure
+    // - use require → validate inputs
+
     companion object {
         val quiz = hashMapOf(
             "title" to "Quiz X",
