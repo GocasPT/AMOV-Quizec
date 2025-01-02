@@ -1,13 +1,11 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
 import pt.isec.amov.quizec.model.User
@@ -19,7 +17,7 @@ fun UserInfo.toUser(): User {
     return User(displayName, strEmail)
 }
 
-class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
+class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
     private val _user = mutableStateOf(dbClient.auth.currentUserOrNull()?.toUser())
     val user: MutableState<User?>
         get() = _user

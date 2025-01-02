@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
         const val LOGIN_SCREEN = "Login"
         const val MAIN_SCREEN = "Main"
     }
+
     private val app: QuizecApp by lazy { application as QuizecApp }
     private val viewModel: QuizecViewModel by viewModels { QuizecViewModelFactory(app.dbClient) }
     private val viewModelAuth: QuizecAuthViewModel by viewModels { QuizecViewModelAuthFactory(app.dbClient) }
