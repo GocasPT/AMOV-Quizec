@@ -34,72 +34,97 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.model.User
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun RegisterScreen(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
-    onSuccess: () -> Unit,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
+    onSuccess : () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(
-            modifier = modifier,
-            onSuccess = onSuccess,
-            playerInfo = playerInfo,
-            viewModel = viewModel
-        )
+        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
     else
-        RegisterScreenPortrait(
-            modifier = modifier,
-            onSuccess = onSuccess,
-            playerInfo = playerInfo,
-            viewModel = viewModel
-        )
+        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
 
 }
 
 @Composable
 fun RegisterScreenLandscape(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
 
 }
 
 @Composable
 fun RegisterScreenPortrait(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    var repeatPassword by remember { mutableStateOf("") }
+    val repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
-
     var showRepeatPassword by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(viewModel.user.value) {
-        if (viewModel.user.value != null && viewModel.error.value == null) {
-            onSuccess()
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(errorMessageText) {
+        errorMessage = errorMessageText
+        if(errorMessage.equals("Success")) {
+            showDialog = true
         }
     }
-
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            BasicText(
+                text = buildAnnotatedString {
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "register",
+                            linkInteractionListener = {
+                                onBack()
+                            }
+                        )
+                    ) {
+                        append("< Back to Login")
+                    }
+                },
+                modifier = Modifier
+                    .padding(top = 32.dp),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -120,7 +145,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = email.value,
                 onValueChange = { newText -> email.value = newText },
-                label = { Text("Name") },
+                label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(percent = 20),
                 singleLine = true,
@@ -165,9 +190,9 @@ fun RegisterScreenPortrait(
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
-                value = repeatPassword,
-                onValueChange = { newText -> repeatPassword = newText },
-                label = { Text("Password") },
+                value = repeatPassword.value,
+                onValueChange = { newText -> repeatPassword.value = newText },
+                label = { Text("Repeat Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -199,39 +224,62 @@ fun RegisterScreenPortrait(
                 }
             )
 
-        }
-
-        if (viewModel.error.value != null) {
-            Text(
-                text = "Error: ${viewModel.error.value}",
-                modifier = Modifier
-                    .background(Color(255, 0, 0))
-                    .padding(16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                onClick = {
-                    viewModel.createUserWithEmail(name.value, email.value, password.value)
-
-//
-//                    if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && repeatPassword.isNotBlank() && (password.equals(repeatPassword))) {
-//                        User(name, email, password, repeatPassword)
-//                    } else {
-//                        errorMessage = "Please fill in the blanks."
-//                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("REGISTER")
+            if (errorMessage != null && !errorMessage.equals("Success")) {
+                Text(
+                    text = "Error: $errorMessage",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
             }
+
+            if (showDialog) {
+                Dialog(onDismissRequest = { }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Registration Successful",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    showDialog = false
+                                    onSuccess()
+                                },
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Button(
+            onClick = {
+                onRegister(name.value, email.value, password.value, repeatPassword.value)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D0B0D)),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(),
+        ) {
+            Text("REGISTER")
         }
     }
 }

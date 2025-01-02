@@ -27,11 +27,11 @@ import pt.isec.amov.quizec.model.question.Answer.SingleChoice
 import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionType
-import pt.isec.amov.quizec.utils.QuestionIDGenerator
 
 @Composable
 fun ManageQuestionScreen(
     question: Question?,
+    userId : String,
     saveQuestion: (Question) -> Unit
 ) {
     var questionContent by remember { mutableStateOf(question?.content ?: "") }
@@ -144,10 +144,11 @@ fun ManageQuestionScreen(
                         content = questionContent,
                         answers = questionAnswers
                     ) ?: Question(
-                        id = QuestionIDGenerator.getNextId(),
+                        id = null,
                         image = null,
                         content = questionContent,
-                        answers = questionAnswers
+                        answers = questionAnswers,
+                        user = userId
                     )
                 )
             },

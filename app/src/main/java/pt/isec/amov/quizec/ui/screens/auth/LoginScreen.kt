@@ -1,8 +1,6 @@
 package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -23,14 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,26 +35,35 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: QuizecAuthViewModel,
-    onSuccess: () -> Unit,
+    onLogin: (String, String) -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        LoginScreenLandscape(modifier = modifier, onSuccess = onSuccess, viewModel = viewModel)
+        LoginScreenLandscape(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
     else
-        LoginScreenPortrait(modifier = modifier, onSuccess = onSuccess, viewModel = viewModel)
-
+        LoginScreenPortrait(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
 }
 
 @Composable
 fun LoginScreenLandscape(
     viewModel: QuizecAuthViewModel,
-    onSuccess: () -> Unit,
+    onLogin: (String, String) -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 }
@@ -65,7 +71,8 @@ fun LoginScreenLandscape(
 @Composable
 fun LoginScreenPortrait(
     viewModel: QuizecAuthViewModel,
-    onSuccess: () -> Unit,
+    onLogin: (String, String) -> Unit,
+    onRegister: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -73,6 +80,8 @@ fun LoginScreenPortrait(
     val password = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
+    val gradientColors = listOf(Cyan, Blue)
+    /*
     LaunchedEffect(viewModel.user.value) {
         if (viewModel.user.value != null && viewModel.error.value == null) {
             Log.d(
@@ -82,11 +91,12 @@ fun LoginScreenPortrait(
             onSuccess()
         }
     }
+    */
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
         Box(
             modifier = Modifier
@@ -160,14 +170,12 @@ fun LoginScreenPortrait(
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier
-                        .background(Color(255, 0, 0))
                         .padding(16.dp)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
             Button(
                 onClick = {
-                    viewModel.signInWithEmail(email.value, password.value)
+                    onLogin(email.value, password.value)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -176,11 +184,33 @@ fun LoginScreenPortrait(
             }
         }
 
-        Text(
-            text = "Don't have an account? Click here to register.",
+        BasicText(
+            text = buildAnnotatedString {
+                append("Don't have an account? ")
+                withStyle(
+                    SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        brush = Brush.linearGradient(
+                            colors = gradientColors
+                        )
+                    )
+                ) {
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "register",
+                            linkInteractionListener = {
+                                onRegister()
+                            }
+                        )
+                    ) {
+                        append("Click here to register.")
+                    }
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 32.dp),
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

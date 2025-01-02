@@ -13,7 +13,7 @@ import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
 import pt.isec.amov.quizec.utils.CodeGen
-import pt.isec.amov.quizec.utils.SAuthUtil
+import pt.isec.amov.quizec.utils.SStorageUtil
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
@@ -38,15 +38,51 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun saveQuestion(question: Question) {
         if (_currentQuestion.value != null) {
-            questionList.updateQuestion(question)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.updateQuestionDatabase(dbClient, question) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error updating question: $e")
+                        } else {
+                            questionList.updateQuestion(question)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error updating question: $e")
+                }
+            }
         } else {
-            questionList.addQuestion(question)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveQuestionDatabase(dbClient, question) { e, updatedQuestion ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving question: $e")
+                        } else {
+                            questionList.addQuestion(updatedQuestion!!)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving question: $e")
+                }
+            }
         }
         _currentQuestion.value = null
     }
 
     fun deleteQuestion(question: Question) {
-        questionList.removeQuestion(question)
+        viewModelScope.launch {
+            try {
+                SStorageUtil.deleteQuestionDatabase(dbClient, question) { e ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error deleting question: $e")
+                    } else {
+                        questionList.removeQuestion(question)
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error deleting question: $e")
+            }
+        }
     }
 
     fun createQuiz() {
@@ -59,15 +95,51 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun saveQuiz(quiz: Quiz) {
         if (_currentQuiz.value != null) {
-            quizList.updateQuiz(quiz)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.updateQuizDatabase(dbClient, quiz) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error updating quiz: $e")
+                        } else {
+                            quizList.updateQuiz(quiz)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error updating quiz: $e")
+                }
+            }
         } else {
-            quizList.addQuiz(quiz)
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveQuizDatabase(dbClient, quiz) { e, updatedQuiz ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving quiz: $e")
+                        } else {
+                            quizList.addQuiz(updatedQuiz!!)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving quiz: $e")
+                }
+            }
         }
         _currentQuiz.value = null
     }
 
     fun deleteQuiz(quiz: Quiz) {
-        quizList.removeQuiz(quiz)
+        viewModelScope.launch {
+            try {
+                SStorageUtil.deleteQuizDatabase(dbClient, quiz) { e ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error deleting quiz 1: $e")
+                    } else {
+                        quizList.removeQuiz(quiz)
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error deleting quiz 2: $e")
+            }
+        }
     }
 
     //TODO: separate event handling and data manipulation (viewmodel and util)

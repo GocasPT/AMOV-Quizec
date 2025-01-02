@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,23 +29,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.utils.QuizIDGenerator
 
 @Composable
 fun ManageQuizScreen(
     quiz: Quiz?,
+    userId : String,
     questionList: List<Question>,
     saveQuiz: (Quiz) -> Unit
 ) {
     var quizTitle by remember { mutableStateOf(quiz?.title ?: "") }
-    var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
-    var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
-    var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
-    var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
+    //var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
+    //var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
+    //var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
+    //var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
     val selectedQuestions = remember {
         mutableStateListOf<Question>().apply {
             quiz?.questions?.let { addAll(it) }
@@ -57,8 +54,8 @@ fun ManageQuizScreen(
 
     fun isFormValid(): Boolean {
         return quizTitle.isNotEmpty() &&
-                maxTimeMinutes.isNotEmpty() &&
-                maxTimeMinutes.all { it.isDigit() } &&
+                //maxTimeMinutes.isNotEmpty() &&
+                //maxTimeMinutes.all { it.isDigit() } &&
                 selectedQuestions.isNotEmpty()
     }
 
@@ -84,6 +81,7 @@ fun ManageQuizScreen(
             singleLine = true
         )
 
+        /*
         OutlinedTextField(
             value = maxTimeMinutes,
             onValueChange = {
@@ -96,6 +94,7 @@ fun ManageQuizScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -132,7 +131,7 @@ fun ManageQuizScreen(
                 onCheckedChange = { immediateResults = it }
             )
         }
-
+        */
         Text(
             text = "Select Questions",
             style = MaterialTheme.typography.bodyMedium,
@@ -165,19 +164,20 @@ fun ManageQuizScreen(
                 val updatedQuiz = quiz?.copy(
                     title = quizTitle,
                     questions = selectedQuestions,
-                    isActive = isActive,
-                    maxTime = maxTimeMinutes.toLongOrNull(),
-                    locationRestricted = locationRestricted,
-                    immediateResults = immediateResults
+                    //isActive = isActive,
+                    //maxTime = maxTimeMinutes.toLongOrNull(),
+                    //locationRestricted = locationRestricted,
+                    //immediateResults = immediateResults
                 ) ?: Quiz(
-                    id = QuizIDGenerator.generateRandomCode(),
+                    id = null,
                     title = quizTitle,
                     image = null,
                     questions = selectedQuestions,
-                    isActive = isActive,
-                    maxTime = maxTimeMinutes.toLongOrNull(),
-                    locationRestricted = locationRestricted,
-                    immediateResults = immediateResults
+                    owner = userId
+                    //isActive = isActive,
+                    //maxTime = maxTimeMinutes.toLongOrNull(),
+                    //locationRestricted = locationRestricted,
+                    //immediateResults = immediateResults
                 )
                 saveQuiz(updatedQuiz)
             },
