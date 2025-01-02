@@ -69,11 +69,11 @@ fun MainScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             //!PLACE_HOLDER /*
-            IconButton(onClick = { viewModel.createLobby() }) {
+            IconButton(onClick = { viewModel.createLobby(1, 120) }) {
                 Icon(Icons.Filled.Add, null)
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { viewModel.joinLobby(1729) }) {
+            IconButton(onClick = { viewModel.joinLobby("OJH58W") }) {
                 Icon(Icons.Filled.Done, null)
             }
             Spacer(modifier = Modifier.weight(1f))
