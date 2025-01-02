@@ -3,6 +3,7 @@ package pt.isec.amov.quizec.utils
 import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import pt.isec.amov.quizec.QuizecApp
 import java.io.InputStream
 
 class SStorageUtil {
@@ -11,18 +12,20 @@ class SStorageUtil {
     // - use require → validate inputs
 
     companion object {
+        private val dbClient get() = QuizecApp.getInstance().dbClient
+
         val quiz = hashMapOf(
             "title" to "Quiz X",
         )
 
         //TODO: improve onResult handler
-        suspend fun addDataToSupabase(dbClient: SupabaseClient, onResult: (Throwable?) -> Unit) {
+        suspend fun addDataToSupabase(onResult: (Throwable?) -> Unit) {
             dbClient.from("quiz").insert(quiz)
             onResult(null)
         }
 
         //TODO: improve onResult handler
-        suspend fun updateDataInSupabase(dbClient: SupabaseClient, onResult: (Throwable?) -> Unit) {
+        suspend fun updateDataInSupabase(onResult: (Throwable?) -> Unit) {
             dbClient.from("quiz").upsert(quiz)
             onResult(null)
         }
@@ -49,7 +52,7 @@ class SStorageUtil {
         //private var listenerRegistration: ListenerRegistration? = null
 
         /*
-        fun startObserver(dbClient: SupabaseClient, onNewValues: (Long, Long) -> Unit) {
+        fun startObserver(onNewValues: (Long, Long) -> Unit) {
             stopObserver()
             val db = Firebase.firestore
             listenerRegistration = db.collection("Scores").document("Level1")
