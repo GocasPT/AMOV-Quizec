@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,7 +35,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,7 +45,7 @@ import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.components.CustomList
 
-val quizTeste = listOf(
+val quizHistoryTeste = listOf(
     Quiz(
         id = 1,
         title = "Titulo 1",
@@ -96,10 +91,9 @@ val quizTeste = listOf(
     ),
 )
 
-@Preview(showBackground = true)
 @Composable
-fun QuizListScreen(
-    quizList: List<Quiz> = quizTeste,
+fun QuizHistoryScreen(
+    quizList: List<Quiz> = quizHistoryTeste,
     onSelectQuiz: (Quiz) -> Unit = {},
     onCreateQuiz: () -> Unit = {},
     onEditQuiz: (Quiz) -> Unit = {},
@@ -117,26 +111,6 @@ fun QuizListScreen(
             .fillMaxSize()
             .padding(24.dp)
     ) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .align(Alignment.TopCenter),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            ExtendedFloatingActionButton (
-//                onClick = {
-//                    onCreateQuiz()
-//                }
-//            ) {
-//                Icon(
-//                    modifier = Modifier
-//                        .padding(2.dp),
-//                    contentDescription = "Create Quiz",
-//                    imageVector = Icons.Filled.Add)
-//                Text("CREATE QUIZ")
-//            }
-//        }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,8 +141,8 @@ fun QuizListScreen(
                     onSearch(it)
                 },
                 modifier =
-                    Modifier
-                        .weight(1f),
+                Modifier
+                    .weight(1f),
                 placeholder = { Text("Search") },
                 singleLine = true,
                 leadingIcon = {
@@ -187,7 +161,7 @@ fun QuizListScreen(
             CustomList(
                 items = quizList,
                 onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
-                QuizCardV2(
+                QuizHistoryCard(
                     quiz = quiz as Quiz,
                     onSelectQuiz = { onSelect(quiz) },
                     onEditQuiz = { onEditQuiz(quiz) },
@@ -195,29 +169,12 @@ fun QuizListScreen(
                 )
             }
         }
-
-        ExtendedFloatingActionButton (
-            onClick = {
-                onCreateQuiz()
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 16.dp)
-        ) {
-            Icon(
-                modifier = Modifier
-                    .padding(2.dp),
-                contentDescription = "Create Quiz",
-                imageVector = Icons.Filled.Add
-            )
-            Text("CREATE QUIZ")
-        }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun QuizCardV2(
+fun QuizHistoryCard(
     quiz: Quiz,
     onSelectQuiz: (Quiz) -> Unit,
     onEditQuiz: (Quiz) -> Unit,
@@ -286,101 +243,6 @@ fun QuizCardV2(
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray
                 )
-            }
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("View TODO") },
-                onClick = {
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Edit") },
-                onClick = {
-                    expanded = false
-                    onEditQuiz(quiz)
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Delete") },
-                onClick = {
-                    expanded = false
-                    onDeleteQuiz(quiz)
-                }
-            )
-        }
-    }
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun QuizCard(
-    quiz: Quiz,
-    onSelectQuiz: (Quiz) -> Unit,
-    onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .combinedClickable(
-                onClick = { onSelectQuiz(quiz) },
-                onLongClick = { expanded = true }
-            ),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(255, 255, 192)
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                quiz.image?.let {
-                    //TODO: get image from string and "return" image/file
-                    //PLACE_HOLDER
-                    Icon(Icons.Filled.AccountCircle, it)
-                    Spacer(modifier = Modifier.padding(8.dp))
-                }
-                Text(
-                    text = quiz.title, fontSize = 20.sp
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                /*
-                quiz.maxTime?.let {
-                    Text(text = "$it min", fontSize = 16.sp)
-                    Spacer(modifier = Modifier.padding(2.dp))
-                    Icon(Icons.Rounded.Info, "Max Time", Modifier.size(18.dp))
-                }
-                if (quiz.locationRestricted)
-                    Icon(Icons.Filled.LocationOn, "Location Restricted", Modifier.size(18.dp))
-                if (quiz.immediateResults)
-                    Icon(Icons.Filled.Menu, "Immediate Results", Modifier.size(18.dp))
-                 */
-            }
-            quiz.questions?.forEach { question ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(Icons.Filled.PlayArrow, "Bullet Point", Modifier.size(18.dp))
-                    Text(
-                        text = "${question.content} - Type ${question.answers.answerType.displayName}",
-                        fontSize = 16.sp
-                    )
-                }
             }
         }
         DropdownMenu(

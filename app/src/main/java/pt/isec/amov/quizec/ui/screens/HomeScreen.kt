@@ -55,7 +55,6 @@ fun HomeScreenLandscape(
 
 }
 
-@Preview(showBackground = true)
 @Composable
 fun HomeScreenPortrait(
     modifier: Modifier = Modifier,
@@ -88,10 +87,6 @@ fun HomeScreenPortrait(
                 textStyle = TextStyle(fontSize = 48.sp),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
-                //TF TODO: se usarmos o teclado do pc da para meter letras
-                //tF TODO: experimentar sem o Default.Copy para ver o q faz
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number),
                 trailingIcon = {
                     IconButton(
                         onClick = { /*TODO*/ },
