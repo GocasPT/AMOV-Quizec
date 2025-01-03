@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.utils
 
+import android.util.Log
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
@@ -29,12 +30,23 @@ class SRealTimeUtil {
                 filter = FilterOperation("lobby_code", FilterOperator.EQ, lobbyCode)
             )
 
+            Log.d("SRealTimeUtil", "dataFlow: $dataFlow")
+
             return dataFlow.map { lobbyUsers ->
                 lobbyUsers.map { lobbyUser ->
-                    val user = dbClient.from("profiles").select {
+                    Log.d("SRealTimeUtil", "lobbyUser: $lobbyUser")
+                    Log.d("SRealTimeUtil", "userUUID: ${lobbyUser.user_id}")
+
+                    val user = dbClient.from(Constants.PROFILES_TABLE).select {
                         filter { eq("id", lobbyUser.user_id) }
-                    }.decodeSingleOrNull<User>()
-                    user ?: User()
+                    }.decodeSingle<User>()
+
+                    Log.d("SRealTimeUtil", "user: $user")
+
+                    //TODO: set user email
+                    //user.email =
+
+                    user
                 }
             }
         }

@@ -37,18 +37,21 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(
+    username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: () -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
         HomeScreenLandscape(
+            username = username,
             onJoinLobby = onJoinLobby,
             onCreateLobby = onCreateLobby,
             modifier = modifier
         )
     else
         HomeScreenPortrait(
+            username = username,
             onJoinLobby = onJoinLobby,
             onCreateLobby = onCreateLobby,
             modifier = modifier
@@ -57,17 +60,19 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreenLandscape(
+    username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: () -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
+    //TODO: implement
 }
 
 @Composable
 fun HomeScreenPortrait(
+    username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: () -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -79,7 +84,7 @@ fun HomeScreenPortrait(
             .padding(24.dp)
     ) {
         Text(
-            text = "Welcome, TIAGO",
+            text = "Welcome, $username",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -94,7 +99,9 @@ fun HomeScreenPortrait(
             OutlinedTextField(
                 value = code.value,
                 onValueChange = { if (it.length <= 6) code.value = it },
-                label = { Text("JOIN QUIZ:") },
+                label = {
+                    Text("JOIN QUIZ:")
+                },
                 textStyle = TextStyle(fontSize = 48.sp),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -126,7 +133,10 @@ fun HomeScreenPortrait(
             )
             Spacer(modifier = Modifier.height(12.dp))
             ElevatedButton(
-                onClick = onCreateLobby, //TODO: popup/modal OR QuizListScreen?
+                onClick = {
+                    //TODO: popup/modal OR QuizListScreen?
+                    onCreateLobby(1, 120)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -141,8 +151,9 @@ fun HomeScreenPortrait(
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
+        username = "Tiago",
         onJoinLobby = {},
-        onCreateLobby = {},
+        onCreateLobby = { _, _ -> },
         modifier = Modifier.fillMaxSize()
     )
 }

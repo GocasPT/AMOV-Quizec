@@ -1,6 +1,8 @@
-package pt.isec.amov.quizec.ui.viewmodels
+package pt.isec.amov.quizec.ui.viewmodels.app
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +17,7 @@ import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
 import pt.isec.amov.quizec.utils.CodeGen
+import pt.isec.amov.quizec.utils.Constants
 import pt.isec.amov.quizec.utils.SAuthUtil
 import pt.isec.amov.quizec.utils.SRealTimeUtil
 import pt.isec.amov.quizec.utils.SStorageUtil
@@ -26,14 +29,19 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     //TODO: add data variables
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
-    private var _currentQuestion = mutableStateOf<Question?>(null)
-    private var _currentLobby = mutableStateOf<Lobby?>(null)
     val currentQuiz: Quiz? get() = _currentQuiz.value
-    val currentQuestion: Question? get() = _currentQuestion.value
-    val currentLobby: Lobby? get() = _currentLobby.value
 
-    var _currentLobbyPlayerCount = mutableStateOf(0)
-    var _currentLobbyPlayers = mutableListOf<User>()
+    private var _currentQuestion = mutableStateOf<Question?>(null)
+    val currentQuestion: Question? get() = _currentQuestion.value
+
+    private var _currentLobby = mutableStateOf<Lobby?>(null)
+    val currentLobby: State<Lobby?> get() = _currentLobby
+
+    private var _currentLobbyPlayerCount = mutableIntStateOf(0)
+    val currentLobbyPlayerCount: State<Int> get() = _currentLobbyPlayerCount
+
+    private var _currentLobbyPlayers = mutableListOf<User>()
+    val currentLobbyPlayers: MutableList<User> get() = _currentLobbyPlayers
 
     fun createQuestion() {
         _currentQuestion.value = null
@@ -180,7 +188,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     fun joinLobby(lobbyCode: String) {
         viewModelScope.launch {
             try {
-                val lobby = dbClient.from("lobby").select {
+                val lobby = dbClient.from(Constants.LOBBY_TABLE).select {
                     filter {
                         eq("lobby_code", lobbyCode)
                     }
@@ -194,7 +202,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
                 Log.d("QuizecViewModel", "joinLobby: $lobby")
 
-                dbClient.from("lobby_user").insert(
+                dbClient.from(Constants.LOBBY_USERS_TABLE).insert(
                     hashMapOf(
                         "lobby_code" to lobby.code,
                         "user_id" to SAuthUtil.currentUser!!.id
@@ -212,9 +220,11 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     fun getPlayerCount() {
         viewModelScope.launch {
-            val flow: Flow<List<User>> = SRealTimeUtil.getFlowPlayer(currentLobby!!.code)
+            val flow: Flow<List<User>> = SRealTimeUtil.getFlowPlayer(currentLobby.value!!.code)
             flow.collect {
-                _currentLobbyPlayerCount.value = it.size
+                Log.d("QuizecViewModel", "getPlayerCount: $it")
+
+                _currentLobbyPlayerCount.intValue = it.size
 
                 //TODO: clear + add OR update/swap?
                 _currentLobbyPlayers.clear()

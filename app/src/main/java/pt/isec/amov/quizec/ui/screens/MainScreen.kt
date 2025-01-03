@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.viewmodels
+package pt.isec.amov.quizec.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,12 +24,11 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.ui.screens.HomeScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
+import pt.isec.amov.quizec.ui.screens.lobby.ConfigLobbyScreen
 import pt.isec.amov.quizec.ui.screens.lobby.LobbyScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
@@ -37,6 +36,7 @@ import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 sealed class BottomNavBarItem(
     var title: String,
@@ -160,28 +160,34 @@ fun MainScreen(
         ) {
             composable("home") {
                 HomeScreen(
+                    username = user!!.username,
                     onJoinLobby = { code ->
                         viewModel.joinLobby(code)
                         navController.navigate("lobby")
                     },
-                    onCreateLobby = {
+                    onCreateLobby = { quizId, duration ->
                         /* TODO: create lobby
                             - go to quiz list
                             - select quiz
                             - viewModel.createLobby(quizId, ...)
                         */
+                        viewModel.createLobby(quizId, duration)
+                    }
+                )
+            }
+            composable("setup-lobby") {
+                ConfigLobbyScreen(
+                    owner = user!!,
+                    onCreateLobby = { /* TODO */
+                        viewModel.createLobby(1, 120)
+                        //TODO: nav to owner lobby screen (!= lobby screen OR show different screen for owner)
+                        //navController.navigate("lobby")
                     }
                 )
             }
             composable("lobby") {
                 LobbyScreen(
                     viewModel = viewModel,
-                    lobby = viewModel.currentLobby ?: Lobby(
-                        "123465",
-                        "321654",
-                        1,
-                        120
-                    ), //TODO: fix this
                 )
             }
             composable("quiz") {

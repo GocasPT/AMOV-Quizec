@@ -8,7 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import pt.isec.amov.quizec.ui.viewmodels.BottomNavBarItem
+import pt.isec.amov.quizec.ui.screens.BottomNavBarItem
 
 //sealed class BottomNavBarItem(
 //    var title: String,

@@ -6,29 +6,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.jan.supabase.createSupabaseClient
-import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
+import pt.isec.amov.quizec.model.User
 
 @Composable
-fun OwnerLobbyScreen(
-    viewModel: QuizecViewModel,
+fun ConfigLobbyScreen(
+    owner: User,
+    onCreateLobby: (/* TODO: add all params to setup the lobby */) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize(),
     ) {
-        Text("Lobby: ${viewModel.currentLobby.value?.code}")
-        Text("Players: ${viewModel.currentLobbyPlayerCount.value}")
+        Text("ConfigLobbyScreen")
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun OwnerLobbyScreenPreview() {
-    OwnerLobbyScreen(
-        viewModel = QuizecViewModel(
-            createSupabaseClient("", "") {}
-        ),
+fun ConfigLobbyScreenPreview() {
+    ConfigLobbyScreen(
+        owner = User("1", "batata_uuid", "batata"),
+        onCreateLobby = {}
     )
 }

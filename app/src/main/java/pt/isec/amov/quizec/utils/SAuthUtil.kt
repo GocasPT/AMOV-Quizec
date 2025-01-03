@@ -19,7 +19,6 @@ class SAuthUtil {
             _auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
-                //TODO: check this later
                 data = buildJsonObject {
                     put("username", username)
                 }

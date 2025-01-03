@@ -44,11 +44,11 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
+import pt.isec.amov.quizec.ui.viewmodels.auth.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: QuizecAuthViewModel,
+    viewModel: AuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
@@ -71,7 +71,7 @@ fun LoginScreen(
 
 @Composable
 fun LoginScreenLandscape(
-    viewModel: QuizecAuthViewModel,
+    viewModel: AuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,
@@ -80,7 +80,7 @@ fun LoginScreenLandscape(
 
 @Composable
 fun LoginScreenPortrait(
-    viewModel: QuizecAuthViewModel,
+    viewModel: AuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     modifier: Modifier = Modifier,

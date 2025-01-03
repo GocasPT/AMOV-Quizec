@@ -1,5 +1,6 @@
-package pt.isec.amov.quizec.ui.viewmodels
+package pt.isec.amov.quizec.ui.viewmodels.auth
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -18,7 +19,7 @@ fun UserInfo.toUser(): User {
     return User(id, displayName, strEmail)
 }
 
-class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
+class AuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
     private val _user = mutableStateOf(dbClient.auth.currentUserOrNull()?.toUser())
     val user: MutableState<User?>
         get() = _user
@@ -43,6 +44,7 @@ class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 SAuthUtil.signUpWithEmail(email, password, name)
                 _error.value = "Success"
             } catch (e: Exception) {
+                Log.e("AuthViewModel", e.message.toString())
                 _error.value = e.message
             }
         }
@@ -60,6 +62,7 @@ class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 _user.value = SAuthUtil.currentUser?.toUser()
                 _error.value = null
             } catch (e: Exception) {
+                Log.e("AuthViewModel", e.message.toString())
                 _error.value = e.message
             }
         }
