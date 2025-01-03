@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,6 +35,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -70,10 +74,10 @@ sealed class BottomNavBarItem(
             "History",
             Icons.Filled.History
         )
-    data object Logout :
+    data object Settings :
         BottomNavBarItem(
-            "Logout",
-            Icons.AutoMirrored.Filled.Logout
+            "Settings",
+            Icons.Filled.Settings
         )
 }
 
@@ -95,7 +99,7 @@ fun MainScreen(
         BottomNavBarItem.Quiz,
         BottomNavBarItem.Question,
         BottomNavBarItem.History,
-        BottomNavBarItem.Logout
+        BottomNavBarItem.Settings
     )
 
     //TODO: viewModel get the data and the screen wait until receive data
@@ -151,7 +155,8 @@ fun MainScreen(
                         "Quiz" -> navController.navigate("quiz")
                         "Question" -> navController.navigate("question")
                         "History" -> navController.navigate("history")
-                        "Logout" -> onSignOut()
+                        "Settings" -> navController.navigate("settings")
+//                        "Logout" -> onSignOut()
                     }
                 }
             )

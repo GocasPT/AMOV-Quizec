@@ -2,14 +2,18 @@ package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -30,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
@@ -100,27 +105,24 @@ fun RegisterScreenPortrait(
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopEnd),
-            contentAlignment = Alignment.TopEnd
+                .padding(top = 32.dp)
+                .clickable { onBack() },
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Top
         ) {
-            BasicText(
-                text = buildAnnotatedString {
-                    withLink(
-                        LinkAnnotation.Clickable(
-                            tag = "register",
-                            linkInteractionListener = {
-                                onBack()
-                            }
-                        )
-                    ) {
-                        append("< Back to Login")
-                    }
-                },
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Back to Login",
                 modifier = Modifier
-                    .padding(top = 32.dp),
+                    .size(24.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp))
+            Text(
+                text = "Back to Login",
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -270,10 +272,11 @@ fun RegisterScreenPortrait(
         }
 
         Button(
+            shape = RoundedCornerShape(percent = 20),
             onClick = {
                 onRegister(name.value, email.value, password.value, repeatPassword.value)
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D0B0D)),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D1C1F)),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp)

@@ -8,10 +8,13 @@ import androidx.activity.viewModels
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.QuizecApp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
@@ -36,6 +39,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+            val backgroundColorInt = ContextCompat.getColor(this, R.color.defaultBackground)
+            val backgroundColor = Color(backgroundColorInt)
+
             val navController = rememberNavController()
             val user by viewModelAuth.user
 
@@ -48,7 +55,9 @@ class MainActivity : ComponentActivity() {
             }
 
             QuizecTheme {
-                Surface {
+                Surface (
+                    color = backgroundColor,
+                ) {
                     NavHost(
                         navController = navController,
                         startDestination = LOGIN_SCREEN,
