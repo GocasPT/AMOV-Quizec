@@ -17,10 +17,10 @@ class SStorageUtil {
     companion object {
         private val dbClient get() = QuizecApp.getInstance().dbClient
 
-        val quiz = hashMapOf(
-            "title" to "Quiz X",
-        )
-        suspend fun saveQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?, Question?) -> Unit) {
+        suspend fun saveQuestionDatabase(
+            question: Question,
+            onResult: (Throwable?, Question?) -> Unit
+        ) {
             try {
                 val updatedQuestion = dbClient.from("question").insert(question) {
                     select()
@@ -31,11 +31,7 @@ class SStorageUtil {
             }
         }
 
-        //TODO: improve onResult handler
-        suspend fun addDataToSupabase(onResult: (Throwable?) -> Unit) {
-            dbClient.from("quiz").insert(quiz)
-            onResult(null)
-        suspend fun updateQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+        suspend fun updateQuestionDatabase(question: Question, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("question").update(question) {
                     filter {
@@ -48,11 +44,7 @@ class SStorageUtil {
             }
         }
 
-        //TODO: improve onResult handler
-        suspend fun updateDataInSupabase(onResult: (Throwable?) -> Unit) {
-            dbClient.from("quiz").upsert(quiz)
-            onResult(null)
-        suspend fun deleteQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+        suspend fun deleteQuestionDatabase(question: Question, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("question").delete {
                     filter {
@@ -65,7 +57,7 @@ class SStorageUtil {
             }
         }
 
-        suspend fun saveQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?, Quiz?) -> Unit) {
+        suspend fun saveQuizDatabase(quiz: Quiz, onResult: (Throwable?, Quiz?) -> Unit) {
             try {
                 val updatedQuiz = dbClient.from("quiz")
                     .insert(quiz.copy(questions = null)) {
@@ -74,7 +66,8 @@ class SStorageUtil {
                     .decodeSingle<Quiz>()
 
                 quiz.questions?.forEach { question ->
-                    dbClient.from("quiz_question").insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
+                    dbClient.from("quiz_question")
+                        .insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
                 }
 
                 quiz.id = updatedQuiz.id
@@ -84,13 +77,13 @@ class SStorageUtil {
             }
         }
 
-        suspend fun updateQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
+        suspend fun updateQuizDatabase(quiz: Quiz, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("quiz").update(
                     {
                         set("title", quiz.title)
                     }
-                )  {
+                ) {
                     filter {
                         eq("id", quiz.id!!)
                     }
@@ -112,7 +105,11 @@ class SStorageUtil {
             }
         }
 
-        suspend fun deleteQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
+        suspend fun deleteQuizDatabase(
+            dbClient: SupabaseClient,
+            quiz: Quiz,
+            onResult: (Throwable?) -> Unit
+        ) {
             try {
                 dbClient.from("quiz_question").delete {
                     filter {
@@ -155,7 +152,7 @@ class SStorageUtil {
         fun stopObserver() {
             listenerRegistration?.remove()
         }
-         */
+        */
 
         //TODO: Flow VS .channel()
 

@@ -31,7 +31,7 @@ import pt.isec.amov.quizec.model.question.QuestionType
 @Composable
 fun ManageQuestionScreen(
     question: Question?,
-    userId : String,
+    userId: String,
     saveQuestion: (Question) -> Unit
 ) {
     var questionContent by remember { mutableStateOf(question?.content ?: "") }

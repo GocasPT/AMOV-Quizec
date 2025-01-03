@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,8 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.components.CustomList
 
@@ -38,17 +42,24 @@ fun QuizListScreen(
     onSelectQuiz: (Quiz) -> Unit,
     onCreateQuiz: () -> Unit,
     onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
+    onDeleteQuiz: (Quiz) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onCreateQuiz() }) {
-            Text("+")
+            onClick = onCreateQuiz
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Create Quiz")
         }
         CustomList(
             items = quizList,
-            onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
+            onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }
+        ) { quiz, onSelect ->
             QuizCard(
                 quiz = quiz as Quiz,
                 onSelectQuiz = { onSelect(quiz) },
@@ -151,4 +162,37 @@ fun QuizCard(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizListScreenPreview() {
+    QuizListScreen(
+        quizList = listOf(
+            Quiz(
+                null, "Quiz 1", null, "Sr. batata", listOf(
+                    Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+                    Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+                )
+            ),
+            Quiz(
+                null, "Quiz 2", null, "Sr. batata", listOf(
+                    Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(
+                        null,
+                        "Question 4",
+                        null,
+                        Answer.MultipleChoice(setOf()),
+                        "Sr. batata"
+                    ),
+                )
+            )
+        ),
+        onSelectQuiz = {},
+        onCreateQuiz = {},
+        onEditQuiz = {},
+        onDeleteQuiz = {}
+    )
 }

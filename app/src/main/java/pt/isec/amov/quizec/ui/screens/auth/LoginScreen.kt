@@ -28,22 +28,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.R
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 
 @Composable
@@ -54,9 +54,19 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        LoginScreenLandscape(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
+        LoginScreenLandscape(
+            modifier = modifier,
+            onLogin = onLogin,
+            onRegister = onRegister,
+            viewModel = viewModel
+        )
     else
-        LoginScreenPortrait(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
+        LoginScreenPortrait(
+            modifier = modifier,
+            onLogin = onLogin,
+            onRegister = onRegister,
+            viewModel = viewModel
+        )
 }
 
 @Composable

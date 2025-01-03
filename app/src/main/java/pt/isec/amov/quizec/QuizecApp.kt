@@ -15,7 +15,7 @@ class QuizecApp : Application() {
         fun getInstance(): QuizecApp =
             instance ?: throw IllegalStateException("QuizecApp not initialized")
     }
-    
+
     // Yes, the URL and Key are public safe, doesn't need to be hidden
     private val _dbClient: SupabaseClient by lazy {
         createSupabaseClient(

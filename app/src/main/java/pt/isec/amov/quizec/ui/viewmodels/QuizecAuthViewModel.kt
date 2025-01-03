@@ -27,7 +27,7 @@ class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
     val error: MutableState<String?>
         get() = _error
 
-    fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
+    fun signUpWithEmail(email: String, password: String, repeatedPassword: String, name: String) {
         if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
             _error.value = "Please fill in the blanks."
             return

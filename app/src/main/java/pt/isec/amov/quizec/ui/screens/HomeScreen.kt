@@ -15,12 +15,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,26 +37,39 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
-    ) {
+) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        HomeScreenLandscape(modifier = modifier)
+        HomeScreenLandscape(
+            onJoinLobby = onJoinLobby,
+            onCreateLobby = onCreateLobby,
+            modifier = modifier
+        )
     else
-        HomeScreenPortrait(modifier = modifier)
+        HomeScreenPortrait(
+            onJoinLobby = onJoinLobby,
+            onCreateLobby = onCreateLobby,
+            modifier = modifier
+        )
 }
 
 @Composable
 fun HomeScreenLandscape(
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
-    ) {
+) {
 
 }
 
-@Preview(showBackground = true)
 @Composable
 fun HomeScreenPortrait(
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
-    ) {
+) {
 
     val code = remember { mutableStateOf("") }
 
@@ -91,10 +101,11 @@ fun HomeScreenPortrait(
                 //TF TODO: se usarmos o teclado do pc da para meter letras
                 //tF TODO: experimentar sem o Default.Copy para ver o q faz
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number),
+                    keyboardType = KeyboardType.Text
+                ),
                 trailingIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { onJoinLobby(code.value) },
                         enabled = code.value.length == 6,
                         modifier = Modifier
                             .padding(16.dp)
@@ -102,7 +113,8 @@ fun HomeScreenPortrait(
                                 color =
                                 if (code.value.length == 6) Color(171, 7, 7, 255)
                                 else Color.Gray,
-                                shape = CircleShape)
+                                shape = CircleShape
+                            )
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
@@ -114,7 +126,7 @@ fun HomeScreenPortrait(
             )
             Spacer(modifier = Modifier.height(12.dp))
             ElevatedButton(
-                onClick = {/*TODO*/},
+                onClick = onCreateLobby, //TODO: popup/modal OR QuizListScreen?
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -123,4 +135,14 @@ fun HomeScreenPortrait(
 
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        onJoinLobby = {},
+        onCreateLobby = {},
+        modifier = Modifier.fillMaxSize()
+    )
 }

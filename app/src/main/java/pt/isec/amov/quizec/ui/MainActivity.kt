@@ -67,7 +67,12 @@ class MainActivity : ComponentActivity() {
                         composable(REGISTER_SCREEN) {
                             RegisterScreen(
                                 onRegister = { name, email, password, repeatPassword ->
-                                    viewModelAuth.signUpWithEmail(email, password, repeatPassword, name)
+                                    viewModelAuth.signUpWithEmail(
+                                        email,
+                                        password,
+                                        repeatPassword,
+                                        name
+                                    )
                                 },
                                 onBack = {
                                     navController.navigate(LOGIN_SCREEN) {

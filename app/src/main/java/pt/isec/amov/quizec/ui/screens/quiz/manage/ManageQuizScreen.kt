@@ -29,14 +29,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 
 @Composable
 fun ManageQuizScreen(
     quiz: Quiz?,
-    userId : String,
+    userId: String,
     questionList: List<Question>,
     saveQuiz: (Quiz) -> Unit
 ) {
@@ -225,4 +227,25 @@ fun QuestionCard(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ManageQuizScreenPreview() {
+    ManageQuizScreen(
+        quiz = null,
+        userId = "1",
+        questionList = listOf(
+            Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 4", null, Answer.MultipleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 5", null, Answer.Matching(setOf()), "Sr. batata"),
+            Question(null, "Question 6", null, Answer.Ordering(listOf()), "Sr. batata"),
+            Question(null, "Question 7", null, Answer.Drag(setOf()), "Sr. batata"),
+            Question(null, "Question 8", null, Answer.Drag(setOf()), "Sr. batata"),
+            Question(null, "Question 9", null, Answer.FillBlank(setOf()), "Sr. batata"),
+        ),
+        saveQuiz = {}
+    )
 }
