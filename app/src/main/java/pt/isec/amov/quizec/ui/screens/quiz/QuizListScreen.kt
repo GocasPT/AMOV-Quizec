@@ -26,6 +26,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -137,6 +138,7 @@ fun QuizListScreen(
 //            }
 //        }
 
+        //TD: todo horizontalArrangement = Arrangement.spacedBy(16.dp)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,7 +162,7 @@ fun QuizListScreen(
                 }
             }
 
-            TextField(
+            OutlinedTextField(
                 value = searchText,
                 onValueChange = {
                     searchText = it
@@ -243,35 +245,33 @@ fun QuizCardV2(
             quiz.image?.let {
                 Image(
                     modifier = Modifier
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.6f)
-                                )
-                            )
-                        )
                         .fillMaxSize(),
                     //TODO: get image from string and "return" image/file
                     //painter = painterResource(it),
                     painter = painterResource(R.drawable.quizec_1080),
                     contentDescription = "Quiz Image",
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.Crop
                 )
             } ?: Image(
                 modifier = Modifier
+                    .fillMaxSize(),
+                painter = painterResource(R.drawable.quizec_1080),
+                contentDescription = "Quiz Image",
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.6f)
-                            )
+                                Color.Gray.copy(alpha = 0.8f)
+                            ),
+                            startY = 0f,
                         )
                     )
-                    .fillMaxSize(),
-                painter = painterResource(R.drawable.quizec_1080),
-                contentDescription = "Quiz Image",
-                contentScale = ContentScale.FillWidth
             )
 
             Box(
@@ -284,7 +284,7 @@ fun QuizCardV2(
                     text = quiz.title,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Gray
+                    color = Color.White
                 )
             }
         }

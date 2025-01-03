@@ -1,9 +1,12 @@
 package pt.isec.amov.quizec.ui
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -109,6 +112,51 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        //TODO: add permissions requests checkers
+
+        //Permissões
+        //verificar se foi dada ou não permissão à camera
+        //o método checkSelfPermission devolve um booleano
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED) {
+            //se não foi dada permissão, pedir
+            //novo formato (c/ recurso a contratos):
+            askSinglePermission.launch(android.Manifest.permission.CAMERA)
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+            ||
+            ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED ) {
+            askMultiplePermission.launch(
+                arrayOf(
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            )
+        }
+    }
+
+    private val askSinglePermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+            if (granted)
+                Toast.makeText(this, "Permissão para a câmera concedida!", Toast.LENGTH_SHORT).show()
+            else
+                Toast.makeText(this, "Permissão para a câmera não concedida!", Toast.LENGTH_SHORT).show()
+    }
+
+    private val askMultiplePermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val deniedPermissions = permissions.filterValues { !it }
+        if (deniedPermissions.isEmpty())
+            Toast.makeText(this, "Todas as permissões concedidas!", Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(this, "Permissões negadas: ${deniedPermissions.keys.joinToString(", ")}", Toast.LENGTH_LONG).show()
     }
 }
