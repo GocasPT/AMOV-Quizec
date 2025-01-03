@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
             val backgroundColorInt = ContextCompat.getColor(this, R.color.defaultBackground)
             val backgroundColor = Color(backgroundColorInt)
 
@@ -64,13 +63,14 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(LOGIN_SCREEN) {
                             LoginScreen(
-                                viewModelAuth,
                                 onLogin = { email, password ->
                                     viewModelAuth.signInWithEmail(email, password)
                                 },
                                 onRegister = {
                                     navController.navigate(REGISTER_SCREEN)
-                                }
+                                },
+                                errorMessageText = viewModelAuth.error.value,
+                                clearError = { viewModelAuth.clearError() }
                             )
                         }
                         composable(REGISTER_SCREEN) {
@@ -89,7 +89,8 @@ class MainActivity : ComponentActivity() {
                                     }
                                     viewModelAuth.clearError()
                                 },
-                                errorMessageText = viewModelAuth.error.value
+                                errorMessageText = viewModelAuth.error.value,
+                                clearError = { viewModelAuth.clearError() }
                             )
                         }
                         composable(MAIN_SCREEN) {

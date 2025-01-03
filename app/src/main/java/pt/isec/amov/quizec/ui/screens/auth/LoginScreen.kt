@@ -3,7 +3,6 @@ package pt.isec.amov.quizec.ui.screens.auth
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,26 +49,28 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
+import pt.isec.amov.quizec.ui.screens.SnackBar
 
 @Composable
 fun LoginScreen(
-    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        LoginScreenLandscape(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
+        LoginScreenLandscape(modifier = modifier, onLogin = onLogin, onRegister = onRegister, errorMessageText = errorMessageText, clearError = clearError)
     else
-        LoginScreenPortrait(modifier = modifier, onLogin = onLogin, onRegister = onRegister, viewModel = viewModel)
+        LoginScreenPortrait(modifier = modifier, onLogin = onLogin, onRegister = onRegister, errorMessageText = errorMessageText, clearError = clearError)
 }
 
 @Composable
 fun LoginScreenLandscape(
-    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 }
@@ -77,9 +78,10 @@ fun LoginScreenLandscape(
 @SuppressLint("ResourceAsColor")
 @Composable
 fun LoginScreenPortrait(
-    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -157,15 +159,6 @@ fun LoginScreenPortrait(
                 }
             )
             Spacer(modifier = Modifier.height(12.dp))
-            if (viewModel.error.value != null) {
-                Text(
-                    text = "Error: ${viewModel.error.value}",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
             Button(
                 shape = RoundedCornerShape(percent = 20),
                 onClick = {
@@ -206,6 +199,12 @@ fun LoginScreenPortrait(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp),
             style = MaterialTheme.typography.bodyMedium,
+        )
+
+        SnackBar(
+            error = errorMessageText,
+            clearError = clearError,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }

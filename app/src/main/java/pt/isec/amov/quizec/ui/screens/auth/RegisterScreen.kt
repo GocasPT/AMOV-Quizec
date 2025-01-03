@@ -32,7 +32,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
@@ -41,12 +40,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.window.Dialog
+import pt.isec.amov.quizec.ui.screens.SnackBar
 
 @Composable
 fun RegisterScreen(
@@ -54,13 +51,14 @@ fun RegisterScreen(
     onBack: () -> Unit,
     onSuccess : () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?
+    errorMessageText : String?,
+    clearError : () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
+        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText, clearError = clearError)
     else
-        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText)
+        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText, clearError = clearError)
 
 }
 
@@ -70,7 +68,8 @@ fun RegisterScreenLandscape(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
 
 }
@@ -81,7 +80,8 @@ fun RegisterScreenPortrait(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
@@ -89,13 +89,11 @@ fun RegisterScreenPortrait(
     val repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showRepeatPassword by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(errorMessageText) {
-        errorMessage = errorMessageText
-        if(errorMessage.equals("Success")) {
+        if(errorMessageText.equals("Success")) {
             showDialog = true
         }
     }
@@ -226,16 +224,6 @@ fun RegisterScreenPortrait(
                 }
             )
 
-            if (errorMessage != null && !errorMessage.equals("Success")) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-
             if (showDialog) {
                 Dialog(onDismissRequest = { }) {
                     Box(
@@ -284,5 +272,11 @@ fun RegisterScreenPortrait(
         ) {
             Text("REGISTER")
         }
+
+        SnackBar(
+            error = errorMessageText,
+            clearError = clearError,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
