@@ -1,31 +1,20 @@
 package pt.isec.amov.quizec.ui.viewmodels
 
-import android.util.Log
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,33 +41,11 @@ sealed class BottomNavBarItem(
     var title: String,
     var icon: ImageVector
 ) {
-    data object Home :
-        BottomNavBarItem(
-            "Home",
-            Icons.Filled.Home
-        )
-
-    data object Quiz :
-        BottomNavBarItem(
-            "Quiz",
-            Icons.Filled.ContentPaste
-        )
-
-    data object Question :
-        BottomNavBarItem(
-            "Question",
-            Icons.Filled.Checklist
-        )
-    data object History :
-        BottomNavBarItem(
-            "History",
-            Icons.Filled.History
-        )
-    data object Settings :
-        BottomNavBarItem(
-            "Settings",
-            Icons.Filled.Settings
-        )
+    class Home(title: String) : BottomNavBarItem(title, Icons.Filled.Home)
+    class Quiz(title: String) : BottomNavBarItem(title, Icons.Filled.ContentPaste)
+    class Question(title: String) : BottomNavBarItem(title, Icons.Filled.Checklist)
+    class History(title: String) : BottomNavBarItem(title, Icons.Filled.History)
+    class Settings(title: String) : BottomNavBarItem(title, Icons.Filled.Settings)
 }
 
 @Composable
@@ -90,19 +57,25 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     val currentScreen by navController.currentBackStackEntryAsState()
-    navController.addOnDestinationChangedListener { _, destination, _ ->
-        Log.d("Destination changed", destination.route.toString())
-    }
+
+    val homeText = stringResource(id = R.string.home)
+    val quizText = stringResource(id = R.string.quiz)
+    val questionText = stringResource(id = R.string.question)
+    val historyText = stringResource(id = R.string.history)
+    val settingsText = stringResource(id = R.string.settings)
+    val showQuiz = stringResource(id = R.string.showQuiz)
+    val showQuestion = stringResource(id = R.string.showQuestion)
+    val manageQuiz = stringResource(id = R.string.managequiz)
+    val manageQuestion = stringResource(id = R.string.manageQuestion)
 
     val items = listOf(
-        BottomNavBarItem.Home,
-        BottomNavBarItem.Quiz,
-        BottomNavBarItem.Question,
-        BottomNavBarItem.History,
-        BottomNavBarItem.Settings
+        BottomNavBarItem.Home(title = homeText),
+        BottomNavBarItem.Quiz(title = quizText),
+        BottomNavBarItem.Question(title = questionText),
+        BottomNavBarItem.History(title = historyText),
+        BottomNavBarItem.Settings(title = settingsText),
     )
 
-    //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             viewModel.dbClient
@@ -151,77 +124,73 @@ fun MainScreen(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("home")
-                        "Quiz" -> navController.navigate("quiz")
-                        "Question" -> navController.navigate("question")
-                        "History" -> navController.navigate("history")
-                        "Settings" -> navController.navigate("settings")
-//                        "Logout" -> onSignOut()
+                        homeText -> navController.navigate(homeText)
+                        quizText -> navController.navigate(quizText)
+                        questionText -> navController.navigate(questionText)
+                        historyText -> navController.navigate(historyText)
+                        settingsText -> navController.navigate(settingsText)
                     }
                 }
             )
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "home",
+            startDestination = homeText,
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
-            composable("home") {
+            composable(homeText) {
                 HomeScreen()
             }
-            composable("quiz") {
+            composable(quizText) {
                 QuizListScreen(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
-                        Log.d("Quiz selected", quiz.title)
                         viewModel.selectQuiz(quiz)
-                        navController.navigate("show-quiz")
+                        navController.navigate(showQuiz)
                     },
                     onCreateQuiz = {
                         viewModel.createQuiz()
-                        navController.navigate("manageQuiz")
+                        navController.navigate(manageQuiz)
                     },
                     onEditQuiz = { quiz ->
                         viewModel.selectQuiz(quiz)
-                        navController.navigate("manageQuiz")
+                        navController.navigate(manageQuiz)
                     },
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
                     }
                 )
             }
-            composable("show-quiz") {
+            composable(showQuiz) {
                 viewModel.currentQuiz?.let {
-                    Log.d("Quiz selected", viewModel.currentQuiz!!.title)
                     QuizShowScreen(quiz = viewModel.currentQuiz!!)
                 }
             }
-            composable("manageQuiz") {
+            composable(manageQuiz) {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
                     userId = user!!.id,
                     questionList = viewModel.questionList.getQuestionList(),
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
-                        navController.navigate("quiz")
+                        navController.navigate(quizText)
                     }
                 )
             }
-            composable("question") {
+            composable(questionText) {
                 QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
-                        Log.d("Question selected", question.content)
                         viewModel.selectQuestion(question)
-                        navController.navigate("show-question")
+                        navController.navigate(showQuiz)
                     },
                     onCreateQuestion = {
                         viewModel.createQuestion()
-                        navController.navigate("manageQuestion")
+                        navController.navigate(manageQuestion)
                     },
                     onEditQuestion = { question ->
                         viewModel.selectQuestion(question)
-                        navController.navigate("manageQuestion")
+                        navController.navigate(manageQuestion)
                     },
                     onDeleteQuestion = { question ->
                         viewModel.deleteQuestion(question)
@@ -229,20 +198,19 @@ fun MainScreen(
                 )
             }
 
-            composable("show-question") {
+            composable(showQuestion) {
                 viewModel.currentQuestion?.let {
-                    Log.d("Question selected", viewModel.currentQuestion!!.content)
                     QuestionShowScreen(question = viewModel.currentQuestion!!)
                 }
             }
 
-            composable("manageQuestion") {
+            composable(manageQuestion) {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion,
                     userId = user!!.id,
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
-                        navController.navigate("question")
+                        navController.navigate(questionText)
                     }
                 )
             }

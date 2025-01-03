@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.launch
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
 import pt.isec.amov.quizec.utils.SStorageUtil
+import pt.isec.amov.quizec.utils.Strings
 
 class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
@@ -37,13 +39,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 try {
                     SStorageUtil.updateQuestionDatabase(dbClient, question) { e ->
                         if (e != null) {
-                            Log.d("QuizecViewModel", "Error updating question: $e")
+                            Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_updating_question) + e)
                         } else {
                             questionList.updateQuestion(question)
                         }
                     }
                 } catch (e: Throwable) {
-                    Log.d("QuizecViewModel", "Error updating question: $e")
+                    Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_updating_question) + e)
                 }
             }
         } else {
@@ -51,13 +53,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 try {
                     SStorageUtil.saveQuestionDatabase(dbClient, question) { e, updatedQuestion ->
                         if (e != null) {
-                            Log.d("QuizecViewModel", "Error saving question: $e")
+                            Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_saving_question) + e)
                         } else {
                             questionList.addQuestion(updatedQuestion!!)
                         }
                     }
                 } catch (e: Throwable) {
-                    Log.d("QuizecViewModel", "Error saving question: $e")
+                    Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_saving_question) + e)
                 }
             }
         }
@@ -69,13 +71,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
             try {
                 SStorageUtil.deleteQuestionDatabase(dbClient, question) { e ->
                     if (e != null) {
-                        Log.d("QuizecViewModel", "Error deleting question: $e")
+                        Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_deleting_question) + e)
                     } else {
                         questionList.removeQuestion(question)
                     }
                 }
             } catch (e: Throwable) {
-                Log.d("QuizecViewModel", "Error deleting question: $e")
+                Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_deleting_question) + e)
             }
         }
     }
@@ -94,13 +96,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 try {
                     SStorageUtil.updateQuizDatabase(dbClient, quiz) { e ->
                         if (e != null) {
-                            Log.d("QuizecViewModel", "Error updating quiz: $e")
+                            Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_updating_quiz) + e)
                         } else {
                             quizList.updateQuiz(quiz)
                         }
                     }
                 } catch (e: Throwable) {
-                    Log.d("QuizecViewModel", "Error updating quiz: $e")
+                    Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_updating_quiz) + e)
                 }
             }
         } else {
@@ -108,13 +110,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 try {
                     SStorageUtil.saveQuizDatabase(dbClient, quiz) { e, updatedQuiz ->
                         if (e != null) {
-                            Log.d("QuizecViewModel", "Error saving quiz: $e")
+                            Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_saving_quiz) + e)
                         } else {
                             quizList.addQuiz(updatedQuiz!!)
                         }
                     }
                 } catch (e: Throwable) {
-                    Log.d("QuizecViewModel", "Error saving quiz: $e")
+                    Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_saving_quiz) + e)
                 }
             }
         }
@@ -126,13 +128,13 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
             try {
                 SStorageUtil.deleteQuizDatabase(dbClient, quiz) { e ->
                     if (e != null) {
-                        Log.d("QuizecViewModel", "Error deleting quiz 1: $e")
+                        Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_deleting_quiz) + e)
                     } else {
                         quizList.removeQuiz(quiz)
                     }
                 }
             } catch (e: Throwable) {
-                Log.d("QuizecViewModel", "Error deleting quiz 2: $e")
+                Log.d(Strings.get(R.string.quizecviewmodel), Strings.get(R.string.error_deleting_quiz) + e)
             }
         }
     }

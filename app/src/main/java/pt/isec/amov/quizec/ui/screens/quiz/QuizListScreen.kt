@@ -39,7 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -169,10 +169,10 @@ fun QuizListScreen(
                 modifier =
                     Modifier
                         .weight(1f),
-                placeholder = { Text("Search") },
+                placeholder = { Text(stringResource(R.string.search)) },
                 singleLine = true,
                 leadingIcon = {
-                    Icon(Icons.Filled.Search, "Search")
+                    Icon(Icons.Filled.Search, stringResource(R.string.search))
                 }
             )
         }
@@ -207,10 +207,10 @@ fun QuizListScreen(
             Icon(
                 modifier = Modifier
                     .padding(2.dp),
-                contentDescription = "Create Quiz",
+                contentDescription = stringResource(R.string.create_quiz),
                 imageVector = Icons.Filled.Add
             )
-            Text("CREATE QUIZ")
+            Text(stringResource(R.string.create_quiz_caps))
         }
     }
 }
@@ -388,20 +388,20 @@ fun QuizCard(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text(stringResource(R.string.view)) },
                 onClick = {
                     expanded = false
                 }
             )
             DropdownMenuItem(
-                text = { Text("Edit") },
+                text = { Text(stringResource(R.string.edit)) },
                 onClick = {
                     expanded = false
                     onEditQuiz(quiz)
                 }
             )
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text(stringResource(R.string.delete)) },
                 onClick = {
                     expanded = false
                     onDeleteQuiz(quiz)

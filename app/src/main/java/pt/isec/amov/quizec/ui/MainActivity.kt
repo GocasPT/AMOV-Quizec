@@ -23,12 +23,13 @@ import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelAuthFactory
 import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelFactory
+import pt.isec.amov.quizec.utils.Strings
 
 class MainActivity : ComponentActivity() {
     companion object {
-        const val LOGIN_SCREEN = "Login"
-        const val MAIN_SCREEN = "Main"
-        const val REGISTER_SCREEN = "Register"
+        val LOGIN_SCREEN = Strings.get(R.string.login)
+        val MAIN_SCREEN = Strings.get(R.string.main)
+        val REGISTER_SCREEN = Strings.get(R.string.register)
     }
 
     private val app: QuizecApp by lazy { application as QuizecApp }

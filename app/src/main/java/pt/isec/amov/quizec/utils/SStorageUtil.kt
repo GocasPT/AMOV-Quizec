@@ -3,6 +3,7 @@ package pt.isec.amov.quizec.utils
 import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.QuizQuestion
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -12,7 +13,7 @@ class SStorageUtil {
     companion object {
         suspend fun saveQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?, Question?) -> Unit) {
             try {
-                val updatedQuestion = dbClient.from("question").insert(question) {
+                val updatedQuestion = dbClient.from(Strings.get(R.string.DB_question)).insert(question) {
                     select()
                 }.decodeSingle<Question>()
                 onResult(null, updatedQuestion)
@@ -23,9 +24,9 @@ class SStorageUtil {
 
         suspend fun updateQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
             try {
-                dbClient.from("question").update(question) {
+                dbClient.from(Strings.get(R.string.DB_question)).update(question) {
                     filter {
-                        eq("id", question.id!!)
+                        eq(Strings.get(R.string.DB_id), question.id!!)
                     }
                 }
                 onResult(null)
@@ -36,9 +37,9 @@ class SStorageUtil {
 
         suspend fun deleteQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
             try {
-                dbClient.from("question").delete {
+                dbClient.from(Strings.get(R.string.DB_question)).delete {
                     filter {
-                        eq("id", question.id!!)
+                        eq(Strings.get(R.string.DB_id), question.id!!)
                     }
                 }
                 onResult(null)
@@ -49,14 +50,14 @@ class SStorageUtil {
 
         suspend fun saveQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?, Quiz?) -> Unit) {
             try {
-                val updatedQuiz = dbClient.from("quiz")
+                val updatedQuiz = dbClient.from(Strings.get(R.string.DB_quiz))
                     .insert(quiz.copy(questions = null)) {
                         select()
                     }
                     .decodeSingle<Quiz>()
 
                 quiz.questions?.forEach { question ->
-                    dbClient.from("quiz_question").insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
+                    dbClient.from(Strings.get(R.string.DB_quiz_question)).insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
                 }
 
                 quiz.id = updatedQuiz.id
@@ -68,24 +69,24 @@ class SStorageUtil {
 
         suspend fun updateQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
             try {
-                dbClient.from("quiz").update(
+                dbClient.from(Strings.get(R.string.DB_quiz)).update(
                     {
-                        set("title", quiz.title)
+                        set(Strings.get(R.string.DB_title), quiz.title)
                     }
                 )  {
                     filter {
-                        eq("id", quiz.id!!)
+                        eq(Strings.get(R.string.DB_id), quiz.id!!)
                     }
                 }
 
-                dbClient.from("quiz_question").delete {
+                dbClient.from(Strings.get(R.string.DB_quiz_question)).delete {
                     filter {
-                        eq("quiz_id", quiz.id!!)
+                        eq(Strings.get(R.string.DB_quiz_id), quiz.id!!)
                     }
                 }
 
                 quiz.questions?.forEach { question ->
-                    dbClient.from("quiz_question").insert(QuizQuestion(quiz.id!!, question.id!!))
+                    dbClient.from(Strings.get(R.string.DB_quiz_question)).insert(QuizQuestion(quiz.id!!, question.id!!))
                 }
 
                 onResult(null)
@@ -96,15 +97,15 @@ class SStorageUtil {
 
         suspend fun deleteQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
             try {
-                dbClient.from("quiz_question").delete {
+                dbClient.from(Strings.get(R.string.DB_quiz_question)).delete {
                     filter {
-                        eq("quiz_id", quiz.id!!)
+                        eq(Strings.get(R.string.DB_quiz_id), quiz.id!!)
                     }
                 }
 
-                dbClient.from("quiz").delete {
+                dbClient.from(Strings.get(R.string.DB_quiz)).delete {
                     filter {
-                        eq("id", quiz.id!!)
+                        eq(Strings.get(R.string.DB_id), quiz.id!!)
                     }
                 }
                 onResult(null)

@@ -25,7 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.SingleChoice
 
@@ -52,7 +54,7 @@ fun SingleChoiceQuestion(
         OutlinedTextField(
             value = newAnswer,
             onValueChange = { newAnswer = it },
-            label = { Text("Add Option") },
+            label = { Text(stringResource(R.string.add_option)) },
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -111,7 +113,7 @@ fun AnswerEntrySingleChoice(
                 IconButton(onClick = { onOptionDelete(answer) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Option"
+                        contentDescription = stringResource(R.string.delete_option)
                     )
                 }
             }

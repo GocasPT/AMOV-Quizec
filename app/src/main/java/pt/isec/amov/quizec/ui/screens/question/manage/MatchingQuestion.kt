@@ -23,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.Matching
 
@@ -55,14 +57,14 @@ fun MatchingQuestion(
             OutlinedTextField(
                 value = leftSide,
                 onValueChange = { leftSide = it },
-                label = { Text("Left Side") },
+                label = { Text(stringResource(R.string.left_side)) },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedTextField(
                 value = rightSide,
                 onValueChange = { rightSide = it },
-                label = { Text("Right Side") },
+                label = { Text(stringResource(R.string.right_side)) },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -77,7 +79,7 @@ fun MatchingQuestion(
                 },
                 enabled = leftSide.isNotEmpty() && rightSide.isNotEmpty()
             ) {
-                Text("Add Pair")
+                Text(stringResource(R.string.add_pair))
             }
         }
 
@@ -91,7 +93,7 @@ fun MatchingQuestion(
                 IconButton(
                     onClick = { matchingPairs = matchingPairs - pair }
                 ) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete Pair")
+                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_pair))
                 }
             }
         }

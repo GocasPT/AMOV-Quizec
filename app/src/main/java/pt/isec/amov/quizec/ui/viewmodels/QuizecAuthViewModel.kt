@@ -8,17 +8,19 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.utils.SAuthUtil
+import pt.isec.amov.quizec.utils.Strings
 
 fun UserInfo.toUser(): User {
     val id = this.id
     val displayName = this.userMetadata.toString()
-    val strEmail = this.email ?: "n.d."
+    val strEmail = this.email ?: Strings.get(R.string.n_a)
     return User(id, displayName, strEmail)
 }
 
-class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
+class QuizecAuthViewModel(private val dbClient : SupabaseClient) : ViewModel() {
     private val _user = mutableStateOf(dbClient.auth.currentUserOrNull()?.toUser())
     val user: MutableState<User?>
         get() = _user
@@ -29,19 +31,19 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
 
     fun signUpWithEmail(email: String, password: String, repeatedPassword : String, name: String) {
         if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
-            _error.value = "Please fill in the blanks."
+            _error.value = Strings.get(R.string.please_fill_in_the_blanks)
             return
         }
 
         if (password != repeatedPassword) {
-            _error.value = "Passwords do not match."
+            _error.value = Strings.get(R.string.passwords_do_not_match)
             return
         }
 
         viewModelScope.launch {
             try {
                 SAuthUtil.signUpWithEmail(email, password, name)
-                _error.value = "Success"
+                _error.value = Strings.get(R.string.success)
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -50,7 +52,7 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
 
     fun signInWithEmail(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
-            _error.value = "Email and password must be filled"
+            _error.value = Strings.get(R.string.please_fill_in_the_blanks)
             return
         }
 

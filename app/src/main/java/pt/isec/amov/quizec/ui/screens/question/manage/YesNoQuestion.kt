@@ -13,6 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 
 @Composable
@@ -33,11 +35,11 @@ fun YesNoQuestion(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("False")
+        Text(stringResource(R.string.false_text))
         Switch(
             checked = trueFalseAnswer,
             onCheckedChange = { trueFalseAnswer = it }
         )
-        Text("True")
+        Text(stringResource(R.string.true_text))
     }
 }

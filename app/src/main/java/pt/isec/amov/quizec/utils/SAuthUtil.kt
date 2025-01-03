@@ -11,6 +11,7 @@ import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import pt.isec.amov.quizec.R
 
 class SAuthUtil {
     companion object {
@@ -37,7 +38,7 @@ class SAuthUtil {
                 this.email = email
                 this.password = password
                 data = buildJsonObject {
-                    put("username", username)
+                    put(Strings.get(R.string.DB_username), username)
                 }
             }
         }

@@ -12,15 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -31,11 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isec.amov.quizec.R
 
 
 @Composable
@@ -61,6 +57,7 @@ fun HomeScreenPortrait(
     ) {
 
     val code = remember { mutableStateOf("") }
+    val welcomeText = stringResource(id = R.string.welcome)
 
     Box(
         modifier = modifier
@@ -68,7 +65,7 @@ fun HomeScreenPortrait(
             .padding(24.dp)
     ) {
         Text(
-            text = "Welcome, TIAGO",
+            text = "$welcomeText Tiago",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -83,7 +80,7 @@ fun HomeScreenPortrait(
             OutlinedTextField(
                 value = code.value,
                 onValueChange = { if (it.length <= 6) code.value = it },
-                label = { Text("JOIN QUIZ:") },
+                label = { Text(stringResource(R.string.join_quiz)) },
                 textStyle = TextStyle(fontSize = 48.sp),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -97,11 +94,12 @@ fun HomeScreenPortrait(
                                 color =
                                 if (code.value.length == 6) Color(171, 7, 7, 255)
                                 else Color.Gray,
-                                shape = CircleShape)
+                                shape = CircleShape
+                            )
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
-                            contentDescription = "Check",
+                            contentDescription = stringResource(R.string.check),
                             tint = Color(255, 255, 255, 255)
                         )
                     }
@@ -113,7 +111,7 @@ fun HomeScreenPortrait(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Text("CREATE ROOM ")
+                Text(stringResource(R.string.create_room))
             }
 
         }

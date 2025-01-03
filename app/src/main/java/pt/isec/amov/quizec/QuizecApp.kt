@@ -9,6 +9,15 @@ import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
 
 class QuizecApp : Application() {
+    companion object {
+        lateinit var instance: QuizecApp private set
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+    }
+
     // Yes, the URL and Key are public safe, doesn't need to be hidden
     private val _dbClient: SupabaseClient by lazy {
         createSupabaseClient(

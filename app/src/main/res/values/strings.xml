@@ -1,7 +1,90 @@
 <resources>
-    <string name="app_name">Quizec</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="app_name" translatable="false">Quizec</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password" translatable="false">Password</string>
+    <string name="register_caps">REGISTER</string>
+    <string name="login_caps">LOGIN</string>
+    <string name="don_t_have_an_account">"Don't have an account? "</string>
+    <string name="click_here_to_register">Click here to register.</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="register_tag">register</string>
+    <string name="logo_image">Logo Image</string>
+    <string name="false_text">False</string>
+    <string name="true_text">True</string>
+    <string name="add_option">Add Option</string>
+    <string name="delete_option">Delete Option</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="name">Name</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="registration_successful">Registration Successful!</string>
+    <string name="join_quiz">JOIN QUIZ:</string>
+    <string name="create_room">"CREATE ROOM "</string>
+    <string name="check" translatable="false">Check</string>
+    <string name="select_the_words">Select the words</string>
+    <string name="to_scramble">" to scramble"</string>
+    <string name="fill_in_the_blanks">Fill in the blanks</string>
+    <string name="by_selecting_the_words_from_the_text_above">" by selecting the words from the text above"</string>
+    <string name="question_text_preview">"Question Text Preview: "</string>
+    <string name="new_question">New Question</string>
+    <string name="edit_question">Edit Question</string>
+    <string name="question_text">Question Text</string>
+    <string name="create_question">Create Question</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="new_quiz">New Quiz</string>
+    <string name="edit_quiz">Edit Quiz</string>
+    <string name="quiz_title">Quiz Title</string>
+    <string name="select_questions">Select Questions</string>
+    <string name="create_quiz">Create Quiz</string>
+    <string name="remove">Remove</string>
+    <string name="add">Add</string>
+    <string name="left_side">Left Side</string>
+    <string name="right_side">Right Side</string>
+    <string name="add_pair">Add Pair</string>
+    <string name="delete_pair">Delete Pair</string>
+    <string name="question_type">Question Type</string>
+    <string name="question_image">Question image</string>
+    <string name="view">View</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="type">"Type: "</string>
+    <string name="success">Success</string>
+    <string name="home" translatable="false">Home</string>
+    <string name="quiz" translatable="false">Quiz</string>
+    <string name="question">Question</string>
+    <string name="history">History</string>
+    <string name="settings">Settings</string>
+    <string name="showQuiz">showQuiz</string>
+    <string name="managequiz">manageQuiz</string>
+    <string name="manageQuestion">manageQuestion</string>
+    <string name="showQuestion">showQuestion</string>
+    <string name="welcome">Welcome</string>
+    <string name="quizecviewmodel" translatable="false">QuizecViewModel</string>
+    <string name="error_updating_question">"Error updating question: "</string>
+    <string name="error_saving_question">"Error saving question: "</string>
+    <string name="error_deleting_question">"Error deleting question: "</string>
+    <string name="error_deleting_quiz">"Error deleting quiz: "</string>
+    <string name="error_saving_quiz">"Error saving quiz: "</string>
+    <string name="error_updating_quiz">"Error updating quiz: "</string>
+    <string name="n_a" translatable="false">N/A</string>
+    <string name="please_fill_in_the_blanks">Please fill in the blanks.</string>
+    <string name="passwords_do_not_match">Passwords do not match.</string>
+    <string name="true_or_false">True or False</string>
+    <string name="single_choice">Single Choice</string>
+    <string name="multiple_choice">Multiple Choice</string>
+    <string name="matching">Matching</string>
+    <string name="ordering">Ordering</string>
+    <string name="drag">Drag</string>
+    <string name="fill_in_the_blank">Fill in the blank</string>
+    <string name="search">Search</string>
+    <string name="create_quiz_caps">CREATE QUIZ</string>
+    <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="login" />
+    <string name="main">Main</string>
+    <string name="DB_question" translatable="false">question</string>
+    <string name="DB_quiz" translatable="false">quiz</string>
+    <string name="DB_quiz_question" translatable="false">quiz_question</string>
+    <string name="DB_title" translatable="false">title</string>
+    <string name="DB_quiz_id" translatable="false">quiz_id</string>
+    <string name="DB_id" translatable="false">id</string>
+    <string name="DB_username" translatable="false">username</string>
 </resources>
