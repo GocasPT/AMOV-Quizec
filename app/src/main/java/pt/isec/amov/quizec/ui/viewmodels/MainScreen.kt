@@ -145,27 +145,27 @@ fun MainScreen(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("home")
-                        "Quiz" -> navController.navigate("quiz")
-                        "Question" -> navController.navigate("question")
-                        "History" -> navController.navigate("history")
-                        "Settings" -> navController.navigate("settings")
+                        "Home" -> navController.navigate("Home")
+                        "Quiz" -> navController.navigate("Quiz")
+                        "Question" -> navController.navigate("Question")
+                        "History" -> navController.navigate("History")
+                        "Settings" -> navController.navigate("Settings")
                     }
                 }
             )
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "home",
+            startDestination = "Home",
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
-            composable("home") {
+            composable("Home") {
                 HomeScreen(
                     username = user!!.name,
                 )
             }
-            composable("quiz") {
+            composable("Quiz") {
                 QuizListScreen(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
@@ -189,7 +189,14 @@ fun MainScreen(
             composable("show-quiz") {
                 viewModel.currentQuiz?.let {
                     Log.d("Quiz selected", viewModel.currentQuiz!!.title)
-                    QuizShowScreen(quiz = viewModel.currentQuiz!!)
+                    QuizShowScreen(
+                        quiz = viewModel.currentQuiz!!,
+                        onBack = { navController.popBackStack() },
+                        onEdit = { quiz ->
+                            viewModel.selectQuiz(quiz)
+                            navController.navigate("manageQuiz")
+                        }
+                    )
                 }
             }
             composable("manageQuiz") {
@@ -200,10 +207,11 @@ fun MainScreen(
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
                         navController.navigate("quiz")
-                    }
+                    },
+                    onBack = { navController.popBackStack() }
                 )
             }
-            composable("question") {
+            composable("Question") {
                 QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
@@ -227,7 +235,14 @@ fun MainScreen(
             composable("show-question") {
                 viewModel.currentQuestion?.let {
                     Log.d("Question selected", viewModel.currentQuestion!!.content)
-                    QuestionShowScreen(question = viewModel.currentQuestion!!)
+                    QuestionShowScreen(
+                        question = viewModel.currentQuestion!!,
+                        onBack = { navController.popBackStack() },
+                        onEdit = { question ->
+                            viewModel.selectQuestion(question)
+                            navController.navigate("manageQuestion")
+                        }
+                    )
                 }
             }
 
@@ -238,11 +253,12 @@ fun MainScreen(
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
                         navController.navigate("question")
-                    }
+                    },
+                    onBack = { navController.popBackStack() }
                 )
             }
 
-            composable("history") {
+            composable("History") {
                 QuizHistoryScreen(
                     onLoad = {
                         viewModel.getHistory(user!!.id)
@@ -264,7 +280,7 @@ fun MainScreen(
                 }
             }
 
-            composable("settings") {
+            composable("Settings") {
                 SettingsScreen(
                     onSignOut = onSignOut
                 )
