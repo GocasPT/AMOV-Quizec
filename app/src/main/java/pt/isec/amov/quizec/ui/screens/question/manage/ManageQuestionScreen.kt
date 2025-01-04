@@ -82,7 +82,8 @@ val questionTest2 = Question(
 fun ManageQuestionScreen(
     question: Question? = questionTest2,
     userId : String = "",
-    saveQuestion: (Question) -> Unit = {}
+    saveQuestion: (Question) -> Unit = {},
+    onBack : () -> Unit = {}
 ) {
     var questionContent by remember { mutableStateOf(question?.content ?: "") }
     var questionAnswers by remember { mutableStateOf(question?.answers ?: TrueFalse(false)) }
@@ -104,11 +105,13 @@ fun ManageQuestionScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onBack()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Get Back",
+                    contentDescription = "Go Back to Previous Screen",
                     tint = Color.Gray
                 )
             }

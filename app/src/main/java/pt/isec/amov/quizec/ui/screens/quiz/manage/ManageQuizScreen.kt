@@ -96,13 +96,10 @@ fun ManageQuizScreen(
     quiz: Quiz? = null,
     userId : String = "1",
     questionList: List<Question> = questions,
-    saveQuiz: (Quiz) -> Unit = {}
+    saveQuiz: (Quiz) -> Unit = {},
+    onBack : () -> Unit = {}
 ) {
     var quizTitle by remember { mutableStateOf(quiz?.title ?: "") }
-    //var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
-    //var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
-    //var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
-    //var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
     val selectedQuestions = remember {
         mutableStateListOf<Question>().apply {
             quiz?.questions?.let { addAll(it) }
@@ -168,11 +165,13 @@ fun ManageQuizScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        onBack()
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Get Back",
+                        contentDescription = "Go Back to Previous Screen",
                         tint = Color.Gray
                     )
                 }

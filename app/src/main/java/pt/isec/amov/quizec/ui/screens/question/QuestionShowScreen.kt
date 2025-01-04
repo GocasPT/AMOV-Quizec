@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.ui.screens.question
 
+import android.widget.TextView.OnEditorActionListener
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,6 +54,8 @@ val questionTest =  Question(
 fun QuestionShowScreen(
     question: Question = questionTest,
     modifier: Modifier = Modifier,
+    onBack : () -> Unit = {},
+    onEdit : (Question) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -68,21 +71,25 @@ fun QuestionShowScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onBack()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Get Back",
+                    contentDescription = "Go Back to Previous Screen",
                     tint = Color.Gray
                 )
             }
 
             IconButton(
-                onClick = {}
+                onClick = {
+                    onEdit(question)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Get Back",
+                    contentDescription = "Edit Question",
                     tint = Color.Gray
                 )
             }

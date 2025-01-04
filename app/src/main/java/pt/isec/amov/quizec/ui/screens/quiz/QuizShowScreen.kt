@@ -76,6 +76,8 @@ val quizView = listOf(
 fun QuizShowScreen(
     quiz: Quiz = quizView[0],
     questionList: List<Question> = quizView[0].questions ?: emptyList(),
+    onBack : () -> Unit = {},
+    onEdit : (Quiz) -> Unit = {}
 ) {
     var expandAll by remember { mutableStateOf(false) }
     val expandIndividual = remember(questionList) { mutableStateListOf(*Array(questionList.size) {false}) }
@@ -94,21 +96,25 @@ fun QuizShowScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onBack()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Get Back",
+                    contentDescription = "Go Back to Previous Screen",
                     tint = Color.Gray
                 )
             }
 
             IconButton(
-                onClick = {}
+                onClick = {
+                    onEdit(quiz)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Get Back",
+                    contentDescription = "Edit Quiz",
                     tint = Color.Gray
                 )
             }
