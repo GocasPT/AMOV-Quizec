@@ -89,7 +89,10 @@ fun AnswerEntryMultipleChoice(
     modifier: Modifier = Modifier,
     scrollState: ScrollState
 ) {
-    Column(modifier = modifier.verticalScroll(scrollState)) {
+    Column(
+        modifier = modifier
+            .verticalScroll(scrollState)
+    ) {
         answers.forEach { answer ->
             Row(
                 modifier = Modifier

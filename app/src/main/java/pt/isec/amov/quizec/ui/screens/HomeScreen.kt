@@ -111,25 +111,27 @@ val quizLists = listOf(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    username: String,
     ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        HomeScreenLandscape(modifier = modifier)
+        HomeScreenLandscape(modifier = modifier, username = username)
     else
-        HomeScreenPortrait(modifier = modifier)
+        HomeScreenPortrait(modifier = modifier, username = username)
 }
 
 @Composable
 fun HomeScreenLandscape(
     modifier: Modifier = Modifier,
-    ) {
+    username: String,
+) {
 
 }
 
-@Preview(showBackground = true)
 @Composable
 fun HomeScreenPortrait(
     modifier: Modifier = Modifier,
-    ) {
+    username: String,
+) {
     val code = remember { mutableStateOf("") }
 
     Box(
@@ -173,7 +175,7 @@ fun HomeScreenPortrait(
                         contentAlignment = Alignment.BottomStart
                     ) {
                         Text(
-                            text = "Welcome, TIAGO",
+                            text = "Welcome, ${username}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White

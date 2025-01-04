@@ -161,7 +161,9 @@ fun MainScreen(
             modifier = modifier.padding(innerPadding)
         ) {
             composable("home") {
-                HomeScreen()
+                HomeScreen(
+                    username = user!!.name,
+                )
             }
             composable("quiz") {
                 QuizListScreen(

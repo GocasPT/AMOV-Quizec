@@ -28,7 +28,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
@@ -52,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -158,6 +161,23 @@ fun ManageQuizScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Get Back",
+                        tint = Color.Gray
+                    )
+                }
+            }
+
             Text(
                 text = if (quiz == null) "New Quiz" else "Edit Quiz",
                 style = MaterialTheme.typography.headlineMedium,
@@ -184,17 +204,15 @@ fun ManageQuizScreen(
                     AsyncImage(
                         model = picture,
                         contentDescription = "Quiz's image",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, Color.Gray, CircleShape)
+                            .fillMaxWidth()
+                            .height(120.dp),
                     )
                 }
 
                 Button(
                     onClick = { showDialog = true },
-                    modifier = Modifier
-                        .fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Image, contentDescription = "Add Image")
                 }
@@ -406,9 +424,9 @@ fun QuestionCard(
                 text = question.content,
                 modifier = Modifier.weight(1f)
             )
-            Text(
-                text = question.answers.answerType.displayName,
-                modifier = Modifier.padding(end = 16.dp)
+            Icon(
+                imageVector = question.answers.answerType.icon,
+                contentDescription = question.answers.answerType.toString()
             )
             Icon(
                 imageVector = if (isSelected) Icons.Default.Remove else Icons.Default.Add,
