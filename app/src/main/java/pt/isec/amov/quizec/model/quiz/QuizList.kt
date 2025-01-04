@@ -24,4 +24,8 @@ class QuizList {
     fun removeQuiz(quiz: Quiz) {
         _list.remove(quiz)
     }
+
+    fun clear() {
+        _list.clear()
+    }
 }

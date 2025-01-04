@@ -11,6 +11,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import pt.isec.amov.quizec.model.history.AnswerHistory
 import pt.isec.amov.quizec.model.history.History
+import pt.isec.amov.quizec.model.history.HistoryList
 import pt.isec.amov.quizec.model.history.QuizSnapshot
 import pt.isec.amov.quizec.model.question.Answer.*
 import pt.isec.amov.quizec.model.question.Question
@@ -23,8 +24,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
     val questionList: QuestionList = QuestionList()
     val quizList: QuizList = QuizList()
-    private val _historyList = mutableStateOf<List<History>>(emptyList())
-    val historyList get() = _historyList.value
+    val historyList: HistoryList = HistoryList()
 
     //TODO: add data variables
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
@@ -33,6 +33,15 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     val currentQuiz: Quiz? get() = _currentQuiz.value
     val currentQuestion: Question? get() = _currentQuestion.value
     val currentHistory: History? get() = _currentHistory.value
+
+    fun clearData() {
+        _currentQuiz.value = null
+        _currentQuestion.value = null
+        _currentHistory.value = null
+        questionList.clear()
+        quizList.clear()
+        historyList.clear()
+    }
 
     fun selectHistory(history: History) {
         _currentHistory.value = history
@@ -283,11 +292,12 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     fun getHistory(userId: String?) {
         viewModelScope.launch {
             try {
-                SStorageUtil.getHistoryDatabase(dbClient, userId) { e, historyList ->
+                SStorageUtil.getHistoryDatabase(dbClient, userId) { e, historyListDB ->
                     if (e != null) {
                         Log.d("QuizecViewModel", "Error getting history: $e")
                     } else {
-                        _historyList.value = historyList!!
+                        historyList.clear()
+                        historyList.setHistoryList(historyListDB!!)
                     }
                 }
             } catch (e: Throwable) {

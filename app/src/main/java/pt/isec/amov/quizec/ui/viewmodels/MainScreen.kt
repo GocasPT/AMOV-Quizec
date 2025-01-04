@@ -98,6 +98,7 @@ fun MainScreen(
 
     //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
+        viewModel.clearData()
         withContext(Dispatchers.IO) {
             viewModel.dbClient
                 .from("quiz")
@@ -277,7 +278,7 @@ fun MainScreen(
                         viewModel.selectHistory(history)
                         navController.navigate("show-history")
                     },
-                    historyList = viewModel.historyList
+                    historyList = viewModel.historyList.getHistoryList(),
                 )
             }
 
