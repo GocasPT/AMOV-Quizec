@@ -32,6 +32,7 @@ import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.HomeScreen
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
+import pt.isec.amov.quizec.ui.screens.credits.CreditsScreen
 import pt.isec.amov.quizec.ui.screens.history.HistoryShowScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
@@ -282,7 +283,18 @@ fun MainScreen(
 
             composable("Settings") {
                 SettingsScreen(
-                    onSignOut = onSignOut
+                    onSignOut = onSignOut,
+                    onCredits = {
+                        navController.navigate("credits")
+                    }
+                )
+            }
+
+            composable("credits") {
+                CreditsScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }
