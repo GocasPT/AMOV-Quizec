@@ -39,6 +39,7 @@ import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
+import pt.isec.amov.quizec.ui.screens.settings.SettingsScreen
 
 sealed class BottomNavBarItem(
     var title: String,
@@ -149,7 +150,6 @@ fun MainScreen(
                         "Question" -> navController.navigate("question")
                         "History" -> navController.navigate("history")
                         "Settings" -> navController.navigate("settings")
-//                        "Logout" -> onSignOut()
                     }
                 }
             )
@@ -260,6 +260,12 @@ fun MainScreen(
                 viewModel.currentHistory?.let {
                     HistoryShowScreen(history = viewModel.currentHistory!!)
                 }
+            }
+
+            composable("settings") {
+                SettingsScreen(
+                    onSignOut = onSignOut
+                )
             }
         }
     }
