@@ -14,10 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +34,7 @@ import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
+import pt.isec.amov.quizec.ui.screens.quiz.QuizHistoryScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
@@ -237,6 +236,18 @@ fun MainScreen(
                         viewModel.saveQuestion(question)
                         navController.navigate("question")
                     }
+                )
+            }
+
+            composable("history") {
+                QuizHistoryScreen(
+                    onLoad = {
+                        viewModel.getHistory(user!!.id)
+                    },
+                    onCreateDummy = {
+                        viewModel.createDummyHistory(user!!.id)
+                    },
+                    historyList = viewModel.historyList
                 )
             }
         }

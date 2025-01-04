@@ -6,6 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.launch
+import pt.isec.amov.quizec.model.history.AnswerHistory
+import pt.isec.amov.quizec.model.history.History
+import pt.isec.amov.quizec.model.history.QuizSnapshot
+import pt.isec.amov.quizec.model.question.Answer.*
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -22,6 +26,9 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     private var _currentQuestion = mutableStateOf<Question?>(null)
     val currentQuiz: Quiz? get() = _currentQuiz.value
     val currentQuestion: Question? get() = _currentQuestion.value
+
+    private val _historyList = mutableStateOf<List<History>>(emptyList())
+    val historyList get() = _historyList.value
 
     fun createQuestion() {
         _currentQuestion.value = null
@@ -133,6 +140,133 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 }
             } catch (e: Throwable) {
                 Log.d("QuizecViewModel", "Error deleting quiz 2: $e")
+            }
+        }
+    }
+
+    fun createDummyHistory(userId: String?) {
+        //Owner = creator1@gmail.com Pass = 123123
+        val addHistory = History(
+            id = null, //database dynamically assigns id
+            userId = userId!!,
+            quiz = QuizSnapshot(
+                title = "Dummy Quiz History",
+                image = null,
+                owner = "ddcd359b-c73a-4ff1-8ee2-3c361a23ea91"
+            ),
+            answers = listOf(
+                AnswerHistory(
+                    content = "Is Kotlin a statically-typed programming language?",
+                    image = null,
+                    correctAnswer = TrueFalse(rightAnswer = true),
+                    userAnswer = TrueFalse(rightAnswer = true)
+                ),
+                AnswerHistory(
+                    content = "Which of the following is a JVM language?",
+                    image = null,
+                    correctAnswer = SingleChoice(
+                        answers = setOf(
+                            true to "Kotlin",
+                            false to "Python",
+                            false to "JavaScript"
+                        )
+                    ),
+                    userAnswer = SingleChoice(
+                        answers = setOf(
+                            true to "JavaScript"
+                        )
+                    )
+                ),
+                AnswerHistory(
+                    content = "Select all functional programming languages:",
+                    image = null,
+                    correctAnswer = MultipleChoice(
+                        answers = setOf(
+                            true to "Haskell",
+                            true to "Scala",
+                            false to "C++"
+                        )
+                    ),
+                    userAnswer = MultipleChoice(
+                        answers = setOf(
+                            true to "Haskell",
+                            false to "Scala",
+                            true to "C++"
+                        )
+                    )
+                ),
+                AnswerHistory(
+                    content = "Match the programming languages to their creators:",
+                    image = null,
+                    correctAnswer = Matching(
+                        pairs = setOf(
+                            "Java" to "James Gosling",
+                            "Python" to "Guido van Rossum",
+                            "C++" to "Bjarne Stroustrup"
+                        )
+                    ),
+                    userAnswer = Matching(
+                        pairs = setOf(
+                            "Java" to "James Gosling",
+                            "Python" to "Bjarne Stroustrup",
+                            "C++" to "Guido van Rossum"
+                        )
+                    )
+                ),
+                AnswerHistory(
+                    content = "Order the numbers from smallest to largest:",
+                    image = null,
+                    correctAnswer = Ordering(
+                        order = listOf("1", "2", "3", "4", "5")
+                    ),
+                    userAnswer = Ordering(
+                        order = listOf("1", "3", "2", "4", "5")
+                    )
+                ),
+                AnswerHistory(
+                    content = "Fill in the blanks: Kotlin is ___ and ___.",
+                    image = null,
+                    correctAnswer = FillBlank(
+                        answers = setOf(
+                            1 to "statically-typed",
+                            2 to "cross-platform"
+                        )
+                    ),
+                    userAnswer = FillBlank(
+                        answers = setOf(
+                            1 to "statically-typed",
+                            2 to "open-source"
+                        )
+                    )
+                )
+            )
+        )
+
+        viewModelScope.launch {
+            try {
+                SStorageUtil.saveHistoryDatabase(dbClient, addHistory) { e ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error saving history: $e")
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error saving history: $e")
+            }
+        }
+    }
+
+    fun getHistory(userId: String?) {
+        viewModelScope.launch {
+            try {
+                SStorageUtil.getHistoryDatabase(dbClient, userId) { e, historyList ->
+                    if (e != null) {
+                        Log.d("QuizecViewModel", "Error getting history: $e")
+                    } else {
+                        _historyList.value = historyList!!
+                    }
+                }
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error getting history: $e")
             }
         }
     }

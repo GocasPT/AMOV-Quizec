@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import pt.isec.amov.quizec.model.QuizQuestion
+import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import java.io.InputStream
@@ -110,6 +111,31 @@ class SStorageUtil {
                 onResult(null)
             } catch (e: Throwable) {
                 onResult(e)
+            }
+        }
+
+        suspend fun saveHistoryDatabase(dbClient: SupabaseClient, history: History, onResult: (Throwable?) -> Unit) {
+            try {
+                dbClient.from("history").insert(history)
+                onResult(null)
+            } catch (e: Throwable) {
+                onResult(e)
+            }
+        }
+
+        suspend fun getHistoryDatabase(dbClient: SupabaseClient, userId: String?, onResult: (Throwable?, List<History>?) -> Unit) {
+            try {
+                val historyList = dbClient
+                    .from("history")
+                    .select {
+                        filter {
+                            eq("user_id", userId!!)
+                        }
+                    }
+                    .decodeList<History>()
+                onResult(null, historyList)
+            } catch (e: Throwable) {
+                onResult(e, null)
             }
         }
 

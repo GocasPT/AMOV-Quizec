@@ -14,17 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,71 +36,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.ui.components.CustomList
-
-val quizHistoryTeste = listOf(
-    Quiz(
-        id = 1,
-        title = "Titulo 1",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 1",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-        )
-    ),
-    Quiz(
-        id = 2,
-        title = "Title 2",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 2",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-            Question(
-                id = 2,
-                content = "Question 3",
-                image = "Image URL",
-                answers = Answer.SingleChoice(
-                    setOf(
-                        Pair(true, "Answer 1"),  // Correct answer
-                        Pair(false, "Answer 2"), // Incorrect answer
-                        Pair(false, "Answer 3")  // Incorrect answer
-                    )
-                ),
-                user = "User"
-            ),
-        )
-    ),
-)
 
 @Composable
 fun QuizHistoryScreen(
-    quizList: List<Quiz> = quizHistoryTeste,
-    onSelectQuiz: (Quiz) -> Unit = {},
-    onCreateQuiz: () -> Unit = {},
-    onEditQuiz: (Quiz) -> Unit = {},
-    onDeleteQuiz: (Quiz) -> Unit = {},
-    onSearch: (String) -> Unit = {},
-    onFilter: (String) -> Unit = {}
+    onLoad: () -> Unit,
+    onCreateDummy : () -> Unit,
+    historyList: List<History>,
 ) {
+
+    LaunchedEffect(Unit) {
+        onLoad()
+    }
 
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
@@ -128,7 +79,7 @@ fun QuizHistoryScreen(
                         text = { Text(option) },
                         onClick = {
                             selectedFilter = option
-                            onFilter(option)
+                            //onFilter(option)
                         }
                     )
                 }
@@ -138,7 +89,7 @@ fun QuizHistoryScreen(
                 value = searchText,
                 onValueChange = {
                     searchText = it
-                    onSearch(it)
+                    //onSearch(it)
                 },
                 modifier =
                 Modifier
@@ -151,6 +102,8 @@ fun QuizHistoryScreen(
             )
         }
 
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,14 +112,17 @@ fun QuizHistoryScreen(
             verticalArrangement = Arrangement.Center
         ) {
             CustomList(
-                items = quizList,
-                onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
+                items = historyList,
+                onSelectItem = { } //
+            ) { history, _ ->
                 QuizHistoryCard(
-                    quiz = quiz as Quiz,
-                    onSelectQuiz = { onSelect(quiz) },
-                    onEditQuiz = { onEditQuiz(quiz) },
-                    onDeleteQuiz = { onDeleteQuiz(quiz) }
+                    history = history as History,
                 )
+            }
+            //Temporary button to create dummy data
+            //This does create but need to refresh the screen to see the changes
+            Button(onClick = { onCreateDummy() }) {
+                Text("Create Dummy")
             }
         }
     }
@@ -175,20 +131,14 @@ fun QuizHistoryScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuizHistoryCard(
-    quiz: Quiz,
-    onSelectQuiz: (Quiz) -> Unit,
-    onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
+    history: History,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .combinedClickable(
-                onClick = { onSelectQuiz(quiz) },
-                onLongClick = { expanded = true }
+                onClick = { }, //
             ),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),
@@ -197,7 +147,7 @@ fun QuizHistoryCard(
             modifier = Modifier
                 .height(160.dp)
         ) {
-            quiz.image?.let {
+            history.quiz.image?.let {
                 Image(
                     modifier = Modifier
                         .background(
@@ -238,37 +188,12 @@ fun QuizHistoryCard(
                 contentAlignment = Alignment.BottomStart
             ) {
                 Text(
-                    text = quiz.title,
+                    text = history.quiz.title,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray
                 )
             }
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("View TODO") },
-                onClick = {
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Edit") },
-                onClick = {
-                    expanded = false
-                    onEditQuiz(quiz)
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Delete") },
-                onClick = {
-                    expanded = false
-                    onDeleteQuiz(quiz)
-                }
-            )
         }
     }
 }
