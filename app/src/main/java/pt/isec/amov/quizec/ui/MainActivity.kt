@@ -1,6 +1,7 @@
 package pt.isec.amov.quizec.ui
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
             }
 
             QuizecTheme {
-                Surface (
+                Surface(
                     color = backgroundColor,
                 ) {
                     NavHost(
@@ -79,7 +80,12 @@ class MainActivity : ComponentActivity() {
                         composable(REGISTER_SCREEN) {
                             RegisterScreen(
                                 onRegister = { name, email, password, repeatPassword ->
-                                    viewModelAuth.signUpWithEmail(email, password, repeatPassword, name)
+                                    viewModelAuth.signUpWithEmail(
+                                        email,
+                                        password,
+                                        repeatPassword,
+                                        name
+                                    )
                                 },
                                 onBack = {
                                     navController.navigate(LOGIN_SCREEN) {
@@ -113,31 +119,43 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        //Permissões
-        //verificar se foi dada ou não permissão à camera
-        //o método checkSelfPermission devolve um booleano
         if (ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED) {
-            //se não foi dada permissão, pedir
-            //novo formato (c/ recurso a contratos):
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             askSinglePermission.launch(android.Manifest.permission.CAMERA)
         }
 
-        if (ContextCompat.checkSelfPermission(
-                this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-            ||
-            ContextCompat.checkSelfPermission(
-                this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED ) {
-            askMultiplePermission.launch(
-                arrayOf(
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+        checkAndRequestStoragePermission()
+    }
+
+    private fun checkAndRequestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 and above
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED) {
+                askStoragePermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+            }
+        } else {
+            // Below Android 13
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED) {
+                askMultiplePermission.launch(
+                    arrayOf(
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -148,6 +166,15 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "Permissão para a câmera concedida!", Toast.LENGTH_SHORT).show()
             else
                 Toast.makeText(this, "Permissão para a câmera não concedida!", Toast.LENGTH_SHORT).show()
+    }
+
+    private val askStoragePermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted)
+            Toast.makeText(this, "Storage permission granted!", Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(this, "Storage permission denied!", Toast.LENGTH_SHORT).show()
     }
 
     private val askMultiplePermission = registerForActivityResult(
