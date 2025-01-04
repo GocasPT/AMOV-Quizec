@@ -95,6 +95,10 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
+    fun duplicateQuestion(question: Question) {
+        saveQuestion(question.copy(id = null))
+    }
+
     fun createQuiz() {
         _currentQuiz.value = null
     }
@@ -150,6 +154,10 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 Log.d("QuizecViewModel", "Error deleting quiz 2: $e")
             }
         }
+    }
+
+    fun duplicateQuiz(quiz: Quiz) {
+        saveQuiz(quiz.copy(id = null))
     }
 
     fun createDummyHistory(userId: String?) {

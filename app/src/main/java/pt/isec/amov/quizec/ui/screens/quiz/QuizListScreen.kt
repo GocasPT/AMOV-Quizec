@@ -106,7 +106,8 @@ fun QuizListScreen(
     onEditQuiz: (Quiz) -> Unit = {},
     onDeleteQuiz: (Quiz) -> Unit = {},
     onSearch: (String) -> Unit = {},
-    onFilter: (String) -> Unit = {}
+    onFilter: (String) -> Unit = {},
+    onDuplicateQuiz: (Quiz) -> Unit = {}
 ) {
 
     var searchText by remember { mutableStateOf("") }
@@ -193,7 +194,8 @@ fun QuizListScreen(
                     quiz = quiz as Quiz,
                     onSelectQuiz = { onSelect(quiz) },
                     onEditQuiz = { onEditQuiz(quiz) },
-                    onDeleteQuiz = { onDeleteQuiz(quiz) }
+                    onDeleteQuiz = { onDeleteQuiz(quiz) },
+                    onDuplicateQuiz = { onDuplicateQuiz(quiz) }
                 )
             }
         }
@@ -223,7 +225,8 @@ fun QuizCardV2(
     quiz: Quiz,
     onSelectQuiz: (Quiz) -> Unit,
     onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
+    onDeleteQuiz: (Quiz) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -293,9 +296,10 @@ fun QuizCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate") },
                 onClick = {
                     expanded = false
+                    onDuplicateQuiz(quiz)
                 }
             )
             DropdownMenuItem(
@@ -323,7 +327,8 @@ fun QuizCard(
     quiz: Quiz,
     onSelectQuiz: (Quiz) -> Unit,
     onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
+    onDeleteQuiz: (Quiz) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -388,9 +393,10 @@ fun QuizCard(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate") },
                 onClick = {
                     expanded = false
+                    onDuplicateQuiz(quiz)
                 }
             )
             DropdownMenuItem(

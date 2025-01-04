@@ -82,13 +82,12 @@ fun QuestionListScreen(
     onSelectQuestion: (Question) -> Unit = {},
     onCreateQuestion: () -> Unit = {},
     onEditQuestion: (Question) -> Unit = {},
-    onDeleteQuestion: (Question) -> Unit = {}
+    onDeleteQuestion: (Question) -> Unit = {},
+    onDuplicateQuestion: (Question) -> Unit = {}
 ) {
-
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
     val filterOptions = listOf("True / False", "Single Choice")
-
 
     Box(
         modifier = Modifier
@@ -110,7 +109,8 @@ fun QuestionListScreen(
                     question = question as Question,
                     onSelectQuestion = onSelectQuestion,
                     onEditQuestion = onEditQuestion,
-                    onDeleteQuestion = onDeleteQuestion
+                    onDeleteQuestion = onDeleteQuestion,
+                    onDuplicateQuestion = onDuplicateQuestion,
                 )
             }
         }
@@ -140,7 +140,8 @@ fun QuestionCard(
     question: Question,
     onSelectQuestion: (Question) -> Unit,
     onEditQuestion: (Question) -> Unit,
-    onDeleteQuestion: (Question) -> Unit
+    onDeleteQuestion: (Question) -> Unit,
+    onDuplicateQuestion : (Question) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -182,9 +183,10 @@ fun QuestionCard(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate") },
                 onClick = {
                     expanded = false
+                    onDuplicateQuestion(question)
                 }
             )
             DropdownMenuItem(
@@ -212,7 +214,8 @@ fun QuestionCardV2(
     question: Question,
     onSelectQuestion: (Question) -> Unit,
     onEditQuestion: (Question) -> Unit,
-    onDeleteQuestion: (Question) -> Unit
+    onDeleteQuestion: (Question) -> Unit,
+    onDuplicateQuestion : (Question) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -301,9 +304,10 @@ fun QuestionCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate") },
                 onClick = {
                     expanded = false
+                    onDuplicateQuestion(question)
                 }
             )
             DropdownMenuItem(

@@ -184,6 +184,9 @@ fun MainScreen(
                     },
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
+                    },
+                    onDuplicateQuiz = { quiz ->
+                        viewModel.duplicateQuiz(quiz)
                     }
                 )
             }
@@ -229,6 +232,9 @@ fun MainScreen(
                     },
                     onDeleteQuestion = { question ->
                         viewModel.deleteQuestion(question)
+                    },
+                    onDuplicateQuestion = { question ->
+                        viewModel.duplicateQuestion(question)
                     }
                 )
             }
