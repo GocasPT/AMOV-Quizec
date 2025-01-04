@@ -10,9 +10,10 @@ data class AnswerHistory (
     @SerialName("image_url")
     val image: String?,
     val correctAnswer: Answer,
-    val userAnswer: Answer
+    val userAnswer: Answer,
+    val score : Double
 ) {
     override fun toString(): String {
-        return "content='$content'\nimage=$image\ncorrectAnswer=$correctAnswer\nuserAnswer=$userAnswer"
+        return "\nTitle='$content'\nimage=$image\ncorrectAnswer=$correctAnswer\nuserAnswer=$userAnswer\nscore=$score"
     }
 }

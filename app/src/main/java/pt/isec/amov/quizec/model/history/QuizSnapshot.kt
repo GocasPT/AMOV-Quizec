@@ -9,8 +9,4 @@ data class QuizSnapshot (
     @SerialName("image_url")
     val image: String?,
     val owner: String
-) {
-    override fun toString(): String {
-        return "title='$title'\nimage=$image\nowner=$owner"
-    }
-}
+)

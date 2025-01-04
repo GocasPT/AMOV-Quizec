@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import pt.isec.amov.quizec.model.history.AnswerHistory
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.history.QuizSnapshot
@@ -150,6 +153,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     }
 
     fun createDummyHistory(userId: String?) {
+        val timezone = TimeZone.currentSystemDefault()
         //Owner = creator1@gmail.com Pass = 123123
         val addHistory = History(
             id = null, //database dynamically assigns id
@@ -164,7 +168,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     content = "Is Kotlin a statically-typed programming language?",
                     image = null,
                     correctAnswer = TrueFalse(rightAnswer = true),
-                    userAnswer = TrueFalse(rightAnswer = true)
+                    userAnswer = TrueFalse(rightAnswer = true),
+                    score = 1.0
                 ),
                 AnswerHistory(
                     content = "Which of the following is a JVM language?",
@@ -180,7 +185,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                         answers = setOf(
                             true to "JavaScript"
                         )
-                    )
+                    ),
+                    score = 0.0
                 ),
                 AnswerHistory(
                     content = "Select all functional programming languages:",
@@ -198,7 +204,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                             false to "Scala",
                             true to "C++"
                         )
-                    )
+                    ),
+                    score = 0.0
                 ),
                 AnswerHistory(
                     content = "Match the programming languages to their creators:",
@@ -216,7 +223,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                             "Python" to "Bjarne Stroustrup",
                             "C++" to "Guido van Rossum"
                         )
-                    )
+                    ),
+                    score = 0.0
                 ),
                 AnswerHistory(
                     content = "Order the numbers from smallest to largest:",
@@ -226,7 +234,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     ),
                     userAnswer = Ordering(
                         order = listOf("1", "3", "2", "4", "5")
-                    )
+                    ),
+                    score = 0.6
                 ),
                 AnswerHistory(
                     content = "Fill in the blanks: Kotlin is ___ and ___.",
@@ -242,9 +251,12 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                             1 to "statically-typed",
                             2 to "open-source"
                         )
-                    )
+                    ),
+                    score = 0.5
                 )
-            )
+            ),
+            score = 7, //total score = sum of all questions (answer score * (20 / number of questions))
+            date = Clock.System.now().toLocalDateTime(timezone).toString()
         )
 
         viewModelScope.launch {

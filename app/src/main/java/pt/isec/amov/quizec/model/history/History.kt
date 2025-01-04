@@ -9,11 +9,7 @@ data class History (
     @SerialName("user_id")
     val userId: String,
     val quiz: QuizSnapshot,
-    val answers: List<AnswerHistory>
-    //val score: Int TODO
-    //val date: Date TODO
-) {
-    override fun toString(): String {
-        return "History:\nuserId='$userId'\nquiz=$quiz\nanswers=\n${answers.joinToString("\n")}"
-    }
-}
+    val answers: List<AnswerHistory>,
+    val score: Int, //0-20
+    val date: String
+)
