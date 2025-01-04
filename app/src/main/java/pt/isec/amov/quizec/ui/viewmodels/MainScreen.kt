@@ -32,9 +32,10 @@ import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.HomeScreen
 import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
+import pt.isec.amov.quizec.ui.screens.history.HistoryShowScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
-import pt.isec.amov.quizec.ui.screens.quiz.QuizHistoryScreen
+import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
@@ -247,8 +248,18 @@ fun MainScreen(
                     onCreateDummy = {
                         viewModel.createDummyHistory(user!!.id)
                     },
+                    onSelectHistory = { history ->
+                        viewModel.selectHistory(history)
+                        navController.navigate("show-history")
+                    },
                     historyList = viewModel.historyList
                 )
+            }
+
+            composable("show-history") {
+                viewModel.currentHistory?.let {
+                    HistoryShowScreen(history = viewModel.currentHistory!!)
+                }
             }
         }
     }

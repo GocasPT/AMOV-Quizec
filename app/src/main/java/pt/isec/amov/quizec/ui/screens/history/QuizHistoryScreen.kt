@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens.quiz
+package pt.isec.amov.quizec.ui.screens.history
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -46,6 +46,7 @@ import pt.isec.amov.quizec.ui.components.CustomList
 fun QuizHistoryScreen(
     onLoad: () -> Unit,
     onCreateDummy : () -> Unit,
+    onSelectHistory : (History) -> Unit,
     historyList: List<History>,
 ) {
 
@@ -113,10 +114,10 @@ fun QuizHistoryScreen(
         ) {
             CustomList(
                 items = historyList,
-                onSelectItem = { } //
-            ) { history, _ ->
+                onSelectItem = { history -> onSelectHistory(history as History) }) { history, onSelect ->
                 QuizHistoryCard(
                     history = history as History,
+                    onSelectHistory = { onSelect(history) }
                 )
             }
             //Temporary button to create dummy data
@@ -132,13 +133,14 @@ fun QuizHistoryScreen(
 @Composable
 fun QuizHistoryCard(
     history: History,
+    onSelectHistory: (History) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .combinedClickable(
-                onClick = { }, //
+                onClick = { onSelectHistory(history) },
             ),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),

@@ -49,7 +49,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import pt.isec.amov.quizec.ui.screens.SnackBar
 
 @Composable
 fun LoginScreen(

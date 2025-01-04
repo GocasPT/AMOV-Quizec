@@ -1,8 +1,6 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.settings
 
-import android.content.res.Configuration
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalConfiguration
 
 @Composable
 fun SettingsScreen() {

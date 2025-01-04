@@ -43,7 +43,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
-import pt.isec.amov.quizec.ui.screens.SnackBar
 
 @Composable
 fun RegisterScreen(

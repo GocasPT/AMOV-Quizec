@@ -11,4 +11,8 @@ data class AnswerHistory (
     val image: String?,
     val correctAnswer: Answer,
     val userAnswer: Answer
-)
+) {
+    override fun toString(): String {
+        return "content='$content'\nimage=$image\ncorrectAnswer=$correctAnswer\nuserAnswer=$userAnswer"
+    }
+}

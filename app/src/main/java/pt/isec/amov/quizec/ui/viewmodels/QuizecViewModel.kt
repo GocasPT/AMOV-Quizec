@@ -20,15 +20,20 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: PLACE_HOLDER
     val questionList: QuestionList = QuestionList()
     val quizList: QuizList = QuizList()
+    private val _historyList = mutableStateOf<List<History>>(emptyList())
+    val historyList get() = _historyList.value
 
     //TODO: add data variables
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
     private var _currentQuestion = mutableStateOf<Question?>(null)
+    private var _currentHistory = mutableStateOf<History?>(null)
     val currentQuiz: Quiz? get() = _currentQuiz.value
     val currentQuestion: Question? get() = _currentQuestion.value
+    val currentHistory: History? get() = _currentHistory.value
 
-    private val _historyList = mutableStateOf<List<History>>(emptyList())
-    val historyList get() = _historyList.value
+    fun selectHistory(history: History) {
+        _currentHistory.value = history
+    }
 
     fun createQuestion() {
         _currentQuestion.value = null

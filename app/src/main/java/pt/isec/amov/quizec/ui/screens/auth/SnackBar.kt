@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.auth
 
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
