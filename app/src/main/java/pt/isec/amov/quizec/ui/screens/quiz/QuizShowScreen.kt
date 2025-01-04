@@ -1,279 +1,209 @@
 package pt.isec.amov.quizec.ui.screens.quiz
 
-import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
+import pt.isec.amov.quizec.R
+import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.ui.screens.quiz.manage.questions
+
+val quizView = listOf(
+    Quiz(
+        id = 1,
+        title = "Titulo 1",
+        image = "Image URL",
+        owner = "Owner",
+        questions = listOf(
+            Question(
+                id = 1,
+                content = "Question 1",
+                image = "Image URL",
+                answers = Answer.TrueFalse(true),
+                user = "User"
+            ),
+            Question(
+                id = 2,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.SingleChoice(
+                    setOf(
+                        Pair(true, "20"),
+                        Pair(false, "21"),
+                        Pair(false, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+        )
+    ))
 
 @Preview(showBackground = true)
 @Composable
 fun QuizShowScreen(
-    quiz: Quiz = quizTeste.get(0),
-    modifier: Modifier = Modifier,
+    quiz: Quiz = quizView[0],
+    questionList: List<Question> = quizView[0].questions ?: emptyList(),
 ) {
-    var instantStart by remember { mutableStateOf(false) }
+    var expandAll by remember { mutableStateOf(false) }
+    val expandIndividual = remember(questionList) { mutableStateListOf(*Array(questionList.size) {false}) }
 
-    var isLocationRestricted by remember { mutableStateOf(false) }
-
-    var sliderLocation by remember { mutableStateOf(60f) }
-
-    var responseTimer by remember { mutableStateOf(10f) }
-
-    var isInstantScore by remember { mutableStateOf(true) }
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Text(
+            text = quiz.title,
+            fontWeight = FontWeight.Bold
+        )
+        
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp),
+            model = quiz.image ?: R.drawable.fundo_exemplo,
+            contentDescription = "quizImage",
+            contentScale = ContentScale.Crop,
+        )
+
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Demo_ExposedDropdownMenuBox()
-        }
-
-
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            DropdownMenu(
-//                expanded = true,
-//                onDismissRequest = { }
-//            ) {
-//                DropdownMenuItem(
-//                    text = { Text(text = "Location Restricted") },
-//                    onClick = { isLocationRestricted = !isLocationRestricted }
-//                )
-//                DropdownMenuItem(
-//                    text = { Text(text = "Instant Score") },
-//                    onClick = { isInstantScore = !isInstantScore }
-//                )
-//            }
-//        }
-
-        quiz.image?.let {
-            Row(
+            HorizontalDivider(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentDescription = null,
-                    alignment = Alignment.Center,
-                    contentScale = ContentScale.Crop,
-                    painter = rememberImagePainter(quiz.image),
-                )
-            }
+                    .weight(1f)
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .wrapContentWidth()
+                    .clickable(onClick = {
+                        expandAll = !expandAll
+                        expandIndividual.fill(expandAll) // Update individual states based on global state
+                    }),
+                imageVector = if (expandAll) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = if (expandAll) "Collapse All" else "Expand All"
+            )
         }
 
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .fillMaxWidth()
+                .fillMaxSize(),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "QUIZ ID",
-                    fontSize = 42.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Normal,
+            items (
+                items = questionList,
+                key = { it.hashCode() }
+            ) { question ->
+                val index = questionList.indexOf(question)
+                QuestionInfoTemp(
+                    question = question,
+                    showExpanded = expandIndividual[index],
+                    onExpandToggle = { expandIndividual[index] = !expandIndividual[index] }
                 )
             }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Instant Start",
-                )
-                Switch(
-                    checked = false,
-                    onCheckedChange = { instantStart = !instantStart }
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Quiz Time",
-                )
-                Slider(
-                    value = responseTimer,
-                    onValueChange = { responseTimer = it },
-                    valueRange = 0f..180f,
-                    steps = 18,
-                )
-                Text(
-                    text = "${responseTimer.toInt().toString()} s",
-                )
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Location Restricted",
-                )
-                Switch(
-                    checked = false,
-                    onCheckedChange = { isLocationRestricted = !isLocationRestricted }
-                )
-            }
-
-            isLocationRestricted.let {
-                if (it) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Slider(
-                            value = sliderLocation,
-                            onValueChange = { sliderLocation = it },
-                            valueRange = 0f..100f,
-                            steps = 20,
-                        )
-                        Text(
-                            text = "${sliderLocation.toString()} km",
-                        )
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Instant Score",
-                )
-                Switch(
-                    checked = false,
-                    onCheckedChange = { isInstantScore = !isInstantScore }
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = null,
-                )
-            }
-
-            Text("SHARE")
         }
-
-
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Demo_ExposedDropdownMenuBox() {
-    val context = LocalContext.current
-    val coffeeDrinks = arrayOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(coffeeDrinks[0]) }
-
-    Box(
+fun QuestionInfoTemp(
+    question: Question,
+    showExpanded: Boolean,
+    onExpandToggle: () -> Unit,
+) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        onClick = onExpandToggle
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
         ) {
-            TextField(
-                value = selectedText,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                coffeeDrinks.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item) },
-                        onClick = {
-                            selectedText = item
-                            expanded = false
-                            Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-                        }
+                Text(
+                    text = question.content,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = question.answers.answerType.icon,
+                    contentDescription = question.answers.answerType.toString()
+                )
+                Icon(
+                    imageVector = if (showExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (showExpanded) "Opened" else "Closed"
+                )
+            }
+
+            if (showExpanded) {
+                question.image?.let {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = "Question Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
                     )
                 }
+                Text(
+                    text = question.answers.answerType.toString()
+                )
             }
         }
     }

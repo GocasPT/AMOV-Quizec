@@ -132,7 +132,6 @@ fun HomeScreenPortrait(
     ) {
     val code = remember { mutableStateOf("") }
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
