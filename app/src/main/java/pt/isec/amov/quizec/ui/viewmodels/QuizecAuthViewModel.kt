@@ -8,12 +8,18 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.utils.SAuthUtil
 
 fun UserInfo.toUser(): User {
     val id = this.id
-    val displayName = this.userMetadata.toString()
+    val displayName = try {
+        val metadata = JSONObject(this.userMetadata.toString())
+        metadata.optString("username", "n.d.")
+    } catch (e: Exception) {
+        "n.d."
+    }
     val strEmail = this.email ?: "n.d."
     return User(id, displayName, strEmail)
 }

@@ -175,7 +175,7 @@ fun HomeScreenPortrait(
                         contentAlignment = Alignment.BottomStart
                     ) {
                         Text(
-                            text = "Welcome, ${username}",
+                            text = "Welcome, $username",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
