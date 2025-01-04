@@ -75,8 +75,6 @@ val questionTest2 = Question(
     user = "User"
 )
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun ManageQuestionScreen(
