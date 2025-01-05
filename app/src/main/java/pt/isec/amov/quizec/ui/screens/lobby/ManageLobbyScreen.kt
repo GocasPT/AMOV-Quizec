@@ -353,7 +353,13 @@ fun ManageLobbyScreenPreview() {
         viewModel = QuizecViewModel(
             createSupabaseClient("", "") {}
         ),
-        quiz = null,
+        quiz = Quiz(
+            id = 1,
+            title = "Quiz test",
+            image = null,
+            owner = "batata",
+            questions = emptyList(),
+        ),
         isNewLobby = true,
         onCreateLobby = { _, _, _, _ -> },
     )

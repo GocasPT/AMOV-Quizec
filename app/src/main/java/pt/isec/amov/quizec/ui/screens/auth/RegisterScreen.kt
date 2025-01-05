@@ -37,22 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-<<<<<<< HEAD
-=======
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.res.stringResource
->>>>>>> 63ad209 (adding strings)
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -65,8 +52,8 @@ fun RegisterScreen(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?,
-    clearError : () -> Unit
+    errorMessageText: String?,
+    clearError: () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -96,7 +83,7 @@ fun RegisterScreenLandscape(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?,
+    errorMessageText: String?,
     clearError: () -> Unit
 ) {
 
@@ -108,7 +95,7 @@ fun RegisterScreenPortrait(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?,
+    errorMessageText: String?,
     clearError: () -> Unit
 ) {
     val name = remember { mutableStateOf("") }
@@ -121,7 +108,7 @@ fun RegisterScreenPortrait(
     var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(errorMessageText) {
-        if(errorMessageText.equals("Success")) {
+        if (errorMessageText.equals("Success")) {
             showDialog = true
         }
     }
@@ -146,7 +133,8 @@ fun RegisterScreenPortrait(
             )
             Spacer(
                 modifier = Modifier
-                    .width(8.dp))
+                    .width(8.dp)
+            )
             Text(
                 text = stringResource(R.string.back_to_login),
                 style = MaterialTheme.typography.bodyMedium,
