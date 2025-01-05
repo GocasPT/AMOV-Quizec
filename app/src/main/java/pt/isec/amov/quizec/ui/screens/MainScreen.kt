@@ -181,15 +181,15 @@ fun MainScreen(
                 )
             }
             composable("show-quiz") {
-                viewModel.currentQuiz?.let {
-                    Log.d("Quiz selected", viewModel.currentQuiz!!.title)
+                viewModel.currentQuiz.let {
+                    Log.d("Quiz selected", viewModel.currentQuiz.value!!.title)
                     QuizShowScreen(
-                        quiz = viewModel.currentQuiz!!,
+                        quiz = viewModel.currentQuiz.value!!,
                         questionList = viewModel.questionList,
                         onBack = { navController.popBackStack() },
                         onCreateQuestion = { //!TODO
                             /*viewModel.selectQuiz(null)
-                            navController.navigate("manageQuiz")*/
+                                        navController.navigate("manageQuiz")*/
                         },
                         onEdit = { quiz ->
                             viewModel.selectQuiz(quiz)
@@ -205,7 +205,7 @@ fun MainScreen(
             }
             composable("manageQuiz") {
                 ManageQuizScreen(
-                    quiz = viewModel.currentQuiz,
+                    quiz = viewModel.currentQuiz.value,
                     userId = user!!.id,
                     questionList = viewModel.questionList,
                     saveQuiz = { quiz ->
@@ -241,10 +241,10 @@ fun MainScreen(
             }
 
             composable("show-question") {
-                viewModel.currentQuestion?.let {
-                    Log.d("Question selected", viewModel.currentQuestion!!.content)
+                viewModel.currentQuestion.let {
+                    Log.d("Question selected", viewModel.currentQuestion.value!!.content)
                     QuestionShowScreen(
-                        question = viewModel.currentQuestion!!,
+                        question = viewModel.currentQuestion.value!!,
                         onBack = { navController.popBackStack() },
                         onEdit = { question ->
                             viewModel.selectQuestion(question)
@@ -256,7 +256,7 @@ fun MainScreen(
 
             composable("manageQuestion") {
                 ManageQuestionScreen(
-                    question = viewModel.currentQuestion,
+                    question = viewModel.currentQuestion.value,
                     userId = user!!.id,
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
@@ -280,8 +280,8 @@ fun MainScreen(
             }
 
             composable("show-history") {
-                viewModel.currentHistory?.let {
-                    HistoryShowScreen(history = viewModel.currentHistory!!)
+                viewModel.currentHistory.let {
+                    HistoryShowScreen(history = viewModel.currentHistory.value!!)
                 }
             }
 

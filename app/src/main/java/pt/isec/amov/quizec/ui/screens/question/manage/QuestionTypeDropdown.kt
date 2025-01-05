@@ -95,11 +95,89 @@ fun QuestionTypeDropdown(
 
 @Preview(showBackground = true)
 @Composable
-fun QuestionTypeDropdownPreview() {
+fun QuestionTypeDropdownPreview_TrueFalse() {
     var isExpanded = false
 
     QuestionTypeDropdown(
         currentAnswer = TrueFalse(false),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_SingleChoice() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.SingleChoice(setOf()),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_MultipleChoice() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.MultipleChoice(setOf()),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_Matching() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.Matching(setOf()),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_Ordering() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.Ordering(emptyList()),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_Drag() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.Drag(setOf()),
+        isExpanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded },
+        onAnswerSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionTypeDropdownPreview_FillBlank() {
+    var isExpanded = false
+
+    QuestionTypeDropdown(
+        currentAnswer = Answer.FillBlank(setOf()),
         isExpanded = isExpanded,
         onExpandedChange = { isExpanded = !isExpanded },
         onAnswerSelected = {}

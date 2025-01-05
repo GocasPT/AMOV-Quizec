@@ -60,7 +60,7 @@ fun ManageLobbyScreen(
     val context = LocalContext.current
     val availableQuizes = viewModel.quizList
     var expanded by remember { mutableStateOf(false) }
-    var selectedQuiz by remember { mutableStateOf(viewModel.currentQuiz) }
+    var selectedQuiz by remember { mutableStateOf(viewModel.currentQuiz.value) }
 
     var sliderTime by remember { mutableStateOf(30f) }
     var instantStart by remember { mutableStateOf(false) }
@@ -81,42 +81,42 @@ fun ManageLobbyScreen(
             .padding(24.dp),
     ) {
         if (isNewLobby)
-                ExposedDropdownMenuBox(
+            ExposedDropdownMenuBox(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                }
+            ) {
+                OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
-                ) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                        label = { Text("Selecione um questionário") }, //TODO: resource lang
-                        value = selectedQuiz?.title ?: "",
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    )
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                    label = { Text("Selecione um questionário") }, //TODO: resource lang
+                    value = selectedQuiz?.title ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                )
 
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        availableQuizes.forEach { quiz ->
-                            DropdownMenuItem(
-                                text = { Text(text = quiz.title) },
-                                onClick = {
-                                    selectedQuiz = quiz
-                                    expanded = false
-                                    Toast.makeText(context, quiz.title, Toast.LENGTH_SHORT).show()
-                                }
-                            )
-                        }
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    availableQuizes.forEach { quiz ->
+                        DropdownMenuItem(
+                            text = { Text(text = quiz.title) },
+                            onClick = {
+                                selectedQuiz = quiz
+                                expanded = false
+                                Toast.makeText(context, quiz.title, Toast.LENGTH_SHORT).show()
+                            }
+                        )
                     }
                 }
+            }
         //}
         else
             Text(
@@ -129,171 +129,172 @@ fun ManageLobbyScreen(
                 fontStyle = FontStyle.Normal,
             )
 
-            selectedQuiz?.image?.let {
-                Image(
-                    modifier = Modifier
-                        .height(120.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentDescription = null,
-                    alignment = Alignment.Center,
-                    contentScale = ContentScale.Crop,
-                    painter = painterResource(R.drawable.quizec_1080),
-                    //painter = rememberImagePainter(quiz.image),
-                )
-            }
-
-            Column(
+        selectedQuiz?.image?.let {
+            Image(
                 modifier = Modifier
+                    .height(120.dp)
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "QUIZ ID",
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Normal,
-                    )
-                    Button(
-                        onClick = { /*TODO*/ },
-                        //startActivity(context, shareIntent, null)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Share,
-                            contentDescription = null,
-                        )
-                    }
-                }
-
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(bottom = 12.dp),
-                    text = stringResource(R.string.quiz_time),
-                )
-                Slider(
-                    value = sliderTime,
-                    onValueChange = { sliderTime = it },
-                    valueRange = 0f..240f,
-                )
-                Text(
-                    text = "${sliderTime.toInt()} min",
-                )
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.instant_start),
-                )
-                Switch(
-                    checked = instantStart,
-                    onCheckedChange = { instantStart = !instantStart }
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.location_restricted),
-                )
-                Switch(
-                    checked = isLocationRestricted,
-                    onCheckedChange = { isLocationRestricted = !isLocationRestricted }
-                )
-            }
-
-            isLocationRestricted.let {
-                if (it) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Slider(
-                            value = sliderLocation,
-                            onValueChange = { sliderLocation = it },
-                            valueRange = 0f..100f,
-                            steps = 20,
-                        )
-                        Text(
-                            text = "$sliderLocation km",
-                        )
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.instant_score),
-                )
-                Switch(
-                    checked = isInstantScore,
-                    onCheckedChange = { isInstantScore = !isInstantScore }
-                )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                contentDescription = null,
+                alignment = Alignment.Center,
+                contentScale = ContentScale.Crop,
+                painter = painterResource(R.drawable.quizec_1080),
+                //painter = rememberImagePainter(quiz.image),
             )
+        }
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                //!TODO: disable button when selectedQuiz is null
+                Text(
+                    text = "QUIZ ID", //!TODO: change this
+                    fontSize = 42.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Normal,
+                )
                 Button(
-                    onClick = {
-                        onCreateLobby(
-                            selectedQuiz!!.id!!.toLong(),
-                            instantStart,
-                            isLocationRestricted,
-                            sliderTime.toLong()
-                        )
-                    }
+                    onClick = { /*TODO*/ },
+                    //TODO: when share, disable settings inputs
+                    //startActivity(context, shareIntent, null)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.PlayArrow,
+                        imageVector = Icons.Filled.Share,
                         contentDescription = null,
                     )
                 }
             }
 
-            Text("SHARE")
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
+                text = stringResource(R.string.quiz_time),
+            )
+            Slider(
+                value = sliderTime,
+                onValueChange = { sliderTime = it },
+                valueRange = 1f..240f,
+            )
+            Text(
+                text = "${sliderTime.toInt()} min",
+            )
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.instant_start),
+            )
+            Switch(
+                checked = instantStart,
+                onCheckedChange = { instantStart = !instantStart }
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.location_restricted),
+            )
+            Switch(
+                checked = isLocationRestricted,
+                onCheckedChange = { isLocationRestricted = !isLocationRestricted }
+            )
+        }
+
+        isLocationRestricted.let {
+            if (it) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Slider(
+                        value = sliderLocation,
+                        onValueChange = { sliderLocation = it },
+                        valueRange = 0f..100f,
+                        steps = 20,
+                    )
+                    Text(
+                        text = "$sliderLocation km",
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.instant_score),
+            )
+            Switch(
+                checked = isInstantScore,
+                onCheckedChange = { isInstantScore = !isInstantScore }
+            )
+        }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            //!TODO: disable button when selectedQuiz is null
+            Button(
+                onClick = {
+                    onCreateLobby(
+                        selectedQuiz!!.id!!.toLong(),
+                        instantStart,
+                        isLocationRestricted,
+                        sliderTime.toLong()
+                    )
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = null,
+                )
+            }
+        }
+
+        Text("SHARE")
     }
 }
 

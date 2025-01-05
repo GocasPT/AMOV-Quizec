@@ -9,6 +9,7 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,28 +22,27 @@ fun LobbyScreen(
     viewModel: QuizecViewModel,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(viewModel.currentLobbyStarted.value) {
+        if (viewModel.currentLobbyStarted.value) {
+            viewModel.fetchLobbyQuiz()
+        }
+    }
+
     Column(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Players: ${viewModel.currentLobbyPlayerCount.value}")
         LazyColumn {
             items(viewModel.currentLobbyPlayers.toList()) {
                 Text(it.username)
             }
         }
 
-        if (viewModel.currentLobby.value == null) {
+        if (!viewModel.currentLobbyStarted.value) {
             ContainedLoadingIndicator()
         } else {
-            viewModel.getPlayerCount()
-            if (viewModel.currentLobby.value!!.started)
-                Text("Lobby has started")
-            else
-                Text("Lobby has not started")
-            //TODO: display quiz/question carrousel
+            Text("Quiz: ${viewModel.currentQuiz.value.toString()}")
         }
     }
 }

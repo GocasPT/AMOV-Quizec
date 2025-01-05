@@ -56,9 +56,9 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     val questionList: MutableList<Question> get() = _questionList.list
     val quizList: MutableList<Quiz> get() = _quizList.list
     val historyList: MutableList<History> get() = _historyList.list
-    val currentQuiz: Quiz? get() = _currentQuiz.value
-    val currentQuestion: Question? get() = _currentQuestion.value
-    val currentHistory: History? get() = _currentHistory.value
+    val currentQuiz: State<Quiz?> get() = _currentQuiz
+    val currentQuestion: State<Question?> get() = _currentQuestion
+    val currentHistory: State<History?> get() = _currentHistory
     val currentLobbiesList: MutableList<Lobby> get() = _currentLobbiesList
     val currentLobby: State<Lobby?> get() = _currentLobby
     val currentLobbyStarted: State<Boolean> get() = _currentLobbyStarted
@@ -69,6 +69,7 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         fetchQuiz()
         fetchQuestion()
         fetchHistory()
+        fetchLobbies()
     }
 
     suspend fun fetchQuiz() {
@@ -96,6 +97,41 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
 
         Log.d("QuizecViewModel", "_quizList: ${_quizList.getQuizList()}")
+    }
+
+    fun fetchLobbyQuiz() {
+        Log.d("QuizecViewModel", "fetchLobbyQuiz: ${_currentLobby.value?.quizId}")
+
+        viewModelScope.launch {
+            try {
+                val quiz = dbClient.from(QUIZ_TABLE).select {
+                    filter {
+                        _currentLobby.value?.quizId?.let { eq("id", it) }
+                    }
+                }.decodeSingleOrNull<Quiz>()
+
+                quiz?.let {
+                    val questions = dbClient
+                        .from(QUESTION_TABLE)
+                        .select(Columns.raw("*, quiz_question!inner(*)")) {
+                            filter {
+                                eq("quiz_question.quiz_id", it.id!!)
+                            }
+                        }
+                        .decodeList<Question>()
+
+                    it.questions = questions
+                    it.image?.let {
+                        getQuizImage(it)
+                    }
+                    _currentQuiz.value = it
+                }
+            } catch (e: Exception) {
+                Log.e("QuizecViewModel", "fetchLobbyQuiz: ${e.message}")
+            }
+        }
+
+        Log.d("QuizecViewModel", "_currentQuiz: ${_currentQuiz.value}")
     }
 
     suspend fun fetchQuestion() {
@@ -130,6 +166,19 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
 
         Log.d("QuizecViewModel", "_historyList: ${_historyList.getHistoryList()}")
+    }
+
+    suspend fun fetchLobbies() {
+        Log.d("QuizecViewModel", "fetchLobbies: ${SAuthUtil.currentUser!!.id}")
+
+        dbClient.from(Constants.LOBBY_TABLE).select {
+            filter { eq("owner_user_id", SAuthUtil.currentUser!!.id) }
+        }.decodeList<Lobby>().let { list ->
+            _currentLobbiesList.clear()
+            _currentLobbiesList.addAll(list)
+        }
+
+        Log.d("QuizecViewModel", "_currentLobbiesList: $_currentLobbiesList")
     }
 
     fun clearData() {

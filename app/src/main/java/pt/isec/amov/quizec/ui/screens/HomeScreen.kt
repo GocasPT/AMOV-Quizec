@@ -1,6 +1,7 @@
 package pt.isec.amov.quizec.ui.screens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -219,6 +220,8 @@ fun HomeScreenPortrait(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(viewModel.currentLobbiesList) { lobby ->
+                        Log.d("HomeScreen", "lobby: $lobby")
+
                         Card(
                             modifier = Modifier
                                 .size(200.dp, 150.dp)
@@ -245,14 +248,14 @@ fun HomeScreenPortrait(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "asdassada",
+                                    text = lobby.code,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Owner: asdsad",
+                                    text = "Owner: ${lobby.ownerUUID}",
                                     fontSize = 12.sp,
                                     color = Color.DarkGray
                                 )
