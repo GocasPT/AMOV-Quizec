@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.Matching
+import pt.isec.amov.quizec.model.question.Question
 
 @Composable
 fun MatchingQuestion(
@@ -96,4 +97,21 @@ fun MatchingQuestion(
             }
         }
     }
+}
+
+//var matching = Question(
+//    content = "Match the following",
+//    answers = Matching(
+//        pairs = setOf(
+//            Pair("A", "1"),
+//            Pair("B", "2"),
+//            Pair("C", "3"),
+//            Pair("D", "4"),
+//        )
+//    )
+//)
+
+@Composable
+fun MatchingQuestionDisplay() {
+
 }

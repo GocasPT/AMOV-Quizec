@@ -39,6 +39,7 @@ import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionType
+import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
@@ -65,10 +66,20 @@ val questionTrueFalse = Question(
     user = "User"
 )
 
+val questionFill = Question(
+    null,
+    "A capital de Portugal é Lisboa.",
+    null,
+    Answer.FillBlank(setOf(
+        Pair(5, "Lisboa.")
+    )),
+    "user");
+
+
 @Preview(showBackground = true)
 @Composable
 fun QuizLiveScreen(
-    question: Question = questionTestSINGLE,
+    question: Question = questionFill,
     onAnswerSelected: (String) -> Unit = {},
     onNextQuestion: () -> Unit = {}
 ) {
@@ -191,12 +202,12 @@ fun QuizLiveScreen(
 
 @Composable
 fun CardQuestionInfo(
-    question: Question = questionTestSINGLE
+    question: Question,
 ){
     var selectedOption by remember { mutableStateOf(false) }
     var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>?>(null) }
-
     var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>( setOf()) }
+    var selectedFilledAnswers by remember { mutableStateOf(setOf<Pair<Int, String>>()) }
 
     Column(
         modifier = Modifier
@@ -213,51 +224,35 @@ fun CardQuestionInfo(
             }
 
             is Answer.SingleChoice -> {
-//                SingleChoiceDisplay(
-//                    answers = question.answers,
-//                    selectedOption = selectedAnswer!!,
-//                    onOptionSelected = { selectedAnswer = it }
-//                )
+                SingleChoiceDisplay(
+                    answers = question.answers.answers,
+                    selectedOption = selectedAnswer,
+                    onOptionSelected = { selectedAnswer = it }
+                )
             }
 
             is Answer.MultipleChoice -> {
-//                MultipleChoiceDisplay(
-//                    answers = question.answers as Set<Pair<Boolean, String>>,
-//                    selectedOptions = selectedAnswers,
-//                    onOptionsSelected = { selectedAnswers = it }
-//                )
+                MultipleChoiceDisplay(
+                    answers = question.answers.answers,
+                    selectedOptions = selectedAnswers,
+                    onOptionsSelected = { selectedAnswers = it }
+                )
             }
 
-
-            is Answer.Drag -> TODO()
-            is Answer.FillBlank -> TODO()
-            is Answer.Matching -> TODO()
+            is Answer.Matching -> {}
             is Answer.Ordering -> TODO()
-        }
+            is Answer.Drag -> TODO()
 
-//        when(question.answers.answerType) {
-//            QuestionType.TRUE_FALSE -> YesNoQuestionDisplay(
-//                selectedOption = selectedOption,
-//                onOptionSelected = { selectedOption = it }
-//            )
-//
-//            QuestionType.SINGLE_CHOICE -> SingleChoiceDisplay(
-//                answers = question.answers as Set<Pair<Boolean, String>>,
-//                selectedOption = selectedAnswer,
-//                onOptionSelected = { selectedAnswer = it }
-//            )
-//
-//            QuestionType.MULTIPLE_CHOICE -> MultipleChoiceDisplay(
-//                answers = question.answers as Set<Pair<Boolean, String>>,
-//                selectedOptions = selectedAnswers,
-//                onOptionSelected = { selectedAnswers = it }
-//            )
-//
-//            QuestionType.MATCHING -> TODO()
-//            QuestionType.ORDERING -> TODO()
-//            QuestionType.DRAG -> TODO()
-//            QuestionType.FILL_BLANK -> TODO()
-//        }
+            is Answer.FillBlank -> {
+                FillBlankQuestionDisplay(
+                    question = question,
+                    answersSelected = selectedFilledAnswers,
+                    onAnswersSelectedChange = { updatedAnswers ->
+                        selectedFilledAnswers = updatedAnswers
+                    }
+                )
+            }
+        }
     }
 
 }

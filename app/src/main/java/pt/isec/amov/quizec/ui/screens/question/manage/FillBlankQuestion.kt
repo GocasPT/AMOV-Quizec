@@ -10,23 +10,29 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
+import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.ui.screens.quiz.live.questionTrueFalse
 
 @Composable
 fun FillBlankQuestion(
@@ -102,5 +108,70 @@ fun FillBlankQuestion(
                 }.joinToString(" ")
             )
         )
+    }
+}
+
+@Composable
+fun FillBlankQuestionDisplay(
+    question: Question,
+    answersSelected: Set<Pair<Int, String>>,
+    onAnswersSelectedChange: (Set<Pair<Int, String>>) -> Unit
+) {
+
+    val blankOptions = (question.answers as? FillBlank)?.answers ?: emptySet()
+    var blankInputs by remember { mutableStateOf(blankOptions.associate { it.first to "" }) }
+
+    val questionContentWithoutResponse = question.content
+        .split(" ")
+        .mapIndexed { index, word ->
+            if (blankOptions.any { it.first == index }) "_".repeat(word.length)
+            else word
+        }.joinToString(" ")
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = questionContentWithoutResponse
+            )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            blankOptions.forEachIndexed { index, (blankIndex, blankWord) ->
+                TextField(
+                    value = blankInputs[blankIndex] ?: "",
+                    onValueChange = { newValue ->
+                        if (newValue.length <= blankWord.length) {
+                            blankInputs = blankInputs.toMutableMap().apply {
+                                this[blankIndex] = newValue
+                            }
+                            val updatedAnswers = blankInputs.filter { it.value.isNotEmpty() }
+                                .map { Pair(it.key, it.value) }
+                                .toSet()
+                            onAnswersSelectedChange(updatedAnswers)
+                        }
+                    },
+                    label = { Text(
+                        stringResource(R.string.hint)
+                                + blankWord.length
+                                + stringResource(R.string.letters))
+                            },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 }

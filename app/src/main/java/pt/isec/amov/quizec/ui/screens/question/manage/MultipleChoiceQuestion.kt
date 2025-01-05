@@ -129,7 +129,7 @@ fun AnswerEntryMultipleChoice(
 fun MultipleChoiceDisplay(
     answers: Set<Pair<Boolean, String>>,
     selectedOptions: Set<Pair<Boolean, String>>,
-    onOptionsSelected: (Pair<Boolean, String>) -> Unit,
+    onOptionsSelected: (Set<Pair<Boolean, String>>) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -143,12 +143,12 @@ fun MultipleChoiceDisplay(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable { onOptionsSelected(answer) },
+                    .clickable { onOptionsSelected(setOf(answer)) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
                     checked = selectedOptions.contains(answer),
-                    onCheckedChange = { onOptionsSelected(answer) }
+                    onCheckedChange = { onOptionsSelected(setOf(answer)) }
                 )
                 Text(
                     text = answer.second,
