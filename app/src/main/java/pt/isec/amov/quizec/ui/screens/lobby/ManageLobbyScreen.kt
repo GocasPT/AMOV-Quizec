@@ -294,7 +294,6 @@ fun ManageLobbyScreen(
             }
 
             Text("SHARE")
-        //}
     }
 }
 
