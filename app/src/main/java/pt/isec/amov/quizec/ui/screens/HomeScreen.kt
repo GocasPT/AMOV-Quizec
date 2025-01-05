@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.jan.supabase.createSupabaseClient
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toInstant
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -113,7 +112,7 @@ fun HomeScreenLandscape(
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(R.drawable.fundo_exemplo),
+                    painter = painterResource(R.drawable.quizec_1080),
                     contentDescription = "Quiz Image",
                     contentScale = ContentScale.Crop
                 )
