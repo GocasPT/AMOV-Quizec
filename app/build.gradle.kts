@@ -61,8 +61,11 @@ dependencies {
     implementation(libs.supabase.auth.kt)
     implementation(libs.supabase.realtime.kt)
     implementation(libs.supabase.storage.kt)
-    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.okhttp)
     implementation("io.coil-kt:coil-compose:2.7.0")
+
+    //ui
     implementation("androidx.compose.material3:material3:1.4.0-alpha02")
+
     debugImplementation(libs.androidx.ui.tooling)
 }

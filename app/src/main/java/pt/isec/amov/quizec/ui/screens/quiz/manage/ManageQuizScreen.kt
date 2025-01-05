@@ -1,49 +1,35 @@
 package pt.isec.amov.quizec.ui.screens.quiz.manage
 
-import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -52,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -61,45 +46,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.utils.FileUtils
 import java.io.File
 
-val questions = listOf(
-    Question(
-        id = 1,
-        content = "Question 2",
-        image = "Image URL",
-        answers = Answer.TrueFalse(true),
-        user = "User"
-    ),
-    Question(
-        id = 2,
-        content = "Question 3",
-        image = "Image URL",
-        answers = Answer.SingleChoice(
-            setOf(
-                Pair(true, "Answer 1"),  // Correct answer
-                Pair(false, "Answer 2"), // Incorrect answer
-                Pair(false, "Answer 3")  // Incorrect answer
-            )
-        ),
-        user = "User"
-    ),
-)
-@Preview(showBackground = true)
 @Composable
 fun ManageQuizScreen(
-    quiz: Quiz? = null,
-    userId : String = "1",
-    questionList: List<Question> = questions,
-    saveQuiz: (Quiz) -> Unit = {},
-    onBack : () -> Unit = {}
+    quiz: Quiz?,
+    userId: String,
+    questionList: List<Question>,
+    saveQuiz: (Quiz) -> Unit,
+    onBack: () -> Unit
 ) {
     var quizTitle by remember { mutableStateOf(quiz?.title ?: "") }
+    //var maxTimeMinutes by remember { mutableStateOf(quiz?.maxTime?.toString() ?: "") }
+    //var isActive by remember { mutableStateOf(quiz?.isActive ?: true) }
+    //var locationRestricted by remember { mutableStateOf(quiz?.locationRestricted ?: false) }
+    //var immediateResults by remember { mutableStateOf(quiz?.immediateResults ?: true) }
     val selectedQuestions = remember {
         mutableStateListOf<Question>().apply {
             quiz?.questions?.let { addAll(it) }
@@ -364,4 +329,26 @@ fun QuestionCard(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ManageQuizScreenPreview() {
+    ManageQuizScreen(
+        quiz = null,
+        userId = "1",
+        questionList = listOf(
+            Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 4", null, Answer.MultipleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 5", null, Answer.Matching(setOf()), "Sr. batata"),
+            Question(null, "Question 6", null, Answer.Ordering(listOf()), "Sr. batata"),
+            Question(null, "Question 7", null, Answer.Drag(setOf()), "Sr. batata"),
+            Question(null, "Question 8", null, Answer.Drag(setOf()), "Sr. batata"),
+            Question(null, "Question 9", null, Answer.FillBlank(setOf()), "Sr. batata"),
+        ),
+        saveQuiz = {},
+        onBack = {}
+    )
 }

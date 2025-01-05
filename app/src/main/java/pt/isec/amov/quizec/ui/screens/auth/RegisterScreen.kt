@@ -14,8 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,34 +39,39 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
 fun RegisterScreen(
     onRegister: (String, String, String, String) -> Unit,
     onBack: () -> Unit,
-    onSuccess : () -> Unit,
+    onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     errorMessageText : String?,
     clearError : () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText, clearError = clearError)
+        RegisterScreenLandscape(
+            modifier = modifier,
+            onRegister = onRegister,
+            onSuccess = onSuccess,
+            onBack = onBack,
+            errorMessageText = errorMessageText,
+            clearError = clearError
+        )
     else
-        RegisterScreenPortrait(modifier = modifier, onRegister = onRegister, onSuccess = onSuccess, onBack = onBack, errorMessageText = errorMessageText, clearError = clearError)
+        RegisterScreenPortrait(
+            modifier = modifier,
+            onRegister = onRegister,
+            onSuccess = onSuccess,
+            onBack = onBack,
+            errorMessageText = errorMessageText,
+            clearError = clearError
+        )
 
 }
 

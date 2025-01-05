@@ -19,22 +19,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +41,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,9 +48,6 @@ import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.ui.components.CustomList
-import pt.isec.amov.quizec.ui.screens.quiz.QuizCardV2
-import pt.isec.amov.quizec.ui.screens.quiz.quizTeste
 
 val quizLists = listOf(
     Quiz(
@@ -107,35 +95,50 @@ val quizLists = listOf(
     ),
 )
 
-
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
     username: String,
-    ) {
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        HomeScreenLandscape(modifier = modifier, username = username)
+        HomeScreenLandscape(
+            username = username,
+            onJoinLobby = onJoinLobby,
+            onCreateLobby = onCreateLobby,
+            modifier = modifier
+        )
     else
-        HomeScreenPortrait(modifier = modifier, username = username)
+        HomeScreenPortrait(
+            username = username,
+            onJoinLobby = onJoinLobby,
+            onCreateLobby = onCreateLobby,
+            modifier = modifier
+        )
 }
 
 @Composable
 fun HomeScreenLandscape(
-    modifier: Modifier = Modifier,
     username: String,
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-
+    //TODO: implement
 }
 
 @Composable
 fun HomeScreenPortrait(
-    modifier: Modifier = Modifier,
     username: String,
+    onJoinLobby: (String) -> Unit,
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val code = remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         Column {
@@ -200,7 +203,7 @@ fun HomeScreenPortrait(
                         trailingIcon = {
                             FloatingActionButton(
                                 modifier = Modifier.padding(16.dp),
-                                onClick = { /*TODO*/ },
+                                onClick = { onJoinLobby(code.value) },
                                 shape = CircleShape
                             ) {
                                 Icon(Icons.Filled.Check, contentDescription = "Floating action button.")
@@ -221,7 +224,7 @@ fun HomeScreenPortrait(
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
                 ElevatedButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onCreateLobby(1, 120) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -242,7 +245,7 @@ fun HomeScreenPortrait(
                         color = Color.Gray,
                     )
                 }
-                
+
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -254,7 +257,7 @@ fun HomeScreenPortrait(
                         Card(
                             modifier = Modifier
                                 .size(200.dp, 150.dp)
-                                .clickable {  },
+                                .clickable { },
                             shape = RoundedCornerShape(12.dp),
                             elevation = CardDefaults.cardElevation(6.dp),
                         ) {
@@ -394,12 +397,15 @@ fun HomeScreenPortrait_V2(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
             OutlinedTextField(
                 value = code.value,
                 onValueChange = { if (it.length <= 6) code.value = it },
-                label = { Text("JOIN QUIZ:") },
+                label = {
+                    Text("JOIN QUIZ:")
+                },
                 textStyle = TextStyle(fontSize = 48.sp),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -408,7 +414,7 @@ fun HomeScreenPortrait_V2(
                         modifier = Modifier
                             .padding(16.dp),
                         shape = CircleShape,
-                        onClick = { /*TODO*/ },
+                        onClick = { /*TODO:???*/ },
                     ) {
                         Icon(Icons.Filled.Check, "Floating action button.")
                     }
@@ -424,12 +430,27 @@ fun HomeScreenPortrait_V2(
         ) {
             HorizontalDivider(thickness = 2.dp)
             ElevatedButton(
-                onClick = {/*TODO*/},
+                onClick = {
+                    //TODO: popup/modal OR QuizListScreen?
+                    //TODO: ???
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
                 Text("CREATE ROOM ")
             }
+
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        username = "Tiago",
+        onJoinLobby = {},
+        onCreateLobby = { _, _ -> },
+        modifier = Modifier.fillMaxSize()
+    )
 }

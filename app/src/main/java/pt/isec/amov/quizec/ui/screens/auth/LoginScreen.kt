@@ -14,7 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,33 +31,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecAuthViewModel
 
 @Composable
 fun LoginScreen(
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     errorMessageText: String?,
@@ -59,13 +61,28 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        LoginScreenLandscape(modifier = modifier, onLogin = onLogin, onRegister = onRegister, errorMessageText = errorMessageText, clearError = clearError)
+        LoginScreenLandscape(
+            viewModel = viewModel,
+            onLogin = onLogin,
+            onRegister = onRegister,
+            errorMessageText = errorMessageText,
+            clearError = clearError,
+            modifier = modifier
+        )
     else
-        LoginScreenPortrait(modifier = modifier, onLogin = onLogin, onRegister = onRegister, errorMessageText = errorMessageText, clearError = clearError)
+        LoginScreenPortrait(
+            viewModel = viewModel,
+            onLogin = onLogin,
+            onRegister = onRegister,
+            errorMessageText = errorMessageText,
+            clearError = clearError,
+            modifier = modifier
+        )
 }
 
 @Composable
 fun LoginScreenLandscape(
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     errorMessageText: String?,
@@ -77,6 +94,7 @@ fun LoginScreenLandscape(
 @SuppressLint("ResourceAsColor")
 @Composable
 fun LoginScreenPortrait(
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
     errorMessageText: String?,

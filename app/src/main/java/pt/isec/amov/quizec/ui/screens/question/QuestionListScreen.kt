@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.question
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -21,14 +21,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,42 +47,17 @@ import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.components.CustomList
-import pt.isec.amov.quizec.ui.screens.quiz.QuizCardV2
 
-
-val questionTest = listOf(
-    Question(
-        id = 1,
-        content = "Question 1",
-        image = "Image URL",
-        answers = Answer.TrueFalse(true),
-        user = "User"
-    ),
-    Question(
-        id = 2,
-        content = "Question 2 asujibdsau dsa dsadubsnaoid sapdjsadnhsaldn as'daisjdoasijd sapodj saiodjasiodjsadj",
-        image = "Image URL",
-        answers = Answer.MultipleChoice(
-            setOf(
-                Pair(true, "Answer 1"),  // Correct answer
-                Pair(false, "Answer 2"), // Incorrect answer
-                Pair(false, "Answer 3")  // Incorrect answer
-            )
-        ),
-        user = "User"
-    ),
-)
-@Preview(showBackground = true)
 @Composable
 fun QuestionListScreen(
-    questionList: List<Question> = questionTest,
-    onSelectQuestion: (Question) -> Unit = {},
-    onCreateQuestion: () -> Unit = {},
-    onEditQuestion: (Question) -> Unit = {},
-    onDeleteQuestion: (Question) -> Unit = {},
-    onDuplicateQuestion: (Question) -> Unit = {}
+    questionList: List<Question>,
+    onSelectQuestion: (Question) -> Unit,
+    onCreateQuestion: () -> Unit,
+    onEditQuestion: (Question) -> Unit,
+    onDeleteQuestion: (Question) -> Unit,
+    onDuplicateQuestion: (Question) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
@@ -325,4 +298,28 @@ fun QuestionCardV2(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestionListScreenPreview() {
+    QuestionListScreen(
+        questionList = listOf(
+            Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(
+                null,
+                "Question 4",
+                null,
+                Answer.MultipleChoice(setOf()),
+                "Sr. batata"
+            )
+        ),
+        onSelectQuestion = {},
+        onCreateQuestion = {},
+        onEditQuestion = {},
+        onDeleteQuestion = {},
+        onDuplicateQuestion = {}
+    )
 }

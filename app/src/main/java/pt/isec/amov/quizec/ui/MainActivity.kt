@@ -19,14 +19,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.QuizecApp
 import pt.isec.amov.quizec.R
+import pt.isec.amov.quizec.ui.screens.MainScreen
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
-import pt.isec.amov.quizec.ui.viewmodels.MainScreen
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
-import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModel
-import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelAuthFactory
-import pt.isec.amov.quizec.ui.viewmodels.QuizecViewModelFactory
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModelFactory
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecAuthViewModel
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecViewModelAuthFactory
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(LOGIN_SCREEN) {
                             LoginScreen(
+                                viewModel = viewModelAuth,
                                 onLogin = { email, password ->
                                     viewModelAuth.signInWithEmail(email, password)
                                 },

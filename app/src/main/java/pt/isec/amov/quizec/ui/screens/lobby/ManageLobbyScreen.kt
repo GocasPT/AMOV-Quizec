@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.screens
+package pt.isec.amov.quizec.ui.screens.lobby
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -38,20 +38,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.ui.screens.quiz.quizTeste
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun ManageLobbyScreen(
-    quiz: Quiz = quizTeste.get(0),
-    modifier: Modifier = Modifier,
-    isNewLobby : Boolean = true
+    quiz: Quiz,
+    isNewLobby: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
@@ -191,7 +189,7 @@ fun ManageLobbyScreen(
                     valueRange = 0f..240f,
                 )
                 Text(
-                    text = "${sliderTime.toInt().toString()} s",
+                    text = "${sliderTime.toInt()} s",
                 )
             }
 
@@ -241,7 +239,7 @@ fun ManageLobbyScreen(
                             steps = 20,
                         )
                         Text(
-                            text = "${sliderLocation.toString()} km",
+                            text = "$sliderLocation km",
                         )
                     }
                 }

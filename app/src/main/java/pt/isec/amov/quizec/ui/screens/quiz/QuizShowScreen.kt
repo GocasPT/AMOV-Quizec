@@ -41,104 +41,15 @@ import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 
-val quizView = listOf(
-    Quiz(
-        id = 1,
-        title = "Titulo 1",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 1",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-            Question(
-                id = 2,
-                content = "Quantos anos tem o Buno?",
-                image = "Image URL",
-                answers = Answer.SingleChoice(
-                    setOf(
-                        Pair(true, "20"),
-                        Pair(false, "21"),
-                        Pair(false, "22"),
-                    )
-                ),
-                user = "User"
-            ),
-            Question(
-                id = 3,
-                content = "Quantos anodsad asd sa dsads tem o Buno?",
-                image = "Image URL",
-                answers = Answer.MultipleChoice(
-                    setOf(
-                        Pair(true, "20"),
-                        Pair(false, "21"),
-                        Pair(true, "22"),
-                    )
-                ),
-                user = "User"
-            ),
-            Question(
-                id = 4,
-                content = "Quantos anos tem o Buno?",
-                image = "Image URL",
-                answers = Answer.Matching(
-                    setOf(
-                        Pair("1", "20"),
-                        Pair("2", "21"),
-                        Pair("3", "22"),
-                    )
-                ),
-                user = "User"
-            ),
-            Question(
-                id = 5,
-                content = "Quantos anos tem o Buno?",
-                image = "Image URL",
-                answers = Answer.Ordering(
-                    listOf("23", "21", "22")
-                ),
-                user = "User"
-            ),
-            Question(
-                id = 6,
-                content = "Quantos anos tem o Buno?",
-                image = "Image URL",
-                answers = Answer.Drag(
-                    setOf(
-                        Pair(1, "20"),
-                        Pair(2, "21"),
-                        Pair(3, "22"),
-                    )
-                ),
-                user = "User"
-            ),
-            Question(
-                id = 7,
-                content = "Quantos anos tem o Buno?",
-                image = "Image URL",
-                answers = Answer.FillBlank(
-                    setOf(
-                        Pair(1, "anos"),
-                        Pair(2, "tem"),
-                        Pair(3, "Buno?"),
-                    )
-                ),
-                user = "User"
-            ),
-        )
-    ))
-
-@Preview(showBackground = true)
 @Composable
 fun QuizShowScreen(
-    quiz: Quiz = quizView[0],
-    questionList: List<Question> = quizView[0].questions ?: emptyList(),
-    onBack : () -> Unit = {},
-    onEdit : (Quiz) -> Unit = {}
+    quiz: Quiz,
+    questionList: List<Question>,
+    onBack: () -> Unit,
+    onEdit: (Quiz) -> Unit,
+    onCreateLobby: (Long) -> Unit,
+    onCreateQuestion: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var expandAll by remember { mutableStateOf(false) }
     val expandIndividual = remember(questionList) { mutableStateListOf(*Array(questionList.size) {false}) }
@@ -186,7 +97,7 @@ fun QuizShowScreen(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-        
+
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
@@ -352,4 +263,31 @@ fun QuestionInfoTemp(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizShowScreenPreview() {
+    QuizShowScreen(
+        quiz = Quiz(
+            title = "Quiz Title",
+            owner = "Owner",
+            id = null,
+            image = null,
+            questions = listOf(
+                Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+                Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+                Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+            )
+        ),
+        questionList = listOf(
+            Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+            Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+            Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+        ),
+        onCreateLobby = {},
+        onCreateQuestion = {},
+        onBack = {},
+        onEdit = {}
+    )
 }

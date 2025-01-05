@@ -19,16 +19,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,78 +37,29 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.components.CustomList
 
-val quizTeste = listOf(
-    Quiz(
-        id = 1,
-        title = "Titulo 1",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 1",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-        )
-    ),
-    Quiz(
-        id = 2,
-        title = "Title 2",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 2",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-            Question(
-                id = 2,
-                content = "Question 3",
-                image = "Image URL",
-                answers = Answer.SingleChoice(
-                    setOf(
-                        Pair(true, "Answer 1"),  // Correct answer
-                        Pair(false, "Answer 2"), // Incorrect answer
-                        Pair(false, "Answer 3")  // Incorrect answer
-                    )
-                ),
-                user = "User"
-            ),
-        )
-    ),
-)
-
-@Preview(showBackground = true)
 @Composable
 fun QuizListScreen(
-    quizList: List<Quiz> = quizTeste,
-    onSelectQuiz: (Quiz) -> Unit = {},
-    onCreateQuiz: () -> Unit = {},
-    onEditQuiz: (Quiz) -> Unit = {},
-    onDeleteQuiz: (Quiz) -> Unit = {},
-    onSearch: (String) -> Unit = {},
-    onFilter: (String) -> Unit = {},
-    onDuplicateQuiz: (Quiz) -> Unit = {}
+    quizList: List<Quiz>,
+    onSelectQuiz: (Quiz) -> Unit,
+    onCreateQuiz: () -> Unit,
+    onEditQuiz: (Quiz) -> Unit,
+    onDeleteQuiz: (Quiz) -> Unit,
+    onSearch: (String) -> Unit,
+    onFilter: (String) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
     val filterOptions = listOf("True / False", "Single Choice")
@@ -259,24 +207,9 @@ fun QuizCardV2(
                     onDuplicateQuiz(quiz)
                 }
             )
-            DropdownMenuItem(
-                text = { Text("Edit") },
-                onClick = {
-                    expanded = false
-                    onEditQuiz(quiz)
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Delete") },
-                onClick = {
-                    expanded = false
-                    onDeleteQuiz(quiz)
-                }
-            )
         }
     }
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -292,7 +225,7 @@ fun QuizCard(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(8.dp)
             .combinedClickable(
                 onClick = { onSelectQuiz(quiz) },
                 onLongClick = { expanded = true }
@@ -372,4 +305,40 @@ fun QuizCard(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizListScreenPreview() {
+    QuizListScreen(
+        quizList = listOf(
+            Quiz(
+                null, "Quiz 1", null, "Sr. batata", listOf(
+                    Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+                    Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+                )
+            ),
+            Quiz(
+                null, "Quiz 2", null, "Sr. batata", listOf(
+                    Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
+                    Question(
+                        null,
+                        "Question 4",
+                        null,
+                        Answer.MultipleChoice(setOf()),
+                        "Sr. batata"
+                    ),
+                )
+            )
+        ),
+        onSelectQuiz = {},
+        onCreateQuiz = {},
+        onEditQuiz = {},
+        onDeleteQuiz = {},
+        onFilter = {},
+        onSearch = {},
+        onDuplicateQuiz = {}
+    )
 }

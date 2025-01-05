@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.viewmodels
+package pt.isec.amov.quizec.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,18 +30,20 @@ import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.ui.screens.HomeScreen
-import pt.isec.amov.quizec.ui.screens.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.credits.CreditsScreen
 import pt.isec.amov.quizec.ui.screens.history.HistoryShowScreen
+import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
+import pt.isec.amov.quizec.ui.screens.lobby.ConfigLobbyScreen
+import pt.isec.amov.quizec.ui.screens.lobby.LobbyScreen
+import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
-import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 import pt.isec.amov.quizec.ui.screens.settings.SettingsScreen
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 sealed class BottomNavBarItem(
     var title: String,
@@ -64,11 +66,13 @@ sealed class BottomNavBarItem(
             "Question",
             Icons.Filled.Checklist
         )
+
     data object History :
         BottomNavBarItem(
             "History",
             Icons.Filled.History
         )
+
     data object Settings :
         BottomNavBarItem(
             "Settings",
@@ -97,6 +101,7 @@ fun MainScreen(
         BottomNavBarItem.Settings
     )
 
+    //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
         viewModel.clearData()
         withContext(Dispatchers.IO) {
@@ -128,7 +133,7 @@ fun MainScreen(
         withContext(Dispatchers.IO) {
             viewModel.dbClient
                 .from("question")
-                .select() {
+                .select {
                     filter {
                         eq("user_id", user!!.id)
                     }
@@ -146,7 +151,7 @@ fun MainScreen(
         withContext(Dispatchers.IO) {
             viewModel.dbClient
                 .from("history")
-                .select() {
+                .select {
                     filter {
                         eq("user_id", user!!.id)
                     }
@@ -188,7 +193,34 @@ fun MainScreen(
         ) {
             composable("Home") {
                 HomeScreen(
-                    username = user!!.name,
+                    username = user!!.username,
+                    onJoinLobby = { code ->
+                        viewModel.joinLobby(code)
+                        navController.navigate("lobby")
+                    },
+                    onCreateLobby = { quizId, duration ->
+                        /* TODO: create lobby
+                            - go to quiz list
+                            - select quiz
+                            - viewModel.createLobby(quizId, ...)
+                        */
+                        viewModel.createLobby(quizId, duration)
+                    }
+                )
+            }
+            composable("setup-lobby") {
+                ConfigLobbyScreen(
+                    owner = user!!,
+                    onCreateLobby = { /* TODO */
+                        viewModel.createLobby(1, 120)
+                        //TODO: nav to owner lobby screen (!= lobby screen OR show different screen for owner)
+                        //navController.navigate("lobby")
+                    }
+                )
+            }
+            composable("lobby") {
+                LobbyScreen(
+                    viewModel = viewModel,
                 )
             }
             composable("Quiz") {
@@ -210,6 +242,8 @@ fun MainScreen(
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
                     },
+                    onSearch = {},
+                    onFilter = {},
                     onDuplicateQuiz = { quiz ->
                         viewModel.duplicateQuiz(quiz)
                     }
@@ -220,11 +254,19 @@ fun MainScreen(
                     Log.d("Quiz selected", viewModel.currentQuiz!!.title)
                     QuizShowScreen(
                         quiz = viewModel.currentQuiz!!,
+                        questionList = viewModel.questionList.getQuestionList(),
                         onBack = { navController.popBackStack() },
                         onEdit = { quiz ->
                             viewModel.selectQuiz(quiz)
                             navController.navigate("manageQuiz")
-                        }
+                        },
+                        onCreateLobby = { code ->
+                            viewModel.createLobby(
+                                code,
+                                120
+                            ) //TODO: receive all parameters to config lobby
+                        },
+                        onCreateQuestion = { /* TODO */ },
                     )
                 }
             }

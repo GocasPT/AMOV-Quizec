@@ -1,10 +1,10 @@
 package pt.isec.amov.quizec.utils
 
 import android.content.res.AssetManager
-import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.storage.storage
+import pt.isec.amov.quizec.QuizecApp
 import pt.isec.amov.quizec.model.QuizQuestion
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
@@ -13,8 +13,17 @@ import java.io.File
 import java.io.InputStream
 
 class SStorageUtil {
+    //TODO: improve this util class
+    // - use Result → Result.success/Result.failure → onSuccess/onFailure
+    // - use require → validate inputs
+
     companion object {
-        suspend fun saveQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?, Question?) -> Unit) {
+        private val dbClient get() = QuizecApp.getInstance().dbClient
+
+        suspend fun saveQuestionDatabase(
+            question: Question,
+            onResult: (Throwable?, Question?) -> Unit
+        ) {
             try {
                 val updatedQuestion = dbClient.from("question").insert(question) {
                     select()
@@ -25,7 +34,7 @@ class SStorageUtil {
             }
         }
 
-        suspend fun updateQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+        suspend fun updateQuestionDatabase(question: Question, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("question").update(question) {
                     filter {
@@ -38,7 +47,7 @@ class SStorageUtil {
             }
         }
 
-        suspend fun deleteQuestionDatabase(dbClient: SupabaseClient, question: Question, onResult: (Throwable?) -> Unit) {
+        suspend fun deleteQuestionDatabase(question: Question, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("question").delete {
                     filter {
@@ -51,7 +60,7 @@ class SStorageUtil {
             }
         }
 
-        suspend fun saveQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?, Quiz?) -> Unit) {
+        suspend fun saveQuizDatabase(quiz: Quiz, onResult: (Throwable?, Quiz?) -> Unit) {
             try {
                 val updatedQuiz = dbClient.from("quiz")
                     .insert(quiz.copy(questions = null)) {
@@ -60,7 +69,8 @@ class SStorageUtil {
                     .decodeSingle<Quiz>()
 
                 quiz.questions?.forEach { question ->
-                    dbClient.from("quiz_question").insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
+                    dbClient.from("quiz_question")
+                        .insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
                 }
 
                 quiz.image?.let {
@@ -74,13 +84,13 @@ class SStorageUtil {
             }
         }
 
-        suspend fun updateQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
+        suspend fun updateQuizDatabase(quiz: Quiz, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("quiz").update(
                     {
                         set("title", quiz.title)
                     }
-                )  {
+                ) {
                     filter {
                         eq("id", quiz.id!!)
                     }
@@ -102,7 +112,11 @@ class SStorageUtil {
             }
         }
 
-        suspend fun deleteQuizDatabase(dbClient: SupabaseClient, quiz: Quiz, onResult: (Throwable?) -> Unit) {
+        suspend fun deleteQuizDatabase(
+            dbClient: SupabaseClient,
+            quiz: Quiz,
+            onResult: (Throwable?) -> Unit
+        ) {
             try {
                 dbClient.from("quiz_question").delete {
                     filter {
@@ -134,7 +148,7 @@ class SStorageUtil {
         //private var listenerRegistration: ListenerRegistration? = null
 
         /*
-        fun startObserver(dbClient: SupabaseClient, onNewValues: (Long, Long) -> Unit) {
+        fun startObserver(onNewValues: (Long, Long) -> Unit) {
             stopObserver()
             val db = Firebase.firestore
             listenerRegistration = db.collection("Scores").document("Level1")
@@ -154,7 +168,7 @@ class SStorageUtil {
         fun stopObserver() {
             listenerRegistration?.remove()
         }
-         */
+        */
 
         //TODO: Flow VS .channel()
 
