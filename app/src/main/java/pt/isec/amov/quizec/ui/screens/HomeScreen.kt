@@ -10,18 +10,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
@@ -45,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
@@ -126,132 +132,120 @@ fun HomeScreenLandscape(
     onCreateLobby: (quizId: Long, duration: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    //TODO: implement
-}
-
-@Composable
-fun HomeScreenPortrait(
-    username: String,
-    onJoinLobby: (String) -> Unit,
-    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
     val code = remember { mutableStateOf("") }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
+    LazyRow(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column {
-            Column(
+        // Welcome Image Section
+        item {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.4f)
+                    .size(300.dp)
             ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.fundo_exemplo),
+                    contentDescription = "Quiz Image",
+                    contentScale = ContentScale.Crop
+                )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.5f)
-                ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.fundo_exemplo),
-                        contentDescription = "Quiz Image",
-                        contentScale = ContentScale.Crop
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Gray.copy(alpha = 0.8f)
-                                    ),
-                                    startY = 0f
-                                )
-                            )
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp),
-                        contentAlignment = Alignment.BottomStart
-                    ) {
-                        Text(
-                            text = stringResource(R.string.welcome, username),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
                         .fillMaxSize()
-                        .weight(0.5f)
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Gray.copy(alpha = 0.8f)
+                                ),
+                                startY = 0f
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.BottomStart
                 ) {
-                    OutlinedTextField(
-                        value = code.value,
-                        onValueChange = { if (it.length <= 6) code.value = it },
-                        label = { Text(stringResource(R.string.join_quiz)) },
-                        textStyle = TextStyle(fontSize = 28.sp),
-                        singleLine = true,
-                        shape = RoundedCornerShape(percent = 20),
-                        trailingIcon = {
-                            FloatingActionButton(
-                                modifier = Modifier.padding(16.dp),
-                                onClick = { onJoinLobby(code.value) },
-                                shape = CircleShape
-                            ) {
-                                Icon(Icons.Filled.Check, contentDescription = "Floating action button.")
-                            }
-                        }
+                    Text(
+                        text = stringResource(R.string.welcome, username),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                 }
             }
+        }
 
-            Column(
+        // Code Input Section
+        item {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.6f)
+                    .width(300.dp)
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
             ) {
-                HorizontalDivider(
-                    color = Color.Gray,
-                    thickness = 2.dp,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                OutlinedTextField(
+                    value = code.value,
+                    onValueChange = { if (it.length <= 6) code.value = it },
+                    label = { Text(stringResource(R.string.join_quiz)) },
+                    textStyle = TextStyle(fontSize = 28.sp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(percent = 20),
+                    trailingIcon = {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = { onJoinLobby(code.value) },
+                            shape = CircleShape
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = "Join button")
+                        }
+                    }
                 )
+            }
+        }
+
+        // Create Room Section
+        item {
+            Box(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 ElevatedButton(
                     onClick = { onCreateLobby(1, 120) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(R.string.create_room))
                 }
+            }
+        }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.my_rooms),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray,
-                    )
-                }
-
+        // My Rooms Section
+        item {
+            Column(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = stringResource(R.string.my_rooms),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Gray,
+                )
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    contentPadding = PaddingValues(horizontal = 24.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(quizLists) { quiz ->
@@ -272,8 +266,7 @@ fun HomeScreenPortrait(
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.quizec_1080),
-                                    //painter = rememberAsyncImagePainter(quiz.image), // Requires Coil for async image loading
-                                    contentDescription = "fsdfds",
+                                    contentDescription = "Quiz Image",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(80.dp),
@@ -281,177 +274,279 @@ fun HomeScreenPortrait(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "asdassada",
+                                    text = "Quiz Title",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Owner: asdsad",
+                                    text = "Owner: UserName",
                                     fontSize = 12.sp,
                                     color = Color.DarkGray
                                 )
                             }
                         }
                     }
-
-
                 }
             }
         }
     }
+
 }
 
+@Preview(showBackground = true)
 @Composable
-fun QuizLobbyCard(
-    quiz: Quiz,
-    onSelectQuiz: (Quiz) -> Unit,
-    ) {
-    Card(
-        modifier = Modifier
-            .size(200.dp, 150.dp)
-            .clickable { /* Navigate to quiz details */ },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.LightGray)
-                .padding(8.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = quiz.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = quiz.title,
-                fontSize = 12.sp,
-                color = Color.DarkGray
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun HomeScreenPortrait_V2(
+fun HomeScreenPortrait(
+    username: String = "Tiago",
+    onJoinLobby: (String) -> Unit = {},
+    onCreateLobby: (quizId: Long, duration: Long) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
-    ) {
-
+) {
     val code = remember { mutableStateOf("") }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .fillMaxWidth()
     ) {
-        Box (
+        Column(
             modifier = Modifier
-                .height(180.dp)
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxSize(),
-                painter = painterResource(R.drawable.fundo_exemplo),
-                contentDescription = "Quiz Image",
-                contentScale = ContentScale.Crop
-            )
-
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Gray.copy(alpha = 0.8f)
-                            ),
-                            startY = 0f,
-                        )
-                    )
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                contentAlignment = Alignment.BottomStart
-            ) {
-                Text(
-                    text = "Welcome, TIAGO",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            OutlinedTextField(
-                value = code.value,
-                onValueChange = { if (it.length <= 6) code.value = it },
-                label = {
-                    Text("JOIN QUIZ:")
-                },
-                textStyle = TextStyle(fontSize = 48.sp),
-                singleLine = true,
-                shape = RoundedCornerShape(percent = 20),
-                trailingIcon = {
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        shape = CircleShape,
-                        onClick = { /*TODO:???*/ },
-                    ) {
-                        Icon(Icons.Filled.Check, "Floating action button.")
-                    }
-                }
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            HorizontalDivider(thickness = 2.dp)
-            ElevatedButton(
-                onClick = {
-                    //TODO: popup/modal OR QuizListScreen?
-                    //TODO: ???
-                },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(140.dp)
             ) {
-                Text("CREATE ROOM ")
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.fundo_exemplo),
+                    contentDescription = "Quiz Image",
+                    contentScale = ContentScale.Crop
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Gray.copy(alpha = 0.8f)
+                                ),
+                                startY = 0f
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.welcome, username),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    OutlinedTextField(
+                        value = code.value,
+                        onValueChange = { if (it.length <= 6) code.value = it },
+                        label = { Text(stringResource(R.string.join_quiz)) },
+                        textStyle = TextStyle(fontSize = 28.sp),
+                        singleLine = true,
+                        shape = RoundedCornerShape(percent = 20),
+                        trailingIcon = {
+                            FloatingActionButton(
+                                modifier = Modifier.padding(16.dp),
+                                onClick = { onJoinLobby(code.value) },
+                                shape = CircleShape
+                            ) {
+                                Icon(Icons.Filled.Check, contentDescription = "Floating action button.")
+                            }
+                        }
+                    )
+
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 2.dp,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+
+                    ElevatedButton(
+                        onClick = { onCreateLobby(1, 120) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.create_room))
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopStart
+            ) {
+                Text(
+                    text = stringResource(R.string.my_rooms),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Gray,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.my_rooms),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Gray,
+                    )
+                }
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(quizLists) { quiz ->
+                        QuizLobbyCard(
+                            quiz = quiz,
+                            onSelectQuiz = {},
+                            isStarted = false
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
+
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        username = "Tiago",
-        onJoinLobby = {},
-        onCreateLobby = { _, _ -> },
-        modifier = Modifier.fillMaxSize()
-    )
+fun QuizLobbyCard(
+    quiz: Quiz,
+    onSelectQuiz: (Quiz) -> Unit,
+    isStarted: Boolean,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {  },
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFBDA9A9),
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .height(180.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.LightGray)
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = quiz.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = if (isStarted) "LIVE" else "WAITING",
+                        color = if (isStarted) Color.Red else Color(0xFF36AD36),
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "00:00 | 00:00",
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Gray
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Restricted",
+                        fontSize = 12.sp,
+                        color = Color.DarkGray
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.People,
+                            contentDescription = "Restricted",
+                            tint = Color.DarkGray
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "10",
+                            fontSize = 12.sp,
+                            color = Color.DarkGray
+                        )
+                    }
+                    Text(
+                        text = quiz.id.toString(),
+                        fontSize = 12.sp,
+                        color = Color.DarkGray
+                    )
+                }
+            }
+        }
+
+    }
 }

@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.ui.screens
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -80,6 +82,7 @@ sealed class BottomNavBarItem(
         )
 }
 
+
 @Composable
 fun MainScreen(
     viewModel: QuizecViewModel,
@@ -87,7 +90,7 @@ fun MainScreen(
     navController: NavHostController = rememberNavController(),
     onSignOut: () -> Unit = {},
     modifier: Modifier = Modifier,
-) {
+) { 
     val currentScreen by navController.currentBackStackEntryAsState()
     navController.addOnDestinationChangedListener { _, destination, _ ->
         Log.d("Destination changed", destination.route.toString())

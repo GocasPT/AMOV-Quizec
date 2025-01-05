@@ -23,6 +23,7 @@ fun HistoryShowScreen(
 ) {
 
     val scoreValue = "${history.score}/20"
+
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),

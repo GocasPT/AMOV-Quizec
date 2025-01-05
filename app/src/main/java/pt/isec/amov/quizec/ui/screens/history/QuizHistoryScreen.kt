@@ -50,10 +50,6 @@ fun QuizHistoryScreen(
     historyList: List<History>,
 ) {
 
-    var searchText by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("All") }
-    val filterOptions = listOf("True / False", "Single Choice")
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -75,8 +71,7 @@ fun QuizHistoryScreen(
                     onSelectHistory = { onSelect(history) }
                 )
             }
-            //Temporary button to create dummy data
-            //This does create but need to refresh the screen to see the changes
+
             Button(onClick = { onCreateDummy() }) {
                 Text("Create Dummy")
             }

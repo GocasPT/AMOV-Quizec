@@ -47,11 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
-<<<<<<< HEAD
-=======
-import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.R
->>>>>>> 63ad209 (adding strings)
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
