@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -184,7 +185,7 @@ fun ManageLobbyScreen(
                 Text(
                     modifier = Modifier
                         .padding(bottom = 12.dp),
-                    text = "Quiz Time",
+                    text = stringResource(R.string.quiz_time),
                 )
                 Slider(
                     value = sliderTime,
@@ -204,7 +205,7 @@ fun ManageLobbyScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Instant Start",
+                    text = stringResource(R.string.instant_start),
                 )
                 Switch(
                     checked = false,
@@ -219,7 +220,7 @@ fun ManageLobbyScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Location Restricted",
+                    text = stringResource(R.string.location_restricted),
                 )
                 Switch(
                     checked = false,
@@ -255,7 +256,7 @@ fun ManageLobbyScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Instant Score",
+                    text = stringResource(R.string.instant_score),
                 )
                 Switch(
                     checked = false,

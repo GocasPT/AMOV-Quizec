@@ -18,11 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
 
@@ -55,9 +57,9 @@ fun FillBlankQuestion(
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("Fill in the blanks")
+                    append(stringResource(R.string.fill_in_the_blanks))
                 }
-                append(" by selecting the words from the text above")
+                append(stringResource(R.string.by_selecting_the_words_from_the_text_above))
             },
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -93,11 +95,12 @@ fun FillBlankQuestion(
         }
 
         Text(
-            text = "Question Text Preview: \n${
+            text = stringResource(
+                R.string.question_text_preview,
                 questionTitle.split(" ").mapIndexed { index, word ->
                     if (selectedWords.contains(index to word)) "_".repeat(word.length) else word
                 }.joinToString(" ")
-            }"
+            )
         )
     }
 }

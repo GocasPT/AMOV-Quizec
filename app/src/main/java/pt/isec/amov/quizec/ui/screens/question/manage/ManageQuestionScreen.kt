@@ -34,10 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer.Drag
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
 import pt.isec.amov.quizec.model.question.Answer.Matching
@@ -115,7 +118,7 @@ fun ManageQuestionScreen(
         }
 
         Text(
-            text = if (question == null) "New Question" else "Edit Question",
+            text = if (question == null) stringResource(R.string.new_question) else stringResource(R.string.edit_question),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -123,7 +126,7 @@ fun ManageQuestionScreen(
         OutlinedTextField(
             value = questionContent,
             onValueChange = { questionContent = it },
-            label = { Text("Question") },
+            label = { Text(stringResource(R.string.question)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -285,7 +288,7 @@ fun ManageQuestionScreen(
                 .align(Alignment.CenterHorizontally),
             enabled = saveEnabled && questionContent.isNotBlank()
         ) {
-            Text(if (question == null) "Create Question" else "Save Changes")
+            Text(if (question == null) stringResource(R.string.create_question) else stringResource(R.string.save_changes))
         }
     }
 }}

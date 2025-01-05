@@ -39,10 +39,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+<<<<<<< HEAD
+=======
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+>>>>>>> 63ad209 (adding strings)
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import pt.isec.amov.quizec.R
 
 @Composable
 fun RegisterScreen(
@@ -133,7 +148,7 @@ fun RegisterScreenPortrait(
                 modifier = Modifier
                     .width(8.dp))
             Text(
-                text = "Back to Login",
+                text = stringResource(R.string.back_to_login),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -149,7 +164,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = name.value,
                 onValueChange = { newText -> name.value = newText },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.name)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(percent = 20),
                 singleLine = true
@@ -158,7 +173,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = email.value,
                 onValueChange = { newText -> email.value = newText },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(percent = 20),
                 singleLine = true,
@@ -170,7 +185,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = password.value,
                 onValueChange = { newText -> password.value = newText },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -205,7 +220,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = repeatPassword.value,
                 onValueChange = { newText -> repeatPassword.value = newText },
-                label = { Text("Repeat Password") },
+                label = { Text(stringResource(R.string.repeat_password)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -252,7 +267,7 @@ fun RegisterScreenPortrait(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Registration Successful",
+                                text = stringResource(R.string.registration_successful),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
@@ -264,7 +279,7 @@ fun RegisterScreenPortrait(
                                 },
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
                             ) {
-                                Text("OK")
+                                Text(stringResource(R.string.ok))
                             }
                         }
                     }
@@ -283,7 +298,7 @@ fun RegisterScreenPortrait(
                 .padding(bottom = 24.dp)
                 .fillMaxWidth(),
         ) {
-            Text("REGISTER")
+            Text(stringResource(R.string.register))
         }
 
         SnackBar(

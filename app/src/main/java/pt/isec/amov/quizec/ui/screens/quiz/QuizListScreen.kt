@@ -37,6 +37,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,9 +63,6 @@ fun QuizListScreen(
     onDuplicateQuiz: (Quiz) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("All") }
-    val filterOptions = listOf("True / False", "Single Choice")
 
     Box(
         modifier = Modifier
@@ -122,7 +122,7 @@ fun QuizListScreen(
                 contentDescription = "Create Quiz",
                 imageVector = Icons.Filled.Add
             )
-            Text("CREATE QUIZ")
+            Text(stringResource(R.string.create_quiz).uppercase())
         }
     }
 }
@@ -201,10 +201,25 @@ fun QuizCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Duplicate") },
+                text = { Text(stringResource(R.string.duplicate)) },
                 onClick = {
                     expanded = false
                     onDuplicateQuiz(quiz)
+                }
+            )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.edit)) },
+                onClick = {
+                    expanded = false
+                    onEditQuiz(quiz)
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.delete)) },
+                onClick = {
+                    expanded = false
+                    onDeleteQuiz(quiz)
                 }
             )
         }

@@ -185,13 +185,13 @@ fun LoginScreenPortrait(
                     .fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D1C1F))
             ) {
-                Text("LOGIN")
+                Text(stringResource(R.string.login))
             }
         }
 
         BasicText(
             text = buildAnnotatedString {
-                append("Don't have an account? ")
+                append(stringResource(R.string.don_t_have_an_account))
                 withStyle(
                     SpanStyle(
                         fontWeight = FontWeight.Bold,
@@ -208,7 +208,7 @@ fun LoginScreenPortrait(
                             }
                         )
                     ) {
-                        append("Click here to register.")
+                        append(stringResource(R.string.click_here_to_register))
                     }
                 }
             },
