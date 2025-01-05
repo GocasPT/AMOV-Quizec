@@ -21,6 +21,7 @@ import pt.isec.amov.quizec.model.history.AnswerHistory
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.history.HistoryList
 import pt.isec.amov.quizec.model.history.QuizSnapshot
+import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
 import pt.isec.amov.quizec.model.question.Answer.Matching
 import pt.isec.amov.quizec.model.question.Answer.MultipleChoice
@@ -44,6 +45,7 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     private val _questionList = QuestionList()
     private val _quizList = QuizList()
     private val _historyList = HistoryList()
+    private val _answersList = mutableListOf<AnswerHistory>()
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
     private var _currentQuestion = mutableStateOf<Question?>(null)
     private var _currentHistory = mutableStateOf<History?>(null)
@@ -315,6 +317,96 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     fun duplicateQuiz(quiz: Quiz) {
         saveQuiz(quiz.copy(id = null))
     }
+
+    //*
+    fun saveAnswer(question: Question, userAnswer: Answer) {
+        Log.d("QuizecViewModel", "saveAnswer: $userAnswer")
+
+        // Calculate score based on answer type
+        val score = when {
+            userAnswer == question.answers -> 1.0
+            userAnswer is Ordering && userAnswer.order == (question.answers as Ordering).order -> 1.0
+            userAnswer is MultipleChoice -> {
+                val correctAnswers = (question.answers as MultipleChoice).answers
+                val userAnswers = userAnswer.answers
+                val correctCount = userAnswers.count { userAns ->
+                    correctAnswers.any { it.first == userAns.first && it.second == userAns.second }
+                }
+                correctCount.toDouble() / correctAnswers.size
+            }
+
+            userAnswer is Matching -> {
+                val correctPairs = (question.answers as Matching).pairs
+                val userPairs = userAnswer.pairs
+                val correctCount = userPairs.count { it in correctPairs }
+                correctCount.toDouble() / correctPairs.size
+            }
+
+            userAnswer is FillBlank -> {
+                val correctAnswers = (question.answers as FillBlank).answers
+                val userAnswers = userAnswer.answers
+                val correctCount = userAnswers.count { it in correctAnswers }
+                correctCount.toDouble() / correctAnswers.size
+            }
+
+            else -> 0.0
+        }
+
+        // Create answer history
+        val answerHistory = AnswerHistory(
+            content = question.content,
+            image = question.image,
+            correctAnswer = question.answers,
+            userAnswer = userAnswer,
+            score = score
+        )
+        _answersList.add(answerHistory)
+
+        // If this is the last question, create the final History object
+        if (_currentQuiz.value?.questions?.size == _answersList.size) {
+            createHistory()
+        }
+    }
+
+    private fun createHistory() {
+        _currentQuiz.value?.let { quiz ->
+            val totalScore = ((_answersList.sumOf { it.score } / _answersList.size) * 20).toInt()
+            val newHistory = History(
+                id = null,
+                userId = _currentLobby.value?.ownerUUID ?: "",
+                quiz = QuizSnapshot(
+                    title = quiz.title,
+                    image = quiz.image,
+                    owner = quiz.owner
+                ),
+                answers = _answersList.toList(),
+                score = totalScore,
+                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toString()
+            )
+            _currentHistory.value = newHistory
+
+            // Save history to database
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveHistoryDatabase(newHistory) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving history: $e")
+                        } else {
+                            _historyList.addHistory(newHistory)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving history: $e")
+                }
+            }
+        }
+    }
+
+    fun clearAnswers() {
+        _answersList.clear()
+    }
+    //*
 
     //TODO: delete this later
     fun createDummyHistory(userId: String?) {

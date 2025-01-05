@@ -9,7 +9,7 @@ data class History (
     @SerialName("user_id")
     val userId: String,
     val quiz: QuizSnapshot,
-    val answers: List<AnswerHistory>,
+    val answers: List<AnswerHistory> = emptyList(),
     val score: Int, //0-20
     val date: String
 )

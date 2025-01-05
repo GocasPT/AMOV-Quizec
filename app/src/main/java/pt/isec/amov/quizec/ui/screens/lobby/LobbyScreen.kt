@@ -33,12 +33,13 @@ fun LobbyScreen(
     modifier: Modifier = Modifier,
 ) {
     var questionIndex by remember { mutableIntStateOf(0) }
-    val quiz = viewModel.currentQuiz.value
     val hasStarted = viewModel.currentLobbyStarted.value
+    val quiz = viewModel.currentQuiz.value
 
     LaunchedEffect(hasStarted) {
         if (hasStarted) {
             viewModel.fetchLobbyQuiz()
+            viewModel.clearAnswers() //!TODO
         }
     }
 
@@ -76,6 +77,8 @@ fun LobbyScreen(
                         question = currentQuestion,
                         onAnswerSelected = { answer ->
                             Log.d("LobbyScreen", "Answer selected: $answer")
+                            //TODO: save answer
+                            viewModel.saveAnswer(currentQuestion, answer)
                         },
                         onNextQuestion = {
                             questionIndex += 1

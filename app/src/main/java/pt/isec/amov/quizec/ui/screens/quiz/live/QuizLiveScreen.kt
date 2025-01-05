@@ -17,7 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,14 +38,10 @@ import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
 @Composable
 fun QuizLiveScreen(
     question: Question,
-    onAnswerSelected: (String) -> Unit = {},
+    onAnswerSelected: (Answer) -> Unit = {},
     onNextQuestion: () -> Unit = {}
 ) {
-    var selectedAnswer by remember {
-        mutableStateOf<String?>(
-            if (question.answers is Answer.TrueFalse) "false" else null
-        )
-    }
+    var selectedAnswer by remember { mutableStateOf<Answer>(Answer.TrueFalse(false)) }
 
     Box(
         modifier = Modifier
@@ -140,7 +135,7 @@ fun QuizLiveScreen(
                     ) {
                         CardQuestionInfo(
                             question = question,
-                            defaultValue = selectedAnswer,
+                            defaultValue = selectedAnswer.toString(),
                             onResponse = { selectedAnswer = it }
                         )
                     }
@@ -155,7 +150,7 @@ fun QuizLiveScreen(
         ) {
             Button(
                 onClick = {
-                    selectedAnswer?.let {
+                    selectedAnswer.let {
                         onAnswerSelected(it)
                         onNextQuestion()
                     }
@@ -172,8 +167,8 @@ fun QuizLiveScreen(
 fun CardQuestionInfo(
     question: Question,
     defaultValue: String? = null,
-    onResponse: (String) -> Unit = {}
-){
+    onResponse: (Answer) -> Unit = {}
+) {
     var selectedOption by remember { mutableStateOf(defaultValue?.toBoolean() ?: false) }
     var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>>(Pair(false, "False")) }
     var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>(emptySet()) }
@@ -191,20 +186,34 @@ fun CardQuestionInfo(
                     selectedOption = selectedOption,
                     onOptionSelected = {
                         selectedOption = it
-                        onResponse(it.toString())
+
+                        //onResponse(selectedOption)
+                        onResponse(Answer.TrueFalse(selectedOption))
                     }
                 )
 
-                LaunchedEffect(Unit) {
-                    onResponse(selectedOption.toString())
-                }
+                //?TODO: check this
+                /*LaunchedEffect(Unit) {
+                    onResponse(selectedOption)
+                }*/
             }
 
             is Answer.SingleChoice -> {
                 SingleChoiceDisplay(
                     answers = question.answers.answers,
                     selectedOption = selectedAnswer,
-                    onOptionSelected = { selectedAnswer = it }
+                    onOptionSelected = {
+                        selectedAnswer = it
+                        //onResponse(selectedAnswer)
+                        onResponse(
+                            Answer.SingleChoice(question.answers.answers.map {
+                                if (it.second == selectedAnswer.second)
+                                    return@map Pair(true, it.second)
+                                else
+                                    return@map Pair(false, it.second)
+                            }.toSet())
+                        )
+                    }
                 )
             }
 
@@ -218,6 +227,16 @@ fun CardQuestionInfo(
                         } else {
                             selectedAnswers + it
                         }
+
+                        //onResponse(selectedAnswers)
+                        onResponse(
+                            Answer.MultipleChoice(question.answers.answers.map {
+                                if (selectedAnswers.contains(it))
+                                    return@map Pair(true, it.second)
+                                else
+                                    return@map Pair(false, it.second)
+                            }.toSet())
+                        )
                     }
                 )
             }
@@ -232,6 +251,16 @@ fun CardQuestionInfo(
                     answersSelected = selectedFilledAnswers,
                     onAnswersSelectedChange = { updatedAnswers ->
                         selectedFilledAnswers = updatedAnswers
+
+                        //onResponse(selectedFilledAnswers)
+                        onResponse(
+                            Answer.FillBlank(question.answers.answers.map {
+                                if (selectedFilledAnswers.contains(it))
+                                    return@map Pair(it.first, it.second)
+                                else
+                                    return@map Pair(it.first, "")
+                            }.toSet())
+                        )
                     }
                 )
             }
