@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quizec</string>
+    <string name="remove">Remove</string>
+    <string name="add">Adicionar</string>
+    <string name="create_quiz">Criar Quiz</string>
+    <string name="save_changes">Guardar Alterações</string>
+    <string name="quiz_title">Titulo Quiz</string>
+    <string name="edit_quiz">Editar Quiz</string>
+    <string name="don_t_have_an_account">Não tens conta?</string>
+    <string name="click_here_to_register">Clica aqui para te registares.</string>
+    <string name="new_quiz">Novo Quiz</string>
+    <string name="back_to_login">Voltar ao Login</string>
+    <string name="name">Nome</string>
+    <string name="repeat_password">Repetir Password</string>
+    <string name="registration_successful">Registado com Sucesso</string>
+    <string name="register">Registo</string>
+</resources>
