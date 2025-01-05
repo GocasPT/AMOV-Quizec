@@ -192,12 +192,52 @@ fun ManageQuizScreen(
                 singleLine = true
             )
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+
+                Button(
+                    onClick = {
+                        pickImage.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = "Select Image"
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        takePicture.launch(
+                            FileProvider.getUriForFile(
+                                context,
+                                "pt.isec.amov.quizec.android.fileprovider",
+                                File(imagePath)
+                            )
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CameraAlt,
+                        contentDescription = "Take Picture"
+                    )
+                }
+            }
+
             Column (
                 modifier = Modifier
+                    .padding(8.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 if (picture != null) {
                     Log.d("PictureDebug", "Picture URI: $picture")
                     AsyncImage(
@@ -209,139 +249,37 @@ fun ManageQuizScreen(
                             .height(120.dp),
                     )
                 }
-
-                Button(
-                    onClick = { showDialog = true },
-                ) {
-                    Icon(Icons.Default.Image, contentDescription = "Add Image")
-                }
             }
 
-            if (showDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false },
-                    title = { Text("Select Image") },
-                    text = { Text("Would you like to select an image or take a new one?") },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showDialog = false
-                            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }) {
-                            Text("Select Image")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showDialog = false
-                            takePicture.launch(
-                                FileProvider.getUriForFile(
-                                    context,
-                                    "pt.isec.amov.quizec.android.fileprovider",
-                                    File(imagePath)
-                                )
-                            )
-                        }) {
-                            Text("Take Picture")
-                        }
-                    }
-                )
-            }
-
-            //FullImagePicker()
-
-//
-//        picture?.let { picture ->
-//            Text(
-//                text = "Image selected",
-//                modifier = Modifier
-//                    .align(Alignment.CenterHorizontally)
-//            )
-//            AsyncImage(
-//                model = picture,
-//                contentDescription = "Quiz's image",
-//                modifier = Modifier
-//                    .aspectRatio(1f)
-//                    .clip(RoundedCornerShape(18.dp))
-//                    .align(Alignment.CenterHorizontally)
-//            )
-//        }
-//
-//        Button(
-//            onClick = {
-//                takePicture.launch(
-//                    FileProvider.getUriForFile(
-//                        context,
-//                        "pt.isec.amov.quizec.android.fileprovider",
-//                        File(imagePath)
-//                    )
+//            if (showDialog) {
+//                AlertDialog(
+//                    onDismissRequest = { showDialog = false },
+//                    title = { Text("Select Image") },
+//                    text = { Text("Would you like to select an image or take a new one?") },
+//                    confirmButton = {
+//                        TextButton(onClick = {
+//                            showDialog = false
+//                            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//                        }) {
+//                            Text("Select Image")
+//                        }
+//                    },
+//                    dismissButton = {
+//                        TextButton(onClick = {
+//                            showDialog = false
+//                            takePicture.launch(
+//                                FileProvider.getUriForFile(
+//                                    context,
+//                                    "pt.isec.amov.quizec.android.fileprovider",
+//                                    File(imagePath)
+//                                )
+//                            )
+//                        }) {
+//                            Text("Take Picture")
+//                        }
+//                    }
 //                )
-//            },
-//            modifier = Modifier.weight(1f)
-//        ) {
-//            Icon(
-//                imageVector = Icons.Filled.Add,
-//                contentDescription = "Take picture"
-//            )
-//        }
-
-            /*
-            OutlinedTextField(
-                value = maxTimeMinutes,
-                onValueChange = {
-                    if (it.isEmpty() || it.all { char -> char.isDigit() }) {
-                        maxTimeMinutes = it
-                    }
-                },
-                label = { Text("Max Time (minutes)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Start Immediately")
-                Switch(
-                    checked = isActive,
-                    onCheckedChange = { isActive = it }
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Restrict Location")
-                Switch(
-                    checked = locationRestricted,
-                    onCheckedChange = { locationRestricted = it }
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Show Results Immediately")
-                Switch(
-                    checked = immediateResults,
-                    onCheckedChange = { immediateResults = it }
-                )
-            }
-            */
-//
-//        Text(
-//            text = "Select Questions",
-//            style = MaterialTheme.typography.bodyLarge,
-//            modifier = Modifier
-//                .padding(top = 16.dp),
-//        )
+//            }
 
             LazyColumn(
                 modifier = Modifier.weight(1f)
