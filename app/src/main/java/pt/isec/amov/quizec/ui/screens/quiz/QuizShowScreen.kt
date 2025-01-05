@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -230,7 +231,7 @@ fun QuestionInfoTemp(
                         val correctAnswers = question.answers.pairs
                             .joinToString(", ") { "[${it.first}: ${it.second}]" }
                         Text(
-                            text = "Correct Answers: $correctAnswers"
+                            text = stringResource(R.string.correct_answers, correctAnswers)
                         )
                     }
 
@@ -239,7 +240,7 @@ fun QuestionInfoTemp(
                             .filter { it.first }
                             .joinToString { it.second }
                         Text(
-                            text = "Correct Answers: $correctAnswers"
+                            text =  stringResource(R.string.correct_answers, correctAnswers)
                         )
                     }
 
@@ -247,7 +248,7 @@ fun QuestionInfoTemp(
                         val correctAnswers = question.answers.order
                             .joinToString { it }
                         Text(
-                            text = "Correct Order: $correctAnswers"
+                            text = stringResource(R.string.correct_order, correctAnswers)
                         )
                     }
 
@@ -256,7 +257,7 @@ fun QuestionInfoTemp(
                             .filter { it.first }
                             .joinToString { it.second }
                         Text(
-                            text = "Correct Answer: $correctAnswer"
+                            text = stringResource(R.string.correct_answer, correctAnswer)
                         )
                     }
                 }

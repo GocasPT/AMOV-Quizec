@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,10 +60,6 @@ fun QuestionListScreen(
     onDuplicateQuestion: (Question) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("All") }
-    val filterOptions = listOf("True / False", "Single Choice")
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -103,7 +100,7 @@ fun QuestionListScreen(
                 contentDescription = "Create Question",
                 imageVector = Icons.Filled.Add
             )
-            Text("CREATE QUESTION")
+            Text(stringResource(R.string.create_question).uppercase())
         }
     }
 }
@@ -149,7 +146,7 @@ fun QuestionCard(
             }
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = "Type: ${question.answers.answerType.displayName}", fontSize = 16.sp
+                text = stringResource(R.string.type, question.answers.answerType.displayName), fontSize = 16.sp
             )
         }
         DropdownMenu(
@@ -157,21 +154,21 @@ fun QuestionCard(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Duplicate") },
+                text = { Text(stringResource(R.string.duplicate)) },
                 onClick = {
                     expanded = false
                     onDuplicateQuestion(question)
                 }
             )
             DropdownMenuItem(
-                text = { Text("Edit") },
+                text = { Text(stringResource(R.string.edit)) },
                 onClick = {
                     expanded = false
                     onEditQuestion(question)
                 }
             )
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text(stringResource(R.string.delete)) },
                 onClick = {
                     expanded = false
                     onDeleteQuestion(question)
@@ -276,21 +273,21 @@ fun QuestionCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Duplicate") },
+                text = { Text(stringResource(R.string.duplicate)) },
                 onClick = {
                     expanded = false
                     onDuplicateQuestion(question)
                 }
             )
             DropdownMenuItem(
-                text = { Text("Edit") },
+                text = { Text(stringResource(R.string.edit)) },
                 onClick = {
                     expanded = false
                     onEditQuestion(question)
                 }
             )
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text(stringResource(R.string.delete)) },
                 onClick = {
                     expanded = false
                     onDeleteQuestion(question)

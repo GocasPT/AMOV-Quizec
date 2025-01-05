@@ -20,7 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.QuestionType
 
@@ -43,7 +45,7 @@ fun QuestionTypeDropdown(
                 value = currentAnswer.answerType.displayName,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Question Type") },
+                label = { Text(stringResource(R.string.question_type)) },
                 trailingIcon = {
                     IconButton(
                         onClick = { onExpandedChange(!isExpanded) }

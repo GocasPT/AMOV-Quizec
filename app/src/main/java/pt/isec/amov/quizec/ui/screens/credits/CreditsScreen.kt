@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 
 @Composable
 fun CreditsScreen(onBack: () -> Unit) {
@@ -47,70 +49,70 @@ fun CreditsScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Credits",
+                text = stringResource(R.string.credits),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Made by:",
+                text = stringResource(R.string.made_by),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Guilherme Camacho",
+                text = stringResource(R.string.guilherme_camacho),
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "Tiago Figueiredo",
+                text = stringResource(R.string.tiago_figueiredo),
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "Bruno Amado",
+                text = stringResource(R.string.bruno_amado),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Course",
+                text = stringResource(R.string.course),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Arquiteturas Móveis",
+                text = stringResource(R.string.arquiteturas_m_veis),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "School Year",
+                text = stringResource(R.string.school_year),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "2024/2025",
+                text = stringResource(R.string._2024_2025),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Degree",
+                text = stringResource(R.string.degree),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Computer Engineering",
+                text = stringResource(R.string.computer_engineering),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "ISEC",
+                text = stringResource(R.string.isec),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }

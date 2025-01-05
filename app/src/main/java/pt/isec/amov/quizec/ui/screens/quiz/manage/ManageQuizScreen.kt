@@ -41,11 +41,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+<<<<<<< HEAD
+=======
+import coil.compose.rememberAsyncImagePainter
+import pt.isec.amov.quizec.R
+>>>>>>> 63ad209 (adding strings)
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -143,7 +149,7 @@ fun ManageQuizScreen(
             }
 
             Text(
-                text = if (quiz == null) "New Quiz" else "Edit Quiz",
+                text = if (quiz == null) stringResource(R.string.new_quiz) else stringResource(R.string.edit_quiz),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 24.dp),
                 fontWeight = FontWeight.Bold
@@ -152,7 +158,7 @@ fun ManageQuizScreen(
             OutlinedTextField(
                 value = quizTitle,
                 onValueChange = { quizTitle = it },
-                label = { Text("Quiz Title") },
+                label = { Text(stringResource(R.string.quiz_title)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -287,7 +293,7 @@ fun ManageQuizScreen(
                     .fillMaxWidth(),
                 enabled = isFormValid()
             ) {
-                Text(if (quiz == null) "Create Quiz" else "Save Changes")
+                Text(if (quiz == null) stringResource(R.string.create_quiz) else stringResource(R.string.save_changes))
             }
         }
 }
@@ -325,7 +331,9 @@ fun QuestionCard(
             )
             Icon(
                 imageVector = if (isSelected) Icons.Default.Remove else Icons.Default.Add,
-                contentDescription = if (isSelected) "Remove" else "Add"
+                contentDescription = if (isSelected) stringResource(R.string.remove) else stringResource(
+                    R.string.add
+                )
             )
         }
     }

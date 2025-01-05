@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -178,7 +179,7 @@ fun HomeScreenPortrait(
                         contentAlignment = Alignment.BottomStart
                     ) {
                         Text(
-                            text = "Welcome, $username",
+                            text = stringResource(R.string.welcome, username),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -196,7 +197,7 @@ fun HomeScreenPortrait(
                     OutlinedTextField(
                         value = code.value,
                         onValueChange = { if (it.length <= 6) code.value = it },
-                        label = { Text("JOIN QUIZ:") },
+                        label = { Text(stringResource(R.string.join_quiz)) },
                         textStyle = TextStyle(fontSize = 28.sp),
                         singleLine = true,
                         shape = RoundedCornerShape(percent = 20),
@@ -229,7 +230,7 @@ fun HomeScreenPortrait(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text("CREATE ROOM")
+                    Text(stringResource(R.string.create_room))
                 }
 
                 Box(
@@ -239,7 +240,7 @@ fun HomeScreenPortrait(
                     contentAlignment = Alignment.TopStart
                 ) {
                     Text(
-                        text = "My Rooms",
+                        text = stringResource(R.string.my_rooms),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Gray,

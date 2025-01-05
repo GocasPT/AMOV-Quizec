@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -24,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.Ordering
 
@@ -50,7 +55,7 @@ fun OrderingQuestion(
         OutlinedTextField(
             value = newAnswer,
             onValueChange = { newAnswer = it },
-            label = { Text("Add Option") },
+            label = { Text(stringResource(R.string.add_option)) },
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -63,7 +68,10 @@ fun OrderingQuestion(
             },
             enabled = newAnswer.isNotBlank()
         ) {
-            Text("+")
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = "Add"
+            )
         }
     }
 
@@ -88,7 +96,10 @@ fun OrderingQuestion(
                             }
                             answers = newOrder
                         }) {
-                            Text("↑")
+                            Icon(
+                                Icons.Filled.ArrowUpward,
+                                contentDescription = "Arrow Upward"
+                            )
                         }
                     }
                     if (index < answers.size - 1) {
@@ -100,7 +111,10 @@ fun OrderingQuestion(
                             }
                             answers = newOrder
                         }) {
-                            Text("↓")
+                            Icon(
+                                Icons.Filled.ArrowDownward,
+                                contentDescription = "Arrow Downward"
+                            )
                         }
                     }
                     IconButton(
