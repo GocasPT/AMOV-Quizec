@@ -214,7 +214,7 @@ fun ManageQuestionScreen(
             }
         }
 
-            Card(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

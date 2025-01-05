@@ -47,3 +47,24 @@ fun YesNoQuestion(
         Text(stringResource(R.string.true_option))
     }
 }
+
+@Composable
+fun YesNoQuestionDisplay(
+    selectedOption: Boolean,
+    onOptionSelected: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(stringResource(R.string.false_option))
+        Switch(
+            checked = selectedOption,
+            onCheckedChange = { onOptionSelected(it) }
+        )
+        Text(stringResource(R.string.true_option))
+    }
+}

@@ -76,7 +76,7 @@ fun ManageLobbyScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (isNewLobby)
+        if (isNewLobby) {
             ExposedDropdownMenuBox(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -113,8 +113,7 @@ fun ManageLobbyScreen(
                     }
                 }
             }
-        //}
-        else
+        } else {
             Text(
                 text = "${selectedQuiz?.title}",
                 modifier = Modifier
@@ -124,6 +123,7 @@ fun ManageLobbyScreen(
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
             )
+        }
 
         selectedQuiz?.image?.let {
             Image(
@@ -256,8 +256,6 @@ fun ManageLobbyScreen(
                 )
             }
         }
-
-        Text("SHARE")
     }
 }
 

@@ -160,7 +160,7 @@ fun QuizShowScreen(
                 key = { it.hashCode() }
             ) { question ->
                 val index = questionList.indexOf(question)
-                QuestionInfoTemp(
+                QuestionShowInfo(
                     question = question,
                     showExpanded = expandIndividual[index],
                     onExpandToggle = { expandIndividual[index] = !expandIndividual[index] }
@@ -171,7 +171,7 @@ fun QuizShowScreen(
 }
 
 @Composable
-fun QuestionInfoTemp(
+fun QuestionShowInfo(
     question: Question,
     showExpanded: Boolean,
     onExpandToggle: () -> Unit,

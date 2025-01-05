@@ -124,3 +124,37 @@ fun AnswerEntryMultipleChoice(
         }
     }
 }
+
+@Composable
+fun MultipleChoiceDisplay(
+    answers: Set<Pair<Boolean, String>>,
+    selectedOptions: Set<Pair<Boolean, String>>,
+    onOptionsSelected: (Pair<Boolean, String>) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+            .verticalScroll(ScrollState(0))
+    ) {
+        answers.forEach { answer ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onOptionsSelected(answer) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = selectedOptions.contains(answer),
+                    onCheckedChange = { onOptionsSelected(answer) }
+                )
+                Text(
+                    text = answer.second,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}

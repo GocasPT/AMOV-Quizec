@@ -118,3 +118,33 @@ fun AnswerEntrySingleChoice(
         }
     }
 }
+
+@Composable
+fun SingleChoiceDisplay(
+    answers: Set<Pair<Boolean, String>>,
+    selectedOption: Pair<Boolean, String>,
+    onOptionSelected: (Pair<Boolean, String>) -> Unit,
+) {
+    Column(
+        modifier = Modifier.verticalScroll(ScrollState(0))
+    ) {
+        answers.forEach { answer ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onOptionSelected(answer) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = answer == selectedOption,
+                    onClick = { onOptionSelected(answer) }
+                )
+                Text(
+                    text = answer.second,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}

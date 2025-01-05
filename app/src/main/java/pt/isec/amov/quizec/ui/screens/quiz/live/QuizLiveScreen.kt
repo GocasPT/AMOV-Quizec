@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.ui.screens.quiz.live
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,9 +38,12 @@ import coil.compose.rememberImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.question.QuestionType
+import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
+import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
+import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
 
-
-val questionTestvv =  Question(
+val questionTestSINGLE =  Question(
     id = 2,
     content = "Quantos anos tem o Buno?",
     image = "Image URL",
@@ -53,14 +57,21 @@ val questionTestvv =  Question(
     user = "User"
 )
 
+val questionTrueFalse = Question(
+    id = 1,
+    content = "O Buno tem 20 anos?",
+    image = "Image URL",
+    answers = Answer.TrueFalse(true),
+    user = "User"
+)
+
 @Preview(showBackground = true)
 @Composable
 fun QuizLiveScreen(
-    question: Question = questionTestvv,
+    question: Question = questionTestSINGLE,
     onAnswerSelected: (String) -> Unit = {},
     onNextQuestion: () -> Unit = {}
 ) {
-    
     var selectedAnswer by remember { mutableStateOf<String?>(null) }
 
     Box(
@@ -112,6 +123,7 @@ fun QuizLiveScreen(
                 }
             }
 
+            //TODO: isto tem q rodar
             Column(
                 modifier = Modifier
                     .padding(8.dp),
@@ -127,7 +139,7 @@ fun QuizLiveScreen(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(16.dp),
-                        text = "a questao é a seguintedasdsad asd asdasdsad ads a?",
+                        text = question.content,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,24 +164,7 @@ fun QuizLiveScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Text(text = "Question")
-//                (question.answers as? Answer.SingleChoice)?.let { answer ->
-//                    answer. { option ->
-//                        Button(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(vertical = 8.dp),
-//                            onClick = {
-//                                selectedAnswer = option.second
-//                            },
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = if (selectedAnswer == option.second) Color.LightGray else Color.Gray
-//                            )
-//                        ) {
-//                            Text(text = option.second)
-//                        }
-//                    }
-//                }
+                        CardQuestionInfo(question = question)
                     }
                 }
             }
@@ -192,4 +187,77 @@ fun QuizLiveScreen(
             }
         }
     }
+}
+
+@Composable
+fun CardQuestionInfo(
+    question: Question = questionTestSINGLE
+){
+    var selectedOption by remember { mutableStateOf(false) }
+    var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>?>(null) }
+
+    var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>( setOf()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        when (question.answers) {
+            is Answer.TrueFalse -> {
+                YesNoQuestionDisplay(
+                    selectedOption = selectedOption,
+                    onOptionSelected = { selectedOption = it }
+                )
+            }
+
+            is Answer.SingleChoice -> {
+//                SingleChoiceDisplay(
+//                    answers = question.answers,
+//                    selectedOption = selectedAnswer!!,
+//                    onOptionSelected = { selectedAnswer = it }
+//                )
+            }
+
+            is Answer.MultipleChoice -> {
+//                MultipleChoiceDisplay(
+//                    answers = question.answers as Set<Pair<Boolean, String>>,
+//                    selectedOptions = selectedAnswers,
+//                    onOptionsSelected = { selectedAnswers = it }
+//                )
+            }
+
+
+            is Answer.Drag -> TODO()
+            is Answer.FillBlank -> TODO()
+            is Answer.Matching -> TODO()
+            is Answer.Ordering -> TODO()
+        }
+
+//        when(question.answers.answerType) {
+//            QuestionType.TRUE_FALSE -> YesNoQuestionDisplay(
+//                selectedOption = selectedOption,
+//                onOptionSelected = { selectedOption = it }
+//            )
+//
+//            QuestionType.SINGLE_CHOICE -> SingleChoiceDisplay(
+//                answers = question.answers as Set<Pair<Boolean, String>>,
+//                selectedOption = selectedAnswer,
+//                onOptionSelected = { selectedAnswer = it }
+//            )
+//
+//            QuestionType.MULTIPLE_CHOICE -> MultipleChoiceDisplay(
+//                answers = question.answers as Set<Pair<Boolean, String>>,
+//                selectedOptions = selectedAnswers,
+//                onOptionSelected = { selectedAnswers = it }
+//            )
+//
+//            QuestionType.MATCHING -> TODO()
+//            QuestionType.ORDERING -> TODO()
+//            QuestionType.DRAG -> TODO()
+//            QuestionType.FILL_BLANK -> TODO()
+//        }
+    }
+
 }
