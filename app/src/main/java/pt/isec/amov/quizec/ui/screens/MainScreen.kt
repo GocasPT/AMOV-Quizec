@@ -1,6 +1,5 @@
 package pt.isec.amov.quizec.ui.screens
 
-import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -271,9 +269,6 @@ fun MainScreen(
 
             composable("History") {
                 QuizHistoryScreen(
-                    onCreateDummy = {
-                        viewModel.createDummyHistory(user!!.id)
-                    },
                     onSelectHistory = { history ->
                         viewModel.selectHistory(history)
                         navController.navigate("show-history")
