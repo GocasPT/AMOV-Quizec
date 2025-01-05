@@ -1,7 +1,11 @@
 package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -113,6 +120,74 @@ var matching = Question(
 )
 
 @Composable
-fun MatchingQuestionDisplay() {
+fun MatchingQuestionDisplay(
+    answers: Set<Pair<String, String>>,
+    selectedMatches: Map<String, String>,
+    onMatchSelected: (Map<String, String>) -> Unit
+) {
+    var currentMatches by remember { mutableStateOf(selectedMatches) }
+    var expandedDropdownIndex by remember { mutableStateOf<Int?>(null) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val leftItems = answers.map { it.first }.toList()
+        val rightItems = answers.map { it.second }.shuffled()
+
+        leftItems.forEachIndexed { index, leftItem ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = leftItem,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+
+                Text(
+                    text = "→",
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                Box {
+                    Card(
+                        modifier = Modifier
+                            .clickable { expandedDropdownIndex = index }
+                    ) {
+                        Text(
+                            text = currentMatches[leftItem] ?: "Select match",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expandedDropdownIndex == index,
+                        onDismissRequest = { expandedDropdownIndex = null },
+                        modifier = Modifier.width(IntrinsicSize.Min)
+                    ) {
+                        rightItems.forEach { rightItem ->
+                            DropdownMenuItem(
+                                text = { Text(rightItem) },
+                                onClick = {
+                                    val newMatches = currentMatches.toMutableMap()
+                                    newMatches[leftItem] = rightItem
+                                    currentMatches = newMatches
+                                    onMatchSelected(currentMatches)
+                                    expandedDropdownIndex = null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
