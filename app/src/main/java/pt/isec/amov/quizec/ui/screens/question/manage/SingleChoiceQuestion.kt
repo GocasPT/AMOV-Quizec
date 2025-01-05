@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
@@ -123,7 +124,7 @@ fun AnswerEntrySingleChoice(
 fun SingleChoiceDisplay(
     answers: Set<Pair<Boolean, String>>,
     selectedOption: Pair<Boolean, String>?,
-    onOptionSelected: (Pair<Boolean, String>?) -> Unit,
+    onOptionSelected: (Pair<Boolean, String>) -> Unit,
 ) {
     Column(
         modifier = Modifier.verticalScroll(ScrollState(0))
@@ -147,4 +148,18 @@ fun SingleChoiceDisplay(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SingleChoiceDisplayPreview() {
+    SingleChoiceDisplay(
+        answers = setOf(
+            Pair(true, "Option 1"),
+            Pair(false, "Option 2"),
+            Pair(false, "Option 3"),
+        ),
+        selectedOption = Pair(false, "Option 1"),
+        onOptionSelected = {}
+    )
 }

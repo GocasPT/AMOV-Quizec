@@ -1,6 +1,7 @@
 package pt.isec.amov.quizec.ui.viewmodels.app
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,12 +22,11 @@ import pt.isec.amov.quizec.model.history.AnswerHistory
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.history.HistoryList
 import pt.isec.amov.quizec.model.history.QuizSnapshot
+import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
 import pt.isec.amov.quizec.model.question.Answer.Matching
 import pt.isec.amov.quizec.model.question.Answer.MultipleChoice
 import pt.isec.amov.quizec.model.question.Answer.Ordering
-import pt.isec.amov.quizec.model.question.Answer.SingleChoice
-import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionList
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -44,6 +44,7 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     private val _questionList = QuestionList()
     private val _quizList = QuizList()
     private val _historyList = HistoryList()
+    private val _answersList = mutableListOf<AnswerHistory>()
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
     private var _currentQuestion = mutableStateOf<Question?>(null)
     private var _currentHistory = mutableStateOf<History?>(null)
@@ -316,127 +317,92 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         saveQuiz(quiz.copy(id = null))
     }
 
-    //TODO: delete this later
-    fun createDummyHistory(userId: String?) {
-        val timezone = TimeZone.currentSystemDefault()
-        //Owner = creator1@gmail.com Pass = 123123
-        val addHistory = History(
-            id = null, //database dynamically assigns id
-            userId = userId!!,
-            quiz = QuizSnapshot(
-                title = "Dummy Quiz History",
-                image = "/data/user/0/pt.isec.amov.quizec/files/image903666447683273588.jpg",
-                owner = "ddcd359b-c73a-4ff1-8ee2-3c361a23ea91"
-            ),
-            answers = listOf(
-                AnswerHistory(
-                    content = "Is Kotlin a statically-typed programming language?",
-                    image = null,
-                    correctAnswer = TrueFalse(rightAnswer = true),
-                    userAnswer = TrueFalse(rightAnswer = true),
-                    score = 1.0
-                ),
-                AnswerHistory(
-                    content = "Which of the following is a JVM language?",
-                    image = null,
-                    correctAnswer = SingleChoice(
-                        answers = setOf(
-                            true to "Kotlin",
-                            false to "Python",
-                            false to "JavaScript"
-                        )
-                    ),
-                    userAnswer = SingleChoice(
-                        answers = setOf(
-                            true to "JavaScript"
-                        )
-                    ),
-                    score = 0.0
-                ),
-                AnswerHistory(
-                    content = "Select all functional programming languages:",
-                    image = null,
-                    correctAnswer = MultipleChoice(
-                        answers = setOf(
-                            true to "Haskell",
-                            true to "Scala",
-                            false to "C++"
-                        )
-                    ),
-                    userAnswer = MultipleChoice(
-                        answers = setOf(
-                            true to "Haskell",
-                            false to "Scala",
-                            true to "C++"
-                        )
-                    ),
-                    score = 0.0
-                ),
-                AnswerHistory(
-                    content = "Match the programming languages to their creators:",
-                    image = null,
-                    correctAnswer = Matching(
-                        pairs = setOf(
-                            "Java" to "James Gosling",
-                            "Python" to "Guido van Rossum",
-                            "C++" to "Bjarne Stroustrup"
-                        )
-                    ),
-                    userAnswer = Matching(
-                        pairs = setOf(
-                            "Java" to "James Gosling",
-                            "Python" to "Bjarne Stroustrup",
-                            "C++" to "Guido van Rossum"
-                        )
-                    ),
-                    score = 0.0
-                ),
-                AnswerHistory(
-                    content = "Order the numbers from smallest to largest:",
-                    image = null,
-                    correctAnswer = Ordering(
-                        order = listOf("1", "2", "3", "4", "5")
-                    ),
-                    userAnswer = Ordering(
-                        order = listOf("1", "3", "2", "4", "5")
-                    ),
-                    score = 0.6
-                ),
-                AnswerHistory(
-                    content = "Fill in the blanks: Kotlin is ___ and ___.",
-                    image = null,
-                    correctAnswer = FillBlank(
-                        answers = setOf(
-                            1 to "statically-typed",
-                            2 to "cross-platform"
-                        )
-                    ),
-                    userAnswer = FillBlank(
-                        answers = setOf(
-                            1 to "statically-typed",
-                            2 to "open-source"
-                        )
-                    ),
-                    score = 0.5
-                )
-            ),
-            score = 7, //total score = sum of all questions (answer score * (20 / number of questions))
-            date = Clock.System.now().toLocalDateTime(timezone).toString()
-        )
+    fun saveAnswer(question: Question, userAnswer: Answer) {
+        Log.d("QuizecViewModel", "saveAnswer: $userAnswer")
 
-        viewModelScope.launch {
-            try {
-                SStorageUtil.saveHistoryDatabase(addHistory) { e ->
-                    if (e != null) {
-                        Log.d("QuizecViewModel", "Error saving history: $e")
-                    } else {
-                        _historyList.addHistory(addHistory)
-                    }
+        // Calculate score based on answer type
+        val score = when {
+            userAnswer == question.answers -> 1.0
+            userAnswer is Ordering && userAnswer.order == (question.answers as Ordering).order -> 1.0
+            userAnswer is MultipleChoice -> {
+                val correctAnswers = (question.answers as MultipleChoice).answers
+                val userAnswers = userAnswer.answers
+                val correctCount = userAnswers.count { userAns ->
+                    correctAnswers.any { it.first == userAns.first && it.second == userAns.second }
                 }
-            } catch (e: Throwable) {
-                Log.d("QuizecViewModel", "Error saving history: $e")
+                correctCount.toDouble() / correctAnswers.size
+            }
+
+            userAnswer is Matching -> {
+                val correctPairs = (question.answers as Matching).pairs
+                val userPairs = userAnswer.pairs
+                val correctCount = userPairs.count { it in correctPairs }
+                correctCount.toDouble() / correctPairs.size
+            }
+
+            userAnswer is FillBlank -> {
+                val correctAnswers = (question.answers as FillBlank).answers
+                val userAnswers = userAnswer.answers
+                val correctCount = userAnswers.count { it in correctAnswers }
+                correctCount.toDouble() / correctAnswers.size
+            }
+
+            else -> 0.0
+        }
+
+        // Create answer history
+        val answerHistory = AnswerHistory(
+            content = question.content,
+            image = question.image,
+            correctAnswer = question.answers,
+            userAnswer = userAnswer,
+            score = score
+        )
+        _answersList.add(answerHistory)
+
+        // If this is the last question, create the final History object
+        if (_currentQuiz.value?.questions?.size == _answersList.size) {
+            createHistory()
+        }
+    }
+
+    private fun createHistory() {
+        _currentQuiz.value?.let { quiz ->
+            val totalScore = ((_answersList.sumOf { it.score } / _answersList.size) * 20).toInt()
+            val newHistory = History(
+                id = null,
+                userId = _currentLobby.value?.ownerUUID ?: "",
+                quiz = QuizSnapshot(
+                    title = quiz.title,
+                    image = quiz.image,
+                    owner = quiz.owner
+                ),
+                answers = _answersList.toList(),
+                score = totalScore,
+                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toString()
+            )
+            _currentHistory.value = newHistory
+
+            // Save history to database
+            viewModelScope.launch {
+                try {
+                    SStorageUtil.saveHistoryDatabase(newHistory) { e ->
+                        if (e != null) {
+                            Log.d("QuizecViewModel", "Error saving history: $e")
+                        } else {
+                            _historyList.addHistory(newHistory)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.d("QuizecViewModel", "Error saving history: $e")
+                }
             }
         }
+    }
+
+    fun clearAnswers() {
+        _answersList.clear()
     }
 
     fun getQuizImage(imageName: String) {
@@ -559,9 +525,11 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
-    fun getPlayerCount() {
+    fun getPlayerCount(lobbyCode: String): MutableState<Int> {
+        val playerCount = mutableIntStateOf(0)
+
         viewModelScope.launch {
-            val flow: Flow<List<User>> = SRealTimeUtil.getFlowPlayer(_currentLobby.value!!.code)
+            val flow: Flow<List<User>> = SRealTimeUtil.getFlowPlayer(lobbyCode)
             flow.collect {
                 _currentLobbyPlayerCount.intValue = it.size
 
@@ -569,7 +537,13 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
                 _currentLobbyPlayers.clear()
                 for (user in it)
                     _currentLobbyPlayers.add(user)
+
+                playerCount.intValue = it.size
+
+                return@collect
             }
         }
+
+        return playerCount
     }
 }

@@ -267,9 +267,6 @@ fun MainScreen(
 
             composable(Strings.get(R.string.historyNav)) {
                 QuizHistoryScreen(
-                    onCreateDummy = {
-                        viewModel.createDummyHistory(user!!.id)
-                    },
                     onSelectHistory = { history ->
                         viewModel.selectHistory(history)
                         navController.navigate(Strings.get(R.string.showHistory))
