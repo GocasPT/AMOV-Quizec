@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,66 +45,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.jan.supabase.createSupabaseClient
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
-
-val quizLists = listOf(
-    Quiz(
-        id = 1,
-        title = "Titulo 1",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 1",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-        )
-    ),
-    Quiz(
-        id = 2,
-        title = "Title 2",
-        image = "Image URL",
-        owner = "Owner",
-        questions = listOf(
-            Question(
-                id = 1,
-                content = "Question 2",
-                image = "Image URL",
-                answers = Answer.TrueFalse(true),
-                user = "User"
-            ),
-            Question(
-                id = 2,
-                content = "Question 3",
-                image = "Image URL",
-                answers = Answer.SingleChoice(
-                    setOf(
-                        Pair(true, "Answer 1"),  // Correct answer
-                        Pair(false, "Answer 2"), // Incorrect answer
-                        Pair(false, "Answer 3")  // Incorrect answer
-                    )
-                ),
-                user = "User"
-            ),
-        )
-    ),
-)
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 @Composable
 fun HomeScreen(
+    viewModel: QuizecViewModel,
     username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
         HomeScreenLandscape(
+            viewModel = viewModel,
             username = username,
             onJoinLobby = onJoinLobby,
             onCreateLobby = onCreateLobby,
@@ -111,6 +68,7 @@ fun HomeScreen(
         )
     else
         HomeScreenPortrait(
+            viewModel = viewModel,
             username = username,
             onJoinLobby = onJoinLobby,
             onCreateLobby = onCreateLobby,
@@ -120,9 +78,10 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreenLandscape(
+    viewModel: QuizecViewModel,
     username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     //TODO: implement
@@ -130,12 +89,17 @@ fun HomeScreenLandscape(
 
 @Composable
 fun HomeScreenPortrait(
+    viewModel: QuizecViewModel,
     username: String,
     onJoinLobby: (String) -> Unit,
-    onCreateLobby: (quizId: Long, duration: Long) -> Unit,
+    onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val code = remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.getLobbies()
+    }
 
     Box(
         modifier = modifier
@@ -224,7 +188,7 @@ fun HomeScreenPortrait(
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
                 ElevatedButton(
-                    onClick = { onCreateLobby(1, 120) },
+                    onClick = onCreateLobby,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -253,7 +217,7 @@ fun HomeScreenPortrait(
                     contentPadding = PaddingValues(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(quizLists) { quiz ->
+                    items(viewModel.currentLobbiesList) { lobby ->
                         Card(
                             modifier = Modifier
                                 .size(200.dp, 150.dp)
@@ -271,7 +235,7 @@ fun HomeScreenPortrait(
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.quizec_1080),
-                                    //painter = rememberAsyncImagePainter(quiz.image), // Requires Coil for async image loading
+                                    //painter = rememberAsyncImagePainter(lobby.image), // Requires Coil for async image loading
                                     contentDescription = "fsdfds",
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -448,9 +412,12 @@ fun HomeScreenPortrait_V2(
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
+        viewModel = QuizecViewModel(
+            createSupabaseClient("", "") {}
+        ),
         username = "Tiago",
         onJoinLobby = {},
-        onCreateLobby = { _, _ -> },
+        onCreateLobby = {},
         modifier = Modifier.fillMaxSize()
     )
 }

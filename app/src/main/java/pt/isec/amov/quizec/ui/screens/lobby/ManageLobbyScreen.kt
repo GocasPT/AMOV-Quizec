@@ -38,31 +38,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.jan.supabase.createSupabaseClient
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-//@Preview(showBackground = true)
 @Composable
 fun ManageLobbyScreen(
-    quiz: Quiz,
+    viewModel: QuizecViewModel,
+    quiz: Quiz?,
     isNewLobby: Boolean = true,
+    onCreateLobby: (Long, Boolean, Boolean, Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
-    val availableQuizes = arrayOf("Quiz 1", "Quiz 2", "Quiz 3", "Quiz 4", "Quiz 5")
+    val availableQuizes = viewModel.quizList
     var expanded by remember { mutableStateOf(false) }
-    var selectedQuiz by remember { mutableStateOf(availableQuizes[0]) }
+    var selectedQuiz = viewModel.currentQuiz
 
     var sliderTime by remember { mutableStateOf(30f) }
     var instantStart by remember { mutableStateOf(false) }
     var isLocationRestricted by remember { mutableStateOf(false) }
     var sliderLocation by remember { mutableStateOf(60f) }
     var isInstantScore by remember { mutableStateOf(true) }
-
 
     //verificar isto
 //    val sendIntent = Intent(Intent.ACTION_SEND).apply {
@@ -95,7 +98,7 @@ fun ManageLobbyScreen(
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        value = selectedQuiz,
+                        value = selectedQuiz.toString(),
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -105,13 +108,13 @@ fun ManageLobbyScreen(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        availableQuizes.forEach { item ->
+                        availableQuizes.forEach { quiz ->
                             DropdownMenuItem(
-                                text = { Text(text = item) },
+                                text = { Text(text = quiz.title) },
                                 onClick = {
-                                    selectedQuiz = item
+                                    selectedQuiz = quiz
                                     expanded = false
-                                    Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, quiz.title, Toast.LENGTH_SHORT).show()
                                 }
                             )
                         }
@@ -126,7 +129,7 @@ fun ManageLobbyScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            quiz.image?.let {
+            quiz?.image?.let {
                 Image(
                     modifier = Modifier
                         .height(120.dp)
@@ -272,10 +275,21 @@ fun ManageLobbyScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = null,
-                )
+                Button(
+                    onClick = {
+                        onCreateLobby(
+                            1, //TODO: selectedQuiz.id.toLong(),
+                            instantStart,
+                            isLocationRestricted,
+                            sliderTime.toLong()
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = null,
+                    )
+                }
             }
 
             Text("SHARE")
@@ -329,4 +343,17 @@ fun Demo_ExposedDropdownMenuBox() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ManageLobbyScreenPreview() {
+    ManageLobbyScreen(
+        viewModel = QuizecViewModel(
+            createSupabaseClient("", "") {}
+        ),
+        quiz = null,
+        isNewLobby = true,
+        onCreateLobby = { _, _, _, _ -> },
+    )
 }

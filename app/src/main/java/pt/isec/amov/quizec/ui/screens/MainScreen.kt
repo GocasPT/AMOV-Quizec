@@ -21,21 +21,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.User
-import pt.isec.amov.quizec.model.history.History
-import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
 import pt.isec.amov.quizec.ui.screens.credits.CreditsScreen
 import pt.isec.amov.quizec.ui.screens.history.HistoryShowScreen
 import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
-import pt.isec.amov.quizec.ui.screens.lobby.ConfigLobbyScreen
 import pt.isec.amov.quizec.ui.screens.lobby.LobbyScreen
+import pt.isec.amov.quizec.ui.screens.lobby.ManageLobbyScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionShowScreen
 import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
@@ -93,6 +86,7 @@ fun MainScreen(
         Log.d("Destination changed", destination.route.toString())
     }
 
+    //?TODO: can be improved?
     val items = listOf(
         BottomNavBarItem.Home,
         BottomNavBarItem.Quiz,
@@ -101,70 +95,10 @@ fun MainScreen(
         BottomNavBarItem.Settings
     )
 
-    //TODO: viewModel get the data and the screen wait until receive data
+
     LaunchedEffect(Unit) {
         viewModel.clearData()
-        withContext(Dispatchers.IO) {
-            viewModel.dbClient
-                .from("quiz")
-                .select {
-                    filter { eq("owner", user!!.id) }
-                }
-                .decodeList<Quiz>().let { quizList ->
-                    quizList.forEach { quiz ->
-                        val questions = viewModel.dbClient
-                            .from("question")
-                            .select(Columns.raw("*, quiz_question!inner(*)")) {
-                                filter {
-                                    eq("quiz_question.quiz_id", quiz.id!!)
-                                }
-                            }
-                            .decodeList<Question>()
-
-                        quiz.questions = questions
-                        quiz.image?.let {
-                            viewModel.getQuizImage(it)
-                        }
-                        viewModel.quizList.addQuiz(quiz)
-                    }
-                }
-        }
-
-        withContext(Dispatchers.IO) {
-            viewModel.dbClient
-                .from("question")
-                .select {
-                    filter {
-                        eq("user_id", user!!.id)
-                    }
-                }
-                .decodeList<Question>().let { list ->
-                    list.forEach {
-                        it.image?.let { image ->
-                            viewModel.getQuestionImage(image)
-                        }
-                        viewModel.questionList.addQuestion(it)
-                    }
-                }
-        }
-
-        withContext(Dispatchers.IO) {
-            viewModel.dbClient
-                .from("history")
-                .select {
-                    filter {
-                        eq("user_id", user!!.id)
-                    }
-                }
-                .decodeList<History>().let { list ->
-                    list.forEach {
-                        it.quiz.image?.let { image ->
-                            viewModel.getQuizImage(image)
-                        }
-                        viewModel.historyList.addHistory(it)
-                    }
-                }
-        }
+        viewModel.fetchData()
     }
 
     Scaffold(
@@ -193,29 +127,27 @@ fun MainScreen(
         ) {
             composable("Home") {
                 HomeScreen(
+                    viewModel = viewModel,
                     username = user!!.username,
                     onJoinLobby = { code ->
                         viewModel.joinLobby(code)
                         navController.navigate("lobby")
                     },
-                    onCreateLobby = { quizId, duration ->
-                        /* TODO: create lobby
-                            - go to quiz list
-                            - select quiz
-                            - viewModel.createLobby(quizId, ...)
-                        */
-                        viewModel.createLobby(quizId, duration)
+                    onCreateLobby = {
+                        navController.navigate("setup-lobby")
                     }
                 )
             }
             composable("setup-lobby") {
-                ConfigLobbyScreen(
-                    owner = user!!,
-                    onCreateLobby = { /* TODO */
-                        viewModel.createLobby(1, 120)
-                        //TODO: nav to owner lobby screen (!= lobby screen OR show different screen for owner)
-                        //navController.navigate("lobby")
-                    }
+                ManageLobbyScreen(
+                    viewModel = viewModel,
+                    quiz = viewModel.currentQuiz,
+                    isNewLobby = viewModel.currentLobby.value == null,
+                    onCreateLobby = { quizId, started, localRestrited, duration ->
+                        viewModel.createLobby(quizId, started, localRestrited, duration)
+                        navController.navigate("Home")
+                    },
+                    //onBack = { navController.popBackStack() }
                 )
             }
             composable("lobby") {
@@ -225,7 +157,7 @@ fun MainScreen(
             }
             composable("Quiz") {
                 QuizListScreen(
-                    quizList = viewModel.quizList.getQuizList(),
+                    quizList = viewModel.quizList,
                     onSelectQuiz = { quiz ->
                         Log.d("Quiz selected", quiz.title)
                         viewModel.selectQuiz(quiz)
@@ -254,7 +186,7 @@ fun MainScreen(
                     Log.d("Quiz selected", viewModel.currentQuiz!!.title)
                     QuizShowScreen(
                         quiz = viewModel.currentQuiz!!,
-                        questionList = viewModel.questionList.getQuestionList(),
+                        questionList = viewModel.questionList,
                         onBack = { navController.popBackStack() },
                         onEdit = { quiz ->
                             viewModel.selectQuiz(quiz)
@@ -263,6 +195,8 @@ fun MainScreen(
                         onCreateLobby = { code ->
                             viewModel.createLobby(
                                 code,
+                                false,
+                                false,
                                 120
                             ) //TODO: receive all parameters to config lobby
                         },
@@ -274,7 +208,7 @@ fun MainScreen(
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz,
                     userId = user!!.id,
-                    questionList = viewModel.questionList.getQuestionList(),
+                    questionList = viewModel.questionList,
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
                         navController.navigate("quiz")
@@ -283,7 +217,8 @@ fun MainScreen(
                 )
             }
             composable("Question") {
-                QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
+                QuestionListScreen(
+                    questionList = viewModel.questionList,
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
                         viewModel.selectQuestion(question)
@@ -341,7 +276,7 @@ fun MainScreen(
                         viewModel.selectHistory(history)
                         navController.navigate("show-history")
                     },
-                    historyList = viewModel.historyList.getHistoryList(),
+                    historyList = viewModel.historyList,
                 )
             }
 

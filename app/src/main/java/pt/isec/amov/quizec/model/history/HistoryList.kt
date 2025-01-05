@@ -1,11 +1,10 @@
 package pt.isec.amov.quizec.model.history
 
 import androidx.compose.runtime.mutableStateListOf
-import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.quiz.Quiz
 
 class HistoryList {
     private val _list = mutableStateListOf<History>()
+    val list: MutableList<History> = _list
 
     fun setHistoryList(list: List<History>) {
         _list.clear()

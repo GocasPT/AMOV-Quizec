@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 class QuestionList {
     private val _list = mutableStateListOf<Question>()
+    val list: MutableList<Question> = _list
 
     fun getQuestionList(): List<Question> {
         //return _list // No order

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,32 +33,95 @@ import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.model.quiz.QuizList
 import pt.isec.amov.quizec.utils.CodeGen
 import pt.isec.amov.quizec.utils.Constants
+import pt.isec.amov.quizec.utils.Constants.HISTORY_TABLE
+import pt.isec.amov.quizec.utils.Constants.QUESTION_TABLE
+import pt.isec.amov.quizec.utils.Constants.QUIZ_TABLE
 import pt.isec.amov.quizec.utils.SAuthUtil
 import pt.isec.amov.quizec.utils.SRealTimeUtil
 import pt.isec.amov.quizec.utils.SStorageUtil
 
-class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
-    //TODO: PLACE_HOLDER
-    val questionList: QuestionList = QuestionList()
-    val quizList: QuizList = QuizList()
-    val historyList: HistoryList = HistoryList()
-
-    //TODO: add data variables
+class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
+    private val _questionList = QuestionList()
+    private val _quizList = QuizList()
+    private val _historyList = HistoryList()
     private var _currentQuiz = mutableStateOf<Quiz?>(null)
     private var _currentQuestion = mutableStateOf<Question?>(null)
     private var _currentHistory = mutableStateOf<History?>(null)
+    private var _currentLobbiesList = mutableListOf<Lobby>()
     private var _currentLobby = mutableStateOf<Lobby?>(null)
     private var _currentLobbyStarted = mutableStateOf(false)
     private var _currentLobbyPlayerCount = mutableIntStateOf(0)
     private var _currentLobbyPlayers = mutableListOf<User>()
 
+    val questionList: MutableList<Question> get() = _questionList.list
+    val quizList: MutableList<Quiz> get() = _quizList.list
+    val historyList: MutableList<History> get() = _historyList.list
     val currentQuiz: Quiz? get() = _currentQuiz.value
     val currentQuestion: Question? get() = _currentQuestion.value
     val currentHistory: History? get() = _currentHistory.value
+    val currentLobbiesList: MutableList<Lobby> get() = _currentLobbiesList
     val currentLobby: State<Lobby?> get() = _currentLobby
     val currentLobbyStarted: State<Boolean> get() = _currentLobbyStarted
     val currentLobbyPlayerCount: State<Int> get() = _currentLobbyPlayerCount
     val currentLobbyPlayers: MutableList<User> get() = _currentLobbyPlayers
+
+    suspend fun fetchData() {
+        fetchQuiz()
+        fetchQuestion()
+        fetchHistory()
+    }
+
+    suspend fun fetchQuiz() {
+        dbClient.from(QUIZ_TABLE).select {
+            filter { eq("owner", SAuthUtil.currentUser!!.id) }
+        }
+            .decodeList<Quiz>().let { quizList ->
+                quizList.forEach { quiz ->
+                    val questions = dbClient
+                        .from(QUESTION_TABLE)
+                        .select(Columns.raw("*, quiz_question!inner(*)")) {
+                            filter {
+                                eq("quiz_question.quiz_id", quiz.id!!)
+                            }
+                        }
+                        .decodeList<Question>()
+
+                    quiz.questions = questions
+                    quiz.image?.let {
+                        getQuizImage(it)
+                    }
+                    _quizList.addQuiz(quiz)
+                }
+            }
+    }
+
+    suspend fun fetchQuestion() {
+        dbClient.from(QUESTION_TABLE).select {
+            filter { eq("user_id", SAuthUtil.currentUser!!.id) }
+        }
+            .decodeList<Question>().let { list ->
+                list.forEach {
+                    it.image?.let { image ->
+                        getQuestionImage(image)
+                    }
+                    _questionList.addQuestion(it)
+                }
+            }
+    }
+
+    suspend fun fetchHistory() {
+        dbClient.from(HISTORY_TABLE).select {
+            filter { eq("user_id", SAuthUtil.currentUser!!.id) }
+        }
+            .decodeList<History>().let { list ->
+                list.forEach {
+                    it.quiz.image?.let { image ->
+                        getQuizImage(image)
+                    }
+                    _historyList.addHistory(it)
+                }
+            }
+    }
 
     fun clearData() {
         _currentQuiz.value = null
@@ -88,7 +152,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                         if (e != null) {
                             Log.d("QuizecViewModel", "Error updating question: $e")
                         } else {
-                            questionList.updateQuestion(question)
+                            _questionList.updateQuestion(question)
                         }
                     }
                 } catch (e: Throwable) {
@@ -102,7 +166,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                         if (e != null) {
                             Log.d("QuizecViewModel", "Error saving question: $e")
                         } else {
-                            questionList.addQuestion(updatedQuestion!!)
+                            _questionList.addQuestion(updatedQuestion!!)
                         }
                     }
                 } catch (e: Throwable) {
@@ -120,7 +184,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     if (e != null) {
                         Log.d("QuizecViewModel", "Error deleting question: $e")
                     } else {
-                        questionList.removeQuestion(question)
+                        _questionList.removeQuestion(question)
                     }
                 }
             } catch (e: Throwable) {
@@ -149,7 +213,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                         if (e != null) {
                             Log.d("QuizecViewModel", "Error updating quiz: $e")
                         } else {
-                            quizList.updateQuiz(quiz)
+                            _quizList.updateQuiz(quiz)
                         }
                     }
                 } catch (e: Throwable) {
@@ -163,7 +227,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                         if (e != null) {
                             Log.d("QuizecViewModel", "Error saving quiz: $e")
                         } else {
-                            quizList.addQuiz(updatedQuiz!!)
+                            _quizList.addQuiz(updatedQuiz!!)
                         }
                     }
                 } catch (e: Throwable) {
@@ -177,11 +241,11 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     fun deleteQuiz(quiz: Quiz) {
         viewModelScope.launch {
             try {
-                SStorageUtil.deleteQuizDatabase(dbClient, quiz) { e ->
+                SStorageUtil.deleteQuizDatabase(quiz) { e ->
                     if (e != null) {
                         Log.d("QuizecViewModel", "Error deleting quiz 1: $e")
                     } else {
-                        quizList.removeQuiz(quiz)
+                        _quizList.removeQuiz(quiz)
                     }
                 }
             } catch (e: Throwable) {
@@ -194,6 +258,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         saveQuiz(quiz.copy(id = null))
     }
 
+    //TODO: delete this later
     fun createDummyHistory(userId: String?) {
         val timezone = TimeZone.currentSystemDefault()
         //Owner = creator1@gmail.com Pass = 123123
@@ -303,11 +368,11 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
         viewModelScope.launch {
             try {
-                SStorageUtil.saveHistoryDatabase(dbClient, addHistory) { e ->
+                SStorageUtil.saveHistoryDatabase(addHistory) { e ->
                     if (e != null) {
                         Log.d("QuizecViewModel", "Error saving history: $e")
                     } else {
-                        historyList.addHistory(addHistory)
+                        _historyList.addHistory(addHistory)
                     }
                 }
             } catch (e: Throwable) {
@@ -319,7 +384,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     fun getQuizImage(imageName: String) {
         viewModelScope.launch {
             try {
-                SStorageUtil.loadFile(dbClient, "quizzes", imageName)
+                SStorageUtil.loadFile("quizzes", imageName)
             } catch (e: Throwable) {
                 Log.d("QuizecViewModel", "Error getting quiz image: $e")
             }
@@ -329,9 +394,30 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     fun getQuestionImage(imageName: String) {
         viewModelScope.launch {
             try {
-                SStorageUtil.loadFile(dbClient, "questions", imageName)
+                SStorageUtil.loadFile("questions", imageName)
             } catch (e: Throwable) {
                 Log.d("QuizecViewModel", "Error getting question image: $e")
+            }
+        }
+    }
+
+    fun getLobbies() {
+        viewModelScope.launch {
+            try {
+                Log.d("QuizecViewModel", "getLobbies: ${SAuthUtil.currentUser!!.id}")
+
+                val resultLobbies = dbClient.from("lobby").select {
+                    filter {
+                        eq("owner_user_id", SAuthUtil.currentUser!!.id)
+                    }
+                }.decodeList<Lobby>()
+
+                Log.d("QuizecViewModel", "getLobbies: $resultLobbies")
+
+                _currentLobbiesList.clear()
+                _currentLobbiesList.addAll(resultLobbies)
+            } catch (e: Exception) {
+                Log.e("QuizecViewModel", "getLobbies: ${e.message}")
             }
         }
     }
@@ -339,6 +425,8 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
     //TODO: separate event handling and data manipulation (viewmodel and util)
     fun createLobby(
         quizId: Long,
+        started: Boolean,
+        localRestrited: Boolean,
         duration: Long
         //TODO: add more parameters for the lobby (show on start/wait, location request, etc)
     ) {
