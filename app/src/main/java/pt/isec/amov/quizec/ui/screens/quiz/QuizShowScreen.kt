@@ -68,6 +68,67 @@ val quizView = listOf(
                 ),
                 user = "User"
             ),
+            Question(
+                id = 3,
+                content = "Quantos anodsad asd sa dsads tem o Buno?",
+                image = "Image URL",
+                answers = Answer.MultipleChoice(
+                    setOf(
+                        Pair(true, "20"),
+                        Pair(false, "21"),
+                        Pair(true, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 4,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Matching(
+                    setOf(
+                        Pair("1", "20"),
+                        Pair("2", "21"),
+                        Pair("3", "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 5,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Ordering(
+                    listOf("23", "21", "22")
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 6,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Drag(
+                    setOf(
+                        Pair(1, "20"),
+                        Pair(2, "21"),
+                        Pair(3, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 7,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.FillBlank(
+                    setOf(
+                        Pair(1, "anos"),
+                        Pair(2, "tem"),
+                        Pair(3, "Buno?"),
+                    )
+                ),
+                user = "User"
+            ),
         )
     ))
 
@@ -85,7 +146,7 @@ fun QuizShowScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -139,7 +200,7 @@ fun QuizShowScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HorizontalDivider(
@@ -150,12 +211,11 @@ fun QuizShowScreen(
             IconButton(
                 onClick = {
                     expandAll = !expandAll
-                    expandIndividual.fill(expandAll) // Update individual states based on global state
+                    expandIndividual.fill(expandAll)
                 }
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 16.dp)
                         .wrapContentWidth(),
                     imageVector = if (expandAll) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expandAll) "Collapse All" else "Expand All"
@@ -220,21 +280,75 @@ fun QuestionInfoTemp(
                     contentDescription = if (showExpanded) "Opened" else "Closed"
                 )
             }
+        }
 
-            if (showExpanded) {
-                question.image?.let {
-                    AsyncImage(
-                        model = it,
-                        contentDescription = "Question Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    )
-                }
+        if (showExpanded) {
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                //image
                 Text(
-                    text = question.answers.answerType.toString()
+                    text = question.answers.answerType.displayName
                 )
+                when (question.answers) {
+                    is Answer.TrueFalse -> {
+                        Text(
+                            text = question.answers.rightAnswer.toString()
+                        )
+                    }
+
+                    is Answer.Drag -> TODO()
+
+                    is Answer.FillBlank -> {
+                        val contentWithBlanks = question.content.split(" ").joinToString(" ") {
+                            word ->
+                            val correctAnswer = question.answers.answers.find { it.second == word }
+                            if (correctAnswer != null) "_".repeat(word.length) else word
+                        }
+
+                        Text(
+                            text = contentWithBlanks
+                        )
+                    }
+
+                    is Answer.Matching -> {
+                        val correctAnswers = question.answers.pairs
+                            .joinToString(", ") { "[${it.first}: ${it.second}]" }
+                        Text(
+                            text = "Correct Answers: $correctAnswers"
+                        )
+                    }
+
+                    is Answer.MultipleChoice -> {
+                        val correctAnswers = question.answers.answers
+                            .filter { it.first }
+                            .joinToString { it.second }
+                        Text(
+                            text = "Correct Answers: $correctAnswers"
+                        )
+                    }
+
+                    is Answer.Ordering -> {
+                        val correctAnswers = question.answers.order
+                            .joinToString { it }
+                        Text(
+                            text = "Correct Order: $correctAnswers"
+                        )
+                    }
+
+                    is Answer.SingleChoice -> {
+                        val correctAnswer = question.answers.answers
+                            .filter { it.first }
+                            .joinToString { it.second }
+                        Text(
+                            text = "Correct Answer: $correctAnswer"
+                        )
+                    }
+                }
             }
         }
     }

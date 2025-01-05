@@ -94,7 +94,7 @@ fun FillBlankQuestion(
         Text(
             text = "Question Text Preview: ${
                 questionTitle.split(" ").mapIndexed { index, word ->
-                    if (selectedWords.contains(index to word)) "____" else word
+                    if (selectedWords.contains(index to word)) "_".repeat(word.length) else word
                 }.joinToString(" ")
             }"
         )

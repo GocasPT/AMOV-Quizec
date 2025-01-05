@@ -137,48 +137,6 @@ fun QuizListScreen(
 //                Text("CREATE QUIZ")
 //            }
 //        }
-
-        //TD: todo horizontalArrangement = Arrangement.spacedBy(16.dp)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DropdownMenu(
-                expanded = false,
-                onDismissRequest = {},
-                modifier = Modifier.weight(1f)
-            ) {
-                filterOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedFilter = option
-                            onFilter(option)
-                        }
-                    )
-                }
-            }
-
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    onSearch(it)
-                },
-                modifier =
-                    Modifier
-                        .weight(1f),
-                placeholder = { Text("Search") },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(Icons.Filled.Search, "Search")
-                }
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -293,7 +251,7 @@ fun QuizCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate TODO") },
                 onClick = {
                     expanded = false
                 }

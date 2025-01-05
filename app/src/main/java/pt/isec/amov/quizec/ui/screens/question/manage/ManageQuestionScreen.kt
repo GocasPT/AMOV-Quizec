@@ -1,16 +1,23 @@
 package pt.isec.amov.quizec.ui.screens.question.manage
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,9 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import coil.compose.AsyncImage
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Answer.Drag
 import pt.isec.amov.quizec.model.question.Answer.FillBlank
@@ -40,45 +51,107 @@ import pt.isec.amov.quizec.model.question.Answer.SingleChoice
 import pt.isec.amov.quizec.model.question.Answer.TrueFalse
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.question.QuestionType
+import pt.isec.amov.quizec.model.quiz.Quiz
+import pt.isec.amov.quizec.utils.FileUtils
+import java.io.File
 
-val questionTest3 =  Question(
-    id = 2,
-    content = "Quantos anos asdfdfh ah sah dashd ashd hsad sahd sahd ahd hsa dhas dhas d tem o Buno?",
-    image = "Image URL",
-    answers = Answer.SingleChoice(
-        setOf(
-            Pair(true, "20"),
-            Pair(false, "21"),
-            Pair(false, "22"),
+val quizView2 = listOf(
+    Quiz(
+        id = 1,
+        title = "Titulo 1",
+        image = "Image URL",
+        owner = "Owner",
+        questions = listOf(
+            Question(
+                id = 1,
+                content = "Question 1",
+                image = "Image URL",
+                answers = Answer.TrueFalse(true),
+                user = "User"
+            ),
+            Question(
+                id = 2,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.SingleChoice(
+                    setOf(
+                        Pair(true, "20"),
+                        Pair(false, "21"),
+                        Pair(false, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 3,
+                content = "Quantos anodsad asd sa dsads tem o Buno?",
+                image = "Image URL",
+                answers = Answer.MultipleChoice(
+                    setOf(
+                        Pair(true, "20"),
+                        Pair(false, "21"),
+                        Pair(true, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 4,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Matching(
+                    setOf(
+                        Pair("1", "20"),
+                        Pair("2", "21"),
+                        Pair("3", "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 5,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Ordering(
+                    listOf("23", "21", "22")
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 6,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.Drag(
+                    setOf(
+                        Pair(1, "20"),
+                        Pair(2, "21"),
+                        Pair(3, "22"),
+                    )
+                ),
+                user = "User"
+            ),
+            Question(
+                id = 7,
+                content = "Quantos anos tem o Buno?",
+                image = "Image URL",
+                answers = Answer.FillBlank(
+                    setOf(
+                        Pair(1, "20"),
+                        Pair(2, "21"),
+                        Pair(3, "22"),
+                    )
+                ),
+                user = "User"
+            ),
         )
-    ),
-    user = "User"
+    )
 )
 
-val questionTest2 = Question(
-    id = 2,
-    content = "Quantos anos asdfdfh ah sah dashd ashd hsad sahd sahd ahd hsa dhas dhas d tem o Buno?",
-    image = "Image URL",
-    answers = Answer.MultipleChoice(
-        setOf(
-            Pair(true, "20"),
-            Pair(false, "21"),
-            Pair(false, "22"),
-//            Pair(true, "23"),
-//            Pair(false, "25"),
-//            Pair(false, "36"),
-//            Pair(true, "64"),
-//            Pair(false, "64"),
-//            Pair(false, "53"),
-        )
-    ),
-    user = "User"
-)
 
 @Preview(showBackground = true)
 @Composable
 fun ManageQuestionScreen(
-    question: Question? = questionTest2,
+    question: Question? = quizView2[0].questions?.get(2),
     userId : String = "",
     saveQuestion: (Question) -> Unit = {},
     onBack : () -> Unit = {}
@@ -89,6 +162,31 @@ fun ManageQuestionScreen(
     var isExpanded by remember { mutableStateOf(false) }
     var saveEnabled by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
+
+    var picture by remember { mutableStateOf(question?.image) }
+    val context = LocalContext.current
+    val imagePath : String by lazy { FileUtils.getTempFilename(context)}
+
+    val pickImage = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let {
+               picture = FileUtils.createFileFromUri(
+                    uri = uri,
+                    context = context
+                )
+            }
+        }
+    )
+
+    val takePicture = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                picture = FileUtils.copyFile(context, imagePath)
+            }
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -147,10 +245,70 @@ fun ManageQuestionScreen(
                 }
             }
         )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+
+            Button(
+                onClick = {
+                    pickImage.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Image,
+                    contentDescription = "Select Image"
+                )
+            }
+
+            Button(
+                onClick = {
+                    takePicture.launch(
+                        FileProvider.getUriForFile(
+                            context,
+                            "pt.isec.amov.quizec.android.fileprovider",
+                            File(imagePath)
+                        )
+                    )
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = "Take Picture"
+                )
+            }
+        }
+
+        Column (
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (picture != null) {
+                Log.d("PictureDebug", "Picture URI: $picture")
+                AsyncImage(
+                    model = picture,
+                    contentDescription = "Question's image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                        .height(120.dp),
+                )
+            }
+        }
         
         Card(
             modifier = Modifier
-                .wrapContentHeight()
+                .fillMaxWidth()
                 .padding(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
         ) {
@@ -230,12 +388,6 @@ fun ManageQuestionScreen(
             enabled = saveEnabled && questionContent.isNotBlank()
         ) {
             Text(if (question == null) "Create Question" else "Save Changes")
-        }
-
-        Button(
-            onClick = {}
-        ) {
-            Text("Duplicate Question")
         }
     }
 }

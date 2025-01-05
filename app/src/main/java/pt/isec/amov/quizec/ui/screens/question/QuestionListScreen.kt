@@ -301,7 +301,7 @@ fun QuestionCardV2(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate TODO") },
                 onClick = {
                     expanded = false
                 }
