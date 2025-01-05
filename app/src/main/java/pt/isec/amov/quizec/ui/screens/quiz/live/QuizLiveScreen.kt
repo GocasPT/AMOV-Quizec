@@ -27,12 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.question.QuestionType
 import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
@@ -214,7 +212,7 @@ fun CardQuestionInfo(
                 MultipleChoiceDisplay(
                     answers = question.answers.answers,
                     selectedOptions = selectedAnswers,
-                    onOptionsSelected = {
+                    onOptionSelected = {
                         selectedAnswers = if (selectedAnswers.contains(it)) {
                             selectedAnswers - it
                         } else {

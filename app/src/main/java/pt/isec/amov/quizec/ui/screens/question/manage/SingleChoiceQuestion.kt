@@ -124,7 +124,7 @@ fun AnswerEntrySingleChoice(
 fun SingleChoiceDisplay(
     answers: Set<Pair<Boolean, String>>,
     selectedOption: Pair<Boolean, String>?,
-    onOptionSelected: (Pair<Boolean, String>?) -> Unit,
+    onOptionSelected: (Pair<Boolean, String>) -> Unit,
 ) {
     Column(
         modifier = Modifier.verticalScroll(ScrollState(0))
