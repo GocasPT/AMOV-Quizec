@@ -141,10 +141,9 @@ fun MainScreen(
             composable("setup-lobby") {
                 ManageLobbyScreen(
                     viewModel = viewModel,
-                    quiz = viewModel.currentQuiz,
                     isNewLobby = viewModel.currentLobby.value == null,
-                    onCreateLobby = { quizId, started, localRestrited, duration ->
-                        viewModel.createLobby(quizId, started, localRestrited, duration)
+                    onCreateLobby = { quizId, started, localRestricted, duration ->
+                        viewModel.createLobby(quizId, started, localRestricted, duration)
                         navController.navigate("Home")
                     },
                     //onBack = { navController.popBackStack() }

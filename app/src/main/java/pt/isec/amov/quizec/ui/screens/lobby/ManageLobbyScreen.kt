@@ -17,10 +17,12 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -44,14 +46,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.jan.supabase.createSupabaseClient
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageLobbyScreen(
     viewModel: QuizecViewModel,
-    quiz: Quiz?,
     isNewLobby: Boolean = true,
     onCreateLobby: (Long, Boolean, Boolean, Long) -> Unit,
     modifier: Modifier = Modifier
@@ -75,32 +75,27 @@ fun ManageLobbyScreen(
 //    }
 //    val shareIntent = Intent.createChooser(sendIntent, null)
 
-    Box(
-        modifier = Modifier
+    Column(
+        modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        isNewLobby.let {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        if (isNewLobby)
                 ExposedDropdownMenuBox(
                     modifier = Modifier
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     expanded = expanded,
                     onExpandedChange = {
                         expanded = !expanded
                     }
                 ) {
-                    TextField(
+                    OutlinedTextField(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        value = selectedQuiz?.title
-                            ?: "Selecione um questionário", //TODO: resource lang
+                            .fillMaxWidth()
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                        label = { Text("Selecione um questionário") }, //TODO: resource lang
+                        value = selectedQuiz?.title ?: "",
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -122,16 +117,19 @@ fun ManageLobbyScreen(
                         }
                     }
                 }
-            }
-        }
+        //}
+        else
+            Text(
+                text = "${selectedQuiz?.title}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+            )
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            quiz?.image?.let {
+            selectedQuiz?.image?.let {
                 Image(
                     modifier = Modifier
                         .height(120.dp)
@@ -194,7 +192,7 @@ fun ManageLobbyScreen(
                     valueRange = 0f..240f,
                 )
                 Text(
-                    text = "${sliderTime.toInt()} s",
+                    text = "${sliderTime.toInt()} min",
                 )
             }
 
@@ -209,7 +207,7 @@ fun ManageLobbyScreen(
                     text = stringResource(R.string.instant_start),
                 )
                 Switch(
-                    checked = false,
+                    checked = instantStart,
                     onCheckedChange = { instantStart = !instantStart }
                 )
             }
@@ -224,7 +222,7 @@ fun ManageLobbyScreen(
                     text = stringResource(R.string.location_restricted),
                 )
                 Switch(
-                    checked = false,
+                    checked = isLocationRestricted,
                     onCheckedChange = { isLocationRestricted = !isLocationRestricted }
                 )
             }
@@ -260,7 +258,7 @@ fun ManageLobbyScreen(
                     text = stringResource(R.string.instant_score),
                 )
                 Switch(
-                    checked = false,
+                    checked = isInstantScore,
                     onCheckedChange = { isInstantScore = !isInstantScore }
                 )
             }
@@ -277,10 +275,11 @@ fun ManageLobbyScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //!TODO: disable button when selectedQuiz is null
                 Button(
                     onClick = {
                         onCreateLobby(
-                            1, //TODO: selectedQuiz.id.toLong(),
+                            selectedQuiz!!.id!!.toLong(),
                             instantStart,
                             isLocationRestricted,
                             sliderTime.toLong()
@@ -295,7 +294,7 @@ fun ManageLobbyScreen(
             }
 
             Text("SHARE")
-        }
+        //}
     }
 }
 
@@ -349,17 +348,22 @@ fun Demo_ExposedDropdownMenuBox() {
 
 @Preview(showBackground = true)
 @Composable
-fun ManageLobbyScreenPreview() {
+fun ManageLobbyScreenPreview_SelectQuiz() {
     ManageLobbyScreen(
         viewModel = QuizecViewModel(
             createSupabaseClient("", "") {}
         ),
-        quiz = Quiz(
-            id = 1,
-            title = "Quiz test",
-            image = null,
-            owner = "batata",
-            questions = emptyList(),
+        isNewLobby = false,
+        onCreateLobby = { _, _, _, _ -> },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ManageLobbyScreenPreview_PreSelectedQuiz() {
+    ManageLobbyScreen(
+        viewModel = QuizecViewModel(
+            createSupabaseClient("", "") {}
         ),
         isNewLobby = true,
         onCreateLobby = { _, _, _, _ -> },
