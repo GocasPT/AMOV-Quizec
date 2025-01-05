@@ -99,17 +99,18 @@ fun MatchingQuestion(
     }
 }
 
-//var matching = Question(
-//    content = "Match the following",
-//    answers = Matching(
-//        pairs = setOf(
-//            Pair("A", "1"),
-//            Pair("B", "2"),
-//            Pair("C", "3"),
-//            Pair("D", "4"),
-//        )
-//    )
-//)
+var matching = Question(
+    id = 1,
+    content = "Match the following",
+    image = null,
+    answers = Matching(
+        pairs = setOf(
+            Pair("A", "1"),
+            Pair("B", "2"),
+        )
+    ),
+    user = "User"
+)
 
 @Composable
 fun MatchingQuestionDisplay() {

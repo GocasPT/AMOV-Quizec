@@ -31,6 +31,7 @@ import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
+import pt.isec.amov.quizec.ui.screens.question.manage.MatchingQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
@@ -241,9 +242,13 @@ fun CardQuestionInfo(
                 )
             }
 
-            is Answer.Matching -> {}
-            is Answer.Ordering -> TODO()
-            is Answer.Drag -> TODO()
+            is Answer.Matching -> {
+                MatchingQuestionDisplay()
+            }
+
+            is Answer.Ordering -> {}
+
+            is Answer.Drag -> {}
 
             is Answer.FillBlank -> {
                 FillBlankQuestionDisplay(

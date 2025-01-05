@@ -365,7 +365,7 @@ fun HomeScreenPortrait(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     items(viewModel.currentLobbiesList) { lobby ->
                         Log.d("HomeScreen", "lobby: $lobby")
@@ -373,6 +373,7 @@ fun HomeScreenPortrait(
                             lobby = lobby,
                             onSelectQuiz = {},
                             people = 10
+                            //TODO: get number of people
                         )
                     }
                 }
@@ -423,10 +424,16 @@ fun QuizLobbyCard(
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
-                    Text(
-                        text = if (lobby.started) "LIVE" else "WAITING",
-                        color = if (lobby.started) Color.Red else Color(0xFF36AD36),
-                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = if (lobby.started) "LIVE" else "WAITING",
+                            color = if (lobby.started) Color.Red else Color(0xFF36AD36),
+                        )
+                    }
+
                 }
 
                 Row(
@@ -453,16 +460,17 @@ fun QuizLobbyCard(
                         text = if (lobby.localRestricted) "Restricted" else "Public",
                         fontSize = 12.sp,
                         color = if (lobby.started) Color.Red else Color(0xFF36AD36),
-                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
                     ) {
                         Icon(
                             imageVector = Icons.Filled.People,
                             contentDescription = "People",
                             tint = Color.DarkGray
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = people.toString(),
                             fontSize = 12.sp,

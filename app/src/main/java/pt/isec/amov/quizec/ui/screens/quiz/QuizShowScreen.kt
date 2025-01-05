@@ -314,7 +314,11 @@ fun QuizShowScreenPreview() {
             image = null,
             questions = listOf(
                 Question(null, "Question 1", null, Answer.TrueFalse(true), "Sr. batata"),
-                Question(null, "Question 2", null, Answer.SingleChoice(setOf()), "Sr. batata"),
+                Question(null, "Question 2", null, Answer.SingleChoice(setOf(
+                    Pair(true, "Answer 1"),
+                    Pair(false, "Answer 2"),
+                    Pair(false, "Answer 3"),
+                )), "Sr. batata"),
                 Question(null, "Question 3", null, Answer.TrueFalse(true), "Sr. batata"),
             )
         ),

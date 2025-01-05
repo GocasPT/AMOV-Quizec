@@ -31,7 +31,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
+import pt.isec.amov.quizec.model.question.Answer.Matching
 import pt.isec.amov.quizec.model.question.Answer.Ordering
+import pt.isec.amov.quizec.model.question.Question
 
 @Composable
 fun OrderingQuestion(
@@ -126,4 +128,20 @@ fun OrderingQuestion(
             }
         }
     }
+}
+
+var ordering = Question(
+    id = 1,
+    content = "Match the following",
+    image = null,
+    answers = Ordering(
+        listOf(
+            "A", "B", "C", "D"
+        )
+    ),
+    user = "User"
+)
+
+@Composable
+fun OrderingQuestionDisplay() {
 }
