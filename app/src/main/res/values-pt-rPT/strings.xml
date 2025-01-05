@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="login">Entrar</string>
     <string name="remove">Remover</string>
     <string name="add">Adicionar</string>
     <string name="create_quiz">Criar Quiz</string>
@@ -14,6 +15,7 @@
     <string name="repeat_password">Repetir Password</string>
     <string name="registration_successful">Registado com Sucesso</string>
     <string name="register">Registo</string>
+    <string name="credits">Créditos</string>
     <string name="made_by">"Elaborado por: "</string>
     <string name="course">Curso</string>
     <string name="school_year">Ano Letivo</string>
@@ -45,13 +47,34 @@
     <string name="correct_order">"Ordem correta: "</string>
     <string name="correct_answer">Resposta correta:</string>
     <string name="sign_out">Terminar Sessão</string>
-    <string name="credits_text">Créditos</string>
     <string name="welcome">"Bem-vindo, "</string>
     <string name="join_quiz">"ENTRAR QUIZ: "</string>
     <string name="create_room">CRIAR SESSÃO</string>
     <string name="my_rooms">Sessão</string>
     <string name="quiz_time">Duração Quiz</string>
-    <string name="instant_start">Inicio Instantaneo</string>
+    <string name="instant_start">Inicio Instantâneo</string>
     <string name="location_restricted">Restringir Localização</string>
-    <string name="instant_score">Resultado Instantaneo</string>
+    <string name="instant_score">Resultado Instantâneo</string>
+    <string name="hint">"Dica: "</string>
+    <string name="letters">" letras"</string>
+    <string name="questionNav">Pergunta</string>
+    <string name="historyNav">Histórico</string>
+    <string name="settingsNav">Definições</string>
+    <string name="lobby">sala</string>
+    <string name="setupLobby">setupSala</string>
+    <string name="showQuiz">mostrarQuiz</string>
+    <string name="manageQuiz">gerirQuiz</string>
+    <string name="showQuestion">mostrarPergunta</string>
+    <string name="manageQuestion">gerirPergunta</string>
+    <string name="showHistory">mostrarHistórico</string>
+    <string name="homeNav">Início</string>
+    <string name="true_or_false">Verdadeiro ou Falso</string>
+    <string name="single_choice">Escolha Única</string>
+    <string name="multiple_choice">Escolha Múltipla</string>
+    <string name="matching">Correspondência</string>
+    <string name="ordering">Ordenação</string>
+    <string name="drag">Arrastar</string>
+    <string name="fill_blank">Preencher os espaços em brancos</string>
+    <string name="true_string">Verdadeiro</string>
+    <string name="false_string">Falso</string>
 </resources>

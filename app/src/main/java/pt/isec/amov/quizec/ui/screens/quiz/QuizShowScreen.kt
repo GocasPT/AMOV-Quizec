@@ -34,7 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -224,11 +227,30 @@ fun QuestionShowInfo(
                 when (question.answers) {
                     is Answer.TrueFalse -> {
                         Text(
-                            text = question.answers.rightAnswer.toString()
+                            text = stringResource(R.string.correct_answers) + question.answers.rightAnswer.toString()
                         )
                     }
 
-                    is Answer.Drag -> TODO()
+                    is Answer.Drag -> {
+                        val correctAnswers = question.answers.answers
+                        val highlightedContent = buildAnnotatedString {
+                            val words = question.content.split(" ")
+                            words.forEachIndexed { index, word ->
+                                val match = correctAnswers.find { it.first == index && it.second == word }
+                                if (match != null) {
+                                    withStyle(style = SpanStyle(color = Color.Red)) {
+                                        append(word)
+                                    }
+                                } else {
+                                    append(word)
+                                }
+                                append(" ")
+                            }
+                        }
+                        Text(
+                            text = highlightedContent
+                        )
+                    }
 
                     is Answer.FillBlank -> {
                         val contentWithBlanks = question.content.split(" ").joinToString(" ") {
@@ -238,7 +260,7 @@ fun QuestionShowInfo(
                         }
 
                         Text(
-                            text = contentWithBlanks
+                            text = contentWithBlanks + "\n" + stringResource(R.string.correct_answers) + question.answers.answers.joinToString(", ") { it.second }
                         )
                     }
 
@@ -246,7 +268,7 @@ fun QuestionShowInfo(
                         val correctAnswers = question.answers.pairs
                             .joinToString(", ") { "[${it.first}: ${it.second}]" }
                         Text(
-                            text = stringResource(R.string.correct_answers, correctAnswers)
+                            text = stringResource(R.string.correct_answers) + correctAnswers
                         )
                     }
 
@@ -255,7 +277,7 @@ fun QuestionShowInfo(
                             .filter { it.first }
                             .joinToString { it.second }
                         Text(
-                            text =  stringResource(R.string.correct_answers, correctAnswers)
+                            text =  stringResource(R.string.correct_answers) + correctAnswers
                         )
                     }
 
@@ -263,7 +285,7 @@ fun QuestionShowInfo(
                         val correctAnswers = question.answers.order
                             .joinToString { it }
                         Text(
-                            text = stringResource(R.string.correct_order, correctAnswers)
+                            text = stringResource(R.string.correct_order) + correctAnswers
                         )
                     }
 
@@ -272,7 +294,7 @@ fun QuestionShowInfo(
                             .filter { it.first }
                             .joinToString { it.second }
                         Text(
-                            text = stringResource(R.string.correct_answer, correctAnswer)
+                            text = stringResource(R.string.correct_answer) + correctAnswer
                         )
                     }
                 }

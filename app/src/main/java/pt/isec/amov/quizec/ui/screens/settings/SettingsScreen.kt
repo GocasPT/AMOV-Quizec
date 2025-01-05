@@ -34,7 +34,7 @@ fun SettingsScreen(
             Button(
                 onClick = onCredits
             ) {
-                Text(stringResource(R.string.credits_text))
+                Text(stringResource(R.string.credits))
             }
         }
     }

@@ -1,6 +1,5 @@
 package pt.isec.amov.quizec.ui.screens
 
-import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,6 +37,7 @@ import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
 import pt.isec.amov.quizec.ui.screens.settings.SettingsScreen
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
+import pt.isec.amov.quizec.utils.Strings
 
 sealed class BottomNavBarItem(
     var title: String,
@@ -46,31 +45,31 @@ sealed class BottomNavBarItem(
 ) {
     data object Home :
         BottomNavBarItem(
-            "Home",
+            Strings.get(R.string.homeNav),
             Icons.Filled.Home
         )
 
     data object Quiz :
         BottomNavBarItem(
-            "Quiz",
+            Strings.get(R.string.quizNav),
             Icons.Filled.ContentPaste
         )
 
     data object Question :
         BottomNavBarItem(
-            "Question",
+            Strings.get(R.string.questionNav),
             Icons.Filled.Checklist
         )
 
     data object History :
         BottomNavBarItem(
-            "History",
+            Strings.get(R.string.historyNav),
             Icons.Filled.History
         )
 
     data object Settings :
         BottomNavBarItem(
-            "Settings",
+            Strings.get(R.string.settingsNav),
             Icons.Filled.Settings
         )
 }
@@ -113,65 +112,64 @@ fun MainScreen(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("Home")
-                        "Quiz" -> navController.navigate("Quiz")
-                        "Question" -> navController.navigate("Question")
-                        "History" -> navController.navigate("History")
-                        "Settings" -> navController.navigate("Settings")
+                        Strings.get(R.string.homeNav) -> navController.navigate(Strings.get(R.string.homeNav))
+                        Strings.get(R.string.quizNav) -> navController.navigate(Strings.get(R.string.quizNav))
+                        Strings.get(R.string.questionNav) -> navController.navigate(Strings.get(R.string.questionNav))
+                        Strings.get(R.string.historyNav) -> navController.navigate(Strings.get(R.string.historyNav))
+                        Strings.get(R.string.settingsNav) -> navController.navigate(Strings.get(R.string.settingsNav))
                     }
                 }
             )
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "Home",
+            startDestination = Strings.get(R.string.homeNav),
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
-            composable("Home") {
+            composable(Strings.get(R.string.homeNav)) {
                 HomeScreen(
                     viewModel = viewModel,
                     username = user!!.username,
                     onJoinLobby = { code ->
                         viewModel.joinLobby(code)
-                        navController.navigate("lobby")
+                        navController.navigate(Strings.get(R.string.lobby))
                     },
                     onCreateLobby = {
-                        navController.navigate("setup-lobby")
+                        navController.navigate(Strings.get(R.string.setupLobby))
                     }
                 )
             }
-            composable("setup-lobby") {
+            composable(Strings.get(R.string.setupLobby)) {
                 ManageLobbyScreen(
                     viewModel = viewModel,
                     isNewLobby = viewModel.currentLobby.value == null,
                     onCreateLobby = { quizId, started, localRestricted, duration ->
                         viewModel.createLobby(quizId, started, localRestricted, duration)
-                        navController.navigate("Home")
+                        navController.navigate(Strings.get(R.string.homeNav))
                     },
                     //onBack = { navController.popBackStack() }
                 )
             }
-            composable("lobby") {
+            composable(Strings.get(R.string.lobby)) {
                 LobbyScreen(
                     viewModel = viewModel,
                 )
             }
-            composable("Quiz") {
+            composable(Strings.get(R.string.quizNav)) {
                 QuizListScreen(
                     quizList = viewModel.quizList,
                     onSelectQuiz = { quiz ->
-                        Log.d("Quiz selected", quiz.title)
                         viewModel.selectQuiz(quiz)
-                        navController.navigate("show-quiz")
+                        navController.navigate(Strings.get(R.string.showQuiz))
                     },
                     onCreateQuiz = {
                         viewModel.createQuiz()
-                        navController.navigate("manageQuiz")
+                        navController.navigate(Strings.get(R.string.manageQuiz))
                     },
                     onEditQuiz = { quiz ->
                         viewModel.selectQuiz(quiz)
-                        navController.navigate("manageQuiz")
+                        navController.navigate(Strings.get(R.string.manageQuiz))
                     },
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
@@ -183,9 +181,8 @@ fun MainScreen(
                     }
                 )
             }
-            composable("show-quiz") {
+            composable(Strings.get(R.string.showQuiz)) {
                 viewModel.currentQuiz.let {
-                    Log.d("Quiz selected", viewModel.currentQuiz.value!!.title)
                     QuizShowScreen(
                         quiz = viewModel.currentQuiz.value!!,
                         questionList = viewModel.questionList,
@@ -196,43 +193,42 @@ fun MainScreen(
                         },
                         onEdit = { quiz ->
                             viewModel.selectQuiz(quiz)
-                            navController.navigate("manageQuiz")
+                            navController.navigate(Strings.get(R.string.manageQuiz))
                         },
                         onCreateLobby = { code ->
                             viewModel.quizList.find { it.id == code.toInt() }
                                 ?.let { it1 -> viewModel.selectQuiz(it1) }
-                            navController.navigate("setup-lobby")
+                            navController.navigate(Strings.get(R.string.setupLobby))
                         },
                     )
                 }
             }
-            composable("manageQuiz") {
+            composable(Strings.get(R.string.manageQuiz)) {
                 ManageQuizScreen(
                     quiz = viewModel.currentQuiz.value,
                     userId = user!!.id,
                     questionList = viewModel.questionList,
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
-                        navController.navigate("quiz")
+                        navController.navigate(Strings.get(R.string.quizNav))
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
-            composable("Question") {
+            composable(Strings.get(R.string.questionNav)) {
                 QuestionListScreen(
                     questionList = viewModel.questionList,
                     onSelectQuestion = { question ->
-                        Log.d("Question selected", question.content)
                         viewModel.selectQuestion(question)
-                        navController.navigate("show-question")
+                        navController.navigate(Strings.get(R.string.showQuestion))
                     },
                     onCreateQuestion = {
                         viewModel.createQuestion()
-                        navController.navigate("manageQuestion")
+                        navController.navigate(Strings.get(R.string.manageQuestion))
                     },
                     onEditQuestion = { question ->
                         viewModel.selectQuestion(question)
-                        navController.navigate("manageQuestion")
+                        navController.navigate(Strings.get(R.string.manageQuestion))
                     },
                     onDeleteQuestion = { question ->
                         viewModel.deleteQuestion(question)
@@ -243,7 +239,7 @@ fun MainScreen(
                 )
             }
 
-            composable("show-question") {
+            composable(Strings.get(R.string.showQuestion)) {
                 viewModel.currentQuestion.let {
                     Log.d("Question selected", viewModel.currentQuestion.value!!.content)
                     QuestionShowScreen(
@@ -251,53 +247,53 @@ fun MainScreen(
                         onBack = { navController.popBackStack() },
                         onEdit = { question ->
                             viewModel.selectQuestion(question)
-                            navController.navigate("manageQuestion")
+                            navController.navigate(Strings.get(R.string.manageQuestion))
                         }
                     )
                 }
             }
 
-            composable("manageQuestion") {
+            composable(Strings.get(R.string.manageQuestion)) {
                 ManageQuestionScreen(
                     question = viewModel.currentQuestion.value,
                     userId = user!!.id,
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
-                        navController.navigate("question")
+                        navController.navigate(Strings.get(R.string.questionNav))
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
 
-            composable("History") {
+            composable(Strings.get(R.string.historyNav)) {
                 QuizHistoryScreen(
                     onCreateDummy = {
                         viewModel.createDummyHistory(user!!.id)
                     },
                     onSelectHistory = { history ->
                         viewModel.selectHistory(history)
-                        navController.navigate("show-history")
+                        navController.navigate(Strings.get(R.string.showHistory))
                     },
                     historyList = viewModel.historyList,
                 )
             }
 
-            composable("show-history") {
+            composable(Strings.get(R.string.showHistory)) {
                 viewModel.currentHistory.let {
                     HistoryShowScreen(history = viewModel.currentHistory.value!!)
                 }
             }
 
-            composable("Settings") {
+            composable(Strings.get(R.string.settingsNav)) {
                 SettingsScreen(
                     onSignOut = onSignOut,
                     onCredits = {
-                        navController.navigate("credits")
+                        navController.navigate(Strings.get(R.string.credits))
                     }
                 )
             }
 
-            composable("credits") {
+            composable(Strings.get(R.string.credits)) {
                 CreditsScreen(
                     onBack = {
                         navController.popBackStack()

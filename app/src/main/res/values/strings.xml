@@ -3,7 +3,7 @@
     <string name="email" translatable="false">Email</string>
     <string name="password" translatable="false">Password</string>
     <string name="register">Register</string>
-    <string name="login" translatable="false">Login</string>
+    <string name="login">Login</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
     <string name="create_quiz">Create Quiz</string>
@@ -18,7 +18,7 @@
     <string name="repeat_password">Repeat Password</string>
     <string name="registration_successful">Registration Successful</string>
     <string name="ok" translatable="false">OK</string>
-    <string name="credits" translatable="false">Credits</string>
+    <string name="credits">Credits</string>
     <string name="made_by">"Made by: "</string>
     <string name="guilherme_camacho" translatable="false">Guilherme Camacho</string>
     <string name="tiago_figueiredo" translatable="false">Tiago Figueiredo</string>
@@ -57,7 +57,6 @@
     <string name="correct_order">"Correct Order: "</string>
     <string name="correct_answer">"Correct Answer: "</string>
     <string name="sign_out">Sign Out</string>
-    <string name="credits_text">Credits</string>
     <string name="welcome">"Welcome, "</string>
     <string name="join_quiz">JOIN QUIZ:</string>
     <string name="create_room">CREATE ROOM</string>
@@ -69,4 +68,25 @@
     <string name="isec" translatable="false">ISEC</string>
     <string name="hint">"Hint: "</string>
     <string name="letters">" letters"</string>
+    <string name="homeNav">Home</string>
+    <string name="quizNav" translatable="false">Quiz</string>
+    <string name="questionNav">Question</string>
+    <string name="historyNav">History</string>
+    <string name="settingsNav">Settings</string>
+    <string name="lobby">lobby</string>
+    <string name="setupLobby">setupLobby</string>
+    <string name="showQuiz">showQuiz</string>
+    <string name="manageQuiz">manageQuiz</string>
+    <string name="showQuestion">showQuestion</string>
+    <string name="manageQuestion">manageQuestion</string>
+    <string name="showHistory">showHistory</string>
+    <string name="true_or_false">True or False</string>
+    <string name="single_choice">Single Choice</string>
+    <string name="multiple_choice">Multiple Choice</string>
+    <string name="matching">Matching</string>
+    <string name="ordering">Ordering</string>
+    <string name="drag">Drag</string>
+    <string name="fill_blank">Fill in the Blank</string>
+    <string name="true_string">True</string>
+    <string name="false_string">False</string>
 </resources>
