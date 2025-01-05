@@ -305,4 +305,14 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
             }
         }
     }
+
+    fun getQuizImage(imageName: String) {
+        viewModelScope.launch {
+            try {
+                SStorageUtil.loadFile(dbClient, "quizzes", imageName)
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error getting quiz image: $e")
+            }
+        }
+    }
 }

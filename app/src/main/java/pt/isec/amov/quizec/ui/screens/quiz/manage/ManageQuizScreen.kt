@@ -368,21 +368,14 @@ fun ManageQuizScreen(
                 onClick = {
                     val updatedQuiz = quiz?.copy(
                         title = quizTitle,
+                        image = picture,
                         questions = selectedQuestions,
-                        //isActive = isActive,
-                        //maxTime = maxTimeMinutes.toLongOrNull(),
-                        //locationRestricted = locationRestricted,
-                        //immediateResults = immediateResults
                     ) ?: Quiz(
                         id = null,
                         title = quizTitle,
-                        image = null,
+                        image = picture,
                         questions = selectedQuestions,
                         owner = userId
-                        //isActive = isActive,
-                        //maxTime = maxTimeMinutes.toLongOrNull(),
-                        //locationRestricted = locationRestricted,
-                        //immediateResults = immediateResults
                     )
                     saveQuiz(updatedQuiz)
                 },

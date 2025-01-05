@@ -1,12 +1,15 @@
 package pt.isec.amov.quizec.utils
 
 import android.content.res.AssetManager
+import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
 import pt.isec.amov.quizec.model.QuizQuestion
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
+import java.io.File
 import java.io.InputStream
 
 class SStorageUtil {
@@ -58,6 +61,10 @@ class SStorageUtil {
 
                 quiz.questions?.forEach { question ->
                     dbClient.from("quiz_question").insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
+                }
+
+                quiz.image?.let {
+                    uploadFile(dbClient, "quizzes", quiz.image)
                 }
 
                 quiz.id = updatedQuiz.id
@@ -177,8 +184,23 @@ class SStorageUtil {
             return inputStream
         }
 
-        fun uploadFile(inputStream: InputStream, imgFile: String) {
+        private suspend fun uploadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+            dbClient.storage.from(bucket).upload(
+                file,
+                File(file).readBytes()
+            )
+        }
 
+        suspend fun loadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+            val localFile = File(file)
+
+            if (localFile.exists()) {
+                return
+            }
+
+            val bbucket = dbClient.storage.from(bucket)
+            val bytes = bbucket.downloadAuthenticated(file)
+            localFile.writeBytes(bytes)
         }
     }
 }

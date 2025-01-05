@@ -117,6 +117,9 @@ fun MainScreen(
                             .decodeList<Question>()
 
                         quiz.questions = questions
+                        quiz.image?.let {
+                            viewModel.getQuizImage(it)
+                        }
                         viewModel.quizList.addQuiz(quiz)
                     }
                 }

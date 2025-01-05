@@ -12,7 +12,7 @@ class FileUtils {
         fun getTempFilename(
             context: Context,
             prefix : String = "image",
-            suffix : String = ".img"
+            suffix : String = ".jpg"
         ) : String = File.createTempFile(
             prefix, suffix,
             context.externalCacheDir
@@ -21,7 +21,7 @@ class FileUtils {
         fun getInternalFilename(
             context: Context,
             prefix : String = "image",
-            suffix : String = ".img"
+            suffix : String = ".jpg"
         ) : String = File.createTempFile(
             prefix, suffix,
             context.filesDir
