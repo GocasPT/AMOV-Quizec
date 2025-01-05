@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
@@ -238,9 +239,7 @@ fun QuestionCardV2(
                 Image(
                     modifier = Modifier
                         .fillMaxSize(),
-                    //TODO: get image from string and "return" image/file
-                    //painter = painterResource(it),
-                    painter = painterResource(R.drawable.quizec_1080),
+                    painter = rememberAsyncImagePainter(it),
                     contentDescription = "Quiz Image",
                     contentScale = ContentScale.Crop
                 )

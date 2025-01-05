@@ -300,7 +300,6 @@ fun ManageQuestionScreen(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-
                         .height(120.dp),
                 )
             }
@@ -374,10 +373,11 @@ fun ManageQuestionScreen(
                 saveQuestion(
                     question?.copy(
                         content = questionContent,
+                        image = picture,
                         answers = questionAnswers
                     ) ?: Question(
                         id = null,
-                        image = null,
+                        image = picture,
                         content = questionContent,
                         answers = questionAnswers,
                         user = userId
