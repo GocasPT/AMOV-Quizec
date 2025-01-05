@@ -24,4 +24,8 @@ class QuestionList {
             _list[index] = question
         }
     }
+
+    fun clear() {
+        _list.clear()
+    }
 }

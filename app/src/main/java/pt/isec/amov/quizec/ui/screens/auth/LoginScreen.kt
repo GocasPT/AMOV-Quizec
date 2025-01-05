@@ -1,6 +1,8 @@
 package pt.isec.amov.quizec.ui.screens.auth
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Cyan
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -44,45 +49,56 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.ui.viewmodels.auth.AuthViewModel
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecAuthViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: AuthViewModel,
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
         LoginScreenLandscape(
-            modifier = modifier,
+            viewModel = viewModel,
             onLogin = onLogin,
             onRegister = onRegister,
-            viewModel = viewModel
+            errorMessageText = errorMessageText,
+            clearError = clearError,
+            modifier = modifier
         )
     else
         LoginScreenPortrait(
-            modifier = modifier,
+            viewModel = viewModel,
             onLogin = onLogin,
             onRegister = onRegister,
-            viewModel = viewModel
+            errorMessageText = errorMessageText,
+            clearError = clearError,
+            modifier = modifier
         )
 }
 
 @Composable
 fun LoginScreenLandscape(
-    viewModel: AuthViewModel,
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 }
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun LoginScreenPortrait(
-    viewModel: AuthViewModel,
+    viewModel: QuizecAuthViewModel,
     onLogin: (String, String) -> Unit,
     onRegister: () -> Unit,
+    errorMessageText: String?,
+    clearError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -91,34 +107,20 @@ fun LoginScreenPortrait(
     var showPassword by remember { mutableStateOf(false) }
 
     val gradientColors = listOf(Cyan, Blue)
-    /*
-    LaunchedEffect(viewModel.user.value) {
-        if (viewModel.user.value != null && viewModel.error.value == null) {
-            Log.d(
-                "LoginScreen",
-                "going to enter in with ${viewModel.user.value} and ${password.value}"
-            )
-            onSuccess()
-        }
-    }
-    */
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        Box(
+
+        Image(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "logo",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+            painter = painterResource(R.drawable.quizec_1080),
+            contentDescription = "logo_image",
+        )
 
         Column(
             modifier = Modifier
@@ -174,21 +176,14 @@ fun LoginScreenPortrait(
                 }
             )
             Spacer(modifier = Modifier.height(12.dp))
-            if (viewModel.error.value != null) {
-                Text(
-                    text = "Error: ${viewModel.error.value}",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
             Button(
+                shape = RoundedCornerShape(percent = 20),
                 onClick = {
                     onLogin(email.value, password.value)
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D1C1F))
             ) {
                 Text("LOGIN")
             }
@@ -221,6 +216,12 @@ fun LoginScreenPortrait(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp),
             style = MaterialTheme.typography.bodyMedium,
+        )
+
+        SnackBar(
+            error = errorMessageText,
+            clearError = clearError,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }

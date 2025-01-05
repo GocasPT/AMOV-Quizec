@@ -33,8 +33,6 @@ fun OrderingQuestion(
     initialAnswer: Ordering,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.order) }
@@ -70,8 +68,8 @@ fun OrderingQuestion(
     }
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(16.dp)
     ) {
         answers.forEachIndexed { index, answer ->

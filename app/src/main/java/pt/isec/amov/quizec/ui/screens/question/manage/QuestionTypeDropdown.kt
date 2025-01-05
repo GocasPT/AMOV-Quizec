@@ -1,6 +1,12 @@
 package pt.isec.amov.quizec.ui.screens.question.manage
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenuItem
@@ -8,10 +14,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.QuestionType
 
@@ -24,30 +33,53 @@ fun QuestionTypeDropdown(
     onAnswerSelected: (QuestionType) -> Unit
 ) {
     ExposedDropdownMenuBox(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
         expanded = isExpanded,
         onExpandedChange = onExpandedChange
     ) {
-        OutlinedTextField(
-            value = currentAnswer.answerType.displayName,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Question Type") },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = null,
-                    Modifier.clickable { onExpandedChange(!isExpanded) }
-                )
-            },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-        )
+            OutlinedTextField(
+                value = currentAnswer.answerType.displayName,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Question Type") },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { onExpandedChange(!isExpanded) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowDropDown,
+                            contentDescription = "Icon Dropdown",
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+            )
+
         ExposedDropdownMenu(
             expanded = isExpanded,
             onDismissRequest = { onExpandedChange(false) }
         ) {
             QuestionType.entries.forEach { type ->
                 DropdownMenuItem(
-                    text = { Text(type.displayName) },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+
+                            Icon(
+                                imageVector = type.icon,
+                                contentDescription = type.toString(),
+                                modifier = Modifier.size(20.dp) // Adjust size as needed
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(type.displayName)
+                        }
+
+                    },
                     onClick = {
                         onExpandedChange(false)
                         onAnswerSelected(type)

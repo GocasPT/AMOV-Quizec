@@ -2,18 +2,22 @@ package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -33,13 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -49,7 +50,8 @@ fun RegisterScreen(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText: String?
+    errorMessageText : String?,
+    clearError : () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -58,7 +60,8 @@ fun RegisterScreen(
             onRegister = onRegister,
             onSuccess = onSuccess,
             onBack = onBack,
-            errorMessageText = errorMessageText
+            errorMessageText = errorMessageText,
+            clearError = clearError
         )
     else
         RegisterScreenPortrait(
@@ -66,7 +69,8 @@ fun RegisterScreen(
             onRegister = onRegister,
             onSuccess = onSuccess,
             onBack = onBack,
-            errorMessageText = errorMessageText
+            errorMessageText = errorMessageText,
+            clearError = clearError
         )
 
 }
@@ -77,7 +81,8 @@ fun RegisterScreenLandscape(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText: String?
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
 
 }
@@ -88,7 +93,8 @@ fun RegisterScreenPortrait(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText: String?
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
@@ -96,13 +102,11 @@ fun RegisterScreenPortrait(
     val repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showRepeatPassword by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(errorMessageText) {
-        errorMessage = errorMessageText
-        if (errorMessage.equals("Success")) {
+        if(errorMessageText.equals("Success")) {
             showDialog = true
         }
     }
@@ -112,27 +116,24 @@ fun RegisterScreenPortrait(
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopEnd),
-            contentAlignment = Alignment.TopEnd
+                .padding(top = 32.dp)
+                .clickable { onBack() },
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Top
         ) {
-            BasicText(
-                text = buildAnnotatedString {
-                    withLink(
-                        LinkAnnotation.Clickable(
-                            tag = "register",
-                            linkInteractionListener = {
-                                onBack()
-                            }
-                        )
-                    ) {
-                        append("< Back to Login")
-                    }
-                },
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Back to Login",
                 modifier = Modifier
-                    .padding(top = 32.dp),
+                    .size(24.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp))
+            Text(
+                text = "Back to Login",
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -236,16 +237,6 @@ fun RegisterScreenPortrait(
                 }
             )
 
-            if (errorMessage != null && !errorMessage.equals("Success")) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-
             if (showDialog) {
                 Dialog(onDismissRequest = { }) {
                     Box(
@@ -282,10 +273,11 @@ fun RegisterScreenPortrait(
         }
 
         Button(
+            shape = RoundedCornerShape(percent = 20),
             onClick = {
                 onRegister(name.value, email.value, password.value, repeatPassword.value)
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D0B0D)),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D1C1F)),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp)
@@ -293,5 +285,11 @@ fun RegisterScreenPortrait(
         ) {
             Text("REGISTER")
         }
+
+        SnackBar(
+            error = errorMessageText,
+            clearError = clearError,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }

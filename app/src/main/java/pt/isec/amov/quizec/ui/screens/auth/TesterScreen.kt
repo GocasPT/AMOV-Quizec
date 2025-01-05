@@ -73,8 +73,11 @@ fun BottomNavBar(
     onItemSelected: (BottomNavBarItem) -> Unit
 ) {
     NavigationBar {
+        var isSelected = false
         items.forEach { item ->
-            val isSelected = currentScreen == item.title // Determine if the item is selected
+            if(currentScreen != null) {
+                isSelected = currentScreen.lowercase().contains(item.title.lowercase())
+            }
 
             NavigationBarItem(
                 selected = isSelected,

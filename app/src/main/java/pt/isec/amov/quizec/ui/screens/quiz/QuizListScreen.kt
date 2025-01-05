@@ -1,23 +1,29 @@
 package pt.isec.amov.quizec.ui.screens.quiz
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +33,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -43,28 +55,157 @@ fun QuizListScreen(
     onCreateQuiz: () -> Unit,
     onEditQuiz: (Quiz) -> Unit,
     onDeleteQuiz: (Quiz) -> Unit,
+    onSearch: (String) -> Unit,
+    onFilter: (String) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
+    var searchText by remember { mutableStateOf("") }
+    var selectedFilter by remember { mutableStateOf("All") }
+    val filterOptions = listOf("True / False", "Single Choice")
+
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onCreateQuiz
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .align(Alignment.TopCenter),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            ExtendedFloatingActionButton (
+//                onClick = {
+//                    onCreateQuiz()
+//                }
+//            ) {
+//                Icon(
+//                    modifier = Modifier
+//                        .padding(2.dp),
+//                    contentDescription = "Create Quiz",
+//                    imageVector = Icons.Filled.Add)
+//                Text("CREATE QUIZ")
+//            }
+//        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Create Quiz")
+            CustomList(
+                items = quizList,
+                onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }) { quiz, onSelect ->
+                QuizCardV2(
+                    quiz = quiz as Quiz,
+                    onSelectQuiz = { onSelect(quiz) },
+                    onEditQuiz = { onEditQuiz(quiz) },
+                    onDeleteQuiz = { onDeleteQuiz(quiz) },
+                    onDuplicateQuiz = { onDuplicateQuiz(quiz) }
+                )
+            }
         }
-        CustomList(
-            items = quizList,
-            onSelectItem = { quiz -> onSelectQuiz(quiz as Quiz) }
-        ) { quiz, onSelect ->
-            QuizCard(
-                quiz = quiz as Quiz,
-                onSelectQuiz = { onSelect(quiz) },
-                onEditQuiz = { onEditQuiz(quiz) },
-                onDeleteQuiz = { onDeleteQuiz(quiz) }
+
+        ExtendedFloatingActionButton (
+            onClick = {
+                onCreateQuiz()
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 16.dp)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(2.dp),
+                contentDescription = "Create Quiz",
+                imageVector = Icons.Filled.Add
+            )
+            Text("CREATE QUIZ")
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun QuizCardV2(
+    quiz: Quiz,
+    onSelectQuiz: (Quiz) -> Unit,
+    onEditQuiz: (Quiz) -> Unit,
+    onDeleteQuiz: (Quiz) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .combinedClickable(
+                onClick = { onSelectQuiz(quiz) },
+                onLongClick = { expanded = true }
+            ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .height(160.dp)
+        ) {
+
+            quiz.image?.let {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = "Quiz Image",
+                    contentScale = ContentScale.Crop
+                )
+            } ?: Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(R.drawable.quizec_1080),
+                contentDescription = "Quiz Image",
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Gray.copy(alpha = 0.8f)
+                            ),
+                            startY = 0f,
+                        )
+                    )
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    text = quiz.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Duplicate") },
+                onClick = {
+                    expanded = false
+                    onDuplicateQuiz(quiz)
+                }
             )
         }
     }
@@ -76,7 +217,8 @@ fun QuizCard(
     quiz: Quiz,
     onSelectQuiz: (Quiz) -> Unit,
     onEditQuiz: (Quiz) -> Unit,
-    onDeleteQuiz: (Quiz) -> Unit
+    onDeleteQuiz: (Quiz) -> Unit,
+    onDuplicateQuiz: (Quiz) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -141,9 +283,10 @@ fun QuizCard(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("View TODO") },
+                text = { Text("Duplicate") },
                 onClick = {
                     expanded = false
+                    onDuplicateQuiz(quiz)
                 }
             )
             DropdownMenuItem(
@@ -193,6 +336,9 @@ fun QuizListScreenPreview() {
         onSelectQuiz = {},
         onCreateQuiz = {},
         onEditQuiz = {},
-        onDeleteQuiz = {}
+        onDeleteQuiz = {},
+        onFilter = {},
+        onSearch = {},
+        onDuplicateQuiz = {}
     )
 }

@@ -1,25 +1,32 @@
 package pt.isec.amov.quizec.ui
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isec.amov.quizec.QuizecApp
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.ui.screens.MainScreen
 import pt.isec.amov.quizec.ui.screens.auth.LoginScreen
 import pt.isec.amov.quizec.ui.screens.auth.RegisterScreen
 import pt.isec.amov.quizec.ui.theme.QuizecTheme
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModelFactory
-import pt.isec.amov.quizec.ui.viewmodels.auth.AuthViewModel
-import pt.isec.amov.quizec.ui.viewmodels.auth.AuthViewModelFactory
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecAuthViewModel
+import pt.isec.amov.quizec.ui.viewmodels.auth.QuizecViewModelAuthFactory
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -30,12 +37,15 @@ class MainActivity : ComponentActivity() {
 
     private val app: QuizecApp by lazy { application as QuizecApp }
     private val viewModel: QuizecViewModel by viewModels { QuizecViewModelFactory(app.dbClient) }
-    private val viewModelAuth: AuthViewModel by viewModels { AuthViewModelFactory(app.dbClient) }
+    private val viewModelAuth: QuizecAuthViewModel by viewModels { QuizecViewModelAuthFactory(app.dbClient) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val backgroundColorInt = ContextCompat.getColor(this, R.color.defaultBackground)
+            val backgroundColor = Color(backgroundColorInt)
+
             val navController = rememberNavController()
             val user by viewModelAuth.user
 
@@ -48,7 +58,9 @@ class MainActivity : ComponentActivity() {
             }
 
             QuizecTheme {
-                Surface {
+                Surface(
+                    color = backgroundColor,
+                ) {
                     NavHost(
                         navController = navController,
                         startDestination = LOGIN_SCREEN,
@@ -61,7 +73,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onRegister = {
                                     navController.navigate(REGISTER_SCREEN)
-                                }
+                                },
+                                errorMessageText = viewModelAuth.error.value,
+                                clearError = { viewModelAuth.clearError() }
                             )
                         }
                         composable(REGISTER_SCREEN) {
@@ -85,7 +99,8 @@ class MainActivity : ComponentActivity() {
                                     }
                                     viewModelAuth.clearError()
                                 },
-                                errorMessageText = viewModelAuth.error.value
+                                errorMessageText = viewModelAuth.error.value,
+                                clearError = { viewModelAuth.clearError() }
                             )
                         }
                         composable(MAIN_SCREEN) {
@@ -104,10 +119,72 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        checkPermissionsRequest()
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            askSinglePermission.launch(android.Manifest.permission.CAMERA)
+        }
+
+        checkAndRequestStoragePermission()
     }
 
-    private fun checkPermissionsRequest() {
-        //TODO: add permissions requests checkers
+    private fun checkAndRequestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 and above
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED) {
+                askStoragePermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+            }
+        } else {
+            // Below Android 13
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED) {
+                askMultiplePermission.launch(
+                    arrayOf(
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+            }
+        }
+    }
+
+    private val askSinglePermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+            if (granted)
+                Toast.makeText(this, "Permissão para a câmera concedida!", Toast.LENGTH_SHORT).show()
+            else
+                Toast.makeText(this, "Permissão para a câmera não concedida!", Toast.LENGTH_SHORT).show()
+    }
+
+    private val askStoragePermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted)
+            Toast.makeText(this, "Storage permission granted!", Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(this, "Storage permission denied!", Toast.LENGTH_SHORT).show()
+    }
+
+    private val askMultiplePermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val deniedPermissions = permissions.filterValues { !it }
+        if (deniedPermissions.isEmpty())
+            Toast.makeText(this, "Todas as permissões concedidas!", Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(this, "Permissões negadas: ${deniedPermissions.keys.joinToString(", ")}", Toast.LENGTH_LONG).show()
     }
 }

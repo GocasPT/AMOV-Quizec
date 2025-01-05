@@ -4,17 +4,18 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,10 +25,15 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.User
+import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.auth.BottomNavBar
+import pt.isec.amov.quizec.ui.screens.credits.CreditsScreen
+import pt.isec.amov.quizec.ui.screens.history.HistoryShowScreen
+import pt.isec.amov.quizec.ui.screens.history.QuizHistoryScreen
 import pt.isec.amov.quizec.ui.screens.lobby.ConfigLobbyScreen
 import pt.isec.amov.quizec.ui.screens.lobby.LobbyScreen
 import pt.isec.amov.quizec.ui.screens.question.QuestionListScreen
@@ -36,6 +42,7 @@ import pt.isec.amov.quizec.ui.screens.question.manage.ManageQuestionScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizListScreen
 import pt.isec.amov.quizec.ui.screens.quiz.QuizShowScreen
 import pt.isec.amov.quizec.ui.screens.quiz.manage.ManageQuizScreen
+import pt.isec.amov.quizec.ui.screens.settings.SettingsScreen
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 sealed class BottomNavBarItem(
@@ -66,10 +73,10 @@ sealed class BottomNavBarItem(
             Icons.Filled.History
         )
 
-    data object Logout :
+    data object Settings :
         BottomNavBarItem(
-            "Logout",
-            Icons.AutoMirrored.Filled.Logout
+            "Settings",
+            Icons.Filled.Settings
         )
 }
 
@@ -91,11 +98,12 @@ fun MainScreen(
         BottomNavBarItem.Quiz,
         BottomNavBarItem.Question,
         BottomNavBarItem.History,
-        BottomNavBarItem.Logout
+        BottomNavBarItem.Settings
     )
 
     //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
+        viewModel.clearData()
         withContext(Dispatchers.IO) {
             viewModel.dbClient
                 .from("quiz")
@@ -114,6 +122,9 @@ fun MainScreen(
                             .decodeList<Question>()
 
                         quiz.questions = questions
+                        quiz.image?.let {
+                            viewModel.getQuizImage(it)
+                        }
                         viewModel.quizList.addQuiz(quiz)
                     }
                 }
@@ -129,13 +140,35 @@ fun MainScreen(
                 }
                 .decodeList<Question>().let { list ->
                     list.forEach {
+                        it.image?.let { image ->
+                            viewModel.getQuestionImage(image)
+                        }
                         viewModel.questionList.addQuestion(it)
+                    }
+                }
+        }
+
+        withContext(Dispatchers.IO) {
+            viewModel.dbClient
+                .from("history")
+                .select {
+                    filter {
+                        eq("user_id", user!!.id)
+                    }
+                }
+                .decodeList<History>().let { list ->
+                    list.forEach {
+                        it.quiz.image?.let { image ->
+                            viewModel.getQuizImage(image)
+                        }
+                        viewModel.historyList.addHistory(it)
                     }
                 }
         }
     }
 
     Scaffold(
+        containerColor = colorResource(id = R.color.defaultBackground),
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             BottomNavBar(
@@ -143,22 +176,22 @@ fun MainScreen(
                 currentScreen = currentScreen?.destination?.route,
                 onItemSelected = { selected ->
                     when (selected.title) {
-                        "Home" -> navController.navigate("home")
-                        "Quiz" -> navController.navigate("quiz")
-                        "Question" -> navController.navigate("question")
-                        "History" -> navController.navigate("history")
-                        "Logout" -> onSignOut()
+                        "Home" -> navController.navigate("Home")
+                        "Quiz" -> navController.navigate("Quiz")
+                        "Question" -> navController.navigate("Question")
+                        "History" -> navController.navigate("History")
+                        "Settings" -> navController.navigate("Settings")
                     }
                 }
             )
         }
     ) { innerPadding ->
         NavHost(
-            startDestination = "home",
+            startDestination = "Home",
             navController = navController,
             modifier = modifier.padding(innerPadding)
         ) {
-            composable("home") {
+            composable("Home") {
                 HomeScreen(
                     username = user!!.username,
                     onJoinLobby = { code ->
@@ -190,7 +223,7 @@ fun MainScreen(
                     viewModel = viewModel,
                 )
             }
-            composable("quiz") {
+            composable("Quiz") {
                 QuizListScreen(
                     quizList = viewModel.quizList.getQuizList(),
                     onSelectQuiz = { quiz ->
@@ -208,6 +241,11 @@ fun MainScreen(
                     },
                     onDeleteQuiz = { quiz ->
                         viewModel.deleteQuiz(quiz)
+                    },
+                    onSearch = {},
+                    onFilter = {},
+                    onDuplicateQuiz = { quiz ->
+                        viewModel.duplicateQuiz(quiz)
                     }
                 )
             }
@@ -216,13 +254,19 @@ fun MainScreen(
                     Log.d("Quiz selected", viewModel.currentQuiz!!.title)
                     QuizShowScreen(
                         quiz = viewModel.currentQuiz!!,
+                        questionList = viewModel.questionList.getQuestionList(),
+                        onBack = { navController.popBackStack() },
+                        onEdit = { quiz ->
+                            viewModel.selectQuiz(quiz)
+                            navController.navigate("manageQuiz")
+                        },
                         onCreateLobby = { code ->
                             viewModel.createLobby(
                                 code,
                                 120
                             ) //TODO: receive all parameters to config lobby
                         },
-                        onCreateQuestion = { /* TODO */ }
+                        onCreateQuestion = { /* TODO */ },
                     )
                 }
             }
@@ -234,10 +278,11 @@ fun MainScreen(
                     saveQuiz = { quiz ->
                         viewModel.saveQuiz(quiz)
                         navController.navigate("quiz")
-                    }
+                    },
+                    onBack = { navController.popBackStack() }
                 )
             }
-            composable("question") {
+            composable("Question") {
                 QuestionListScreen(questionList = viewModel.questionList.getQuestionList(),
                     onSelectQuestion = { question ->
                         Log.d("Question selected", question.content)
@@ -254,6 +299,9 @@ fun MainScreen(
                     },
                     onDeleteQuestion = { question ->
                         viewModel.deleteQuestion(question)
+                    },
+                    onDuplicateQuestion = { question ->
+                        viewModel.duplicateQuestion(question)
                     }
                 )
             }
@@ -261,7 +309,14 @@ fun MainScreen(
             composable("show-question") {
                 viewModel.currentQuestion?.let {
                     Log.d("Question selected", viewModel.currentQuestion!!.content)
-                    QuestionShowScreen(question = viewModel.currentQuestion!!)
+                    QuestionShowScreen(
+                        question = viewModel.currentQuestion!!,
+                        onBack = { navController.popBackStack() },
+                        onEdit = { question ->
+                            viewModel.selectQuestion(question)
+                            navController.navigate("manageQuestion")
+                        }
+                    )
                 }
             }
 
@@ -272,6 +327,43 @@ fun MainScreen(
                     saveQuestion = { question ->
                         viewModel.saveQuestion(question)
                         navController.navigate("question")
+                    },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable("History") {
+                QuizHistoryScreen(
+                    onCreateDummy = {
+                        viewModel.createDummyHistory(user!!.id)
+                    },
+                    onSelectHistory = { history ->
+                        viewModel.selectHistory(history)
+                        navController.navigate("show-history")
+                    },
+                    historyList = viewModel.historyList.getHistoryList(),
+                )
+            }
+
+            composable("show-history") {
+                viewModel.currentHistory?.let {
+                    HistoryShowScreen(history = viewModel.currentHistory!!)
+                }
+            }
+
+            composable("Settings") {
+                SettingsScreen(
+                    onSignOut = onSignOut,
+                    onCredits = {
+                        navController.navigate("credits")
+                    }
+                )
+            }
+
+            composable("credits") {
+                CreditsScreen(
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }

@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -34,8 +36,6 @@ fun MultipleChoiceQuestion(
     initialAnswer: MultipleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.answers) }
@@ -45,40 +45,44 @@ fun MultipleChoiceQuestion(
         saveEnabled(answers.count { it.first } >= 2)
     }
 
-    Row(
-        modifier = Modifier.padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier.padding(16.dp)
     ) {
-        OutlinedTextField(
-            value = newAnswer,
-            onValueChange = { newAnswer = it },
-            label = { Text("Add Option") },
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(
-            onClick = {
-                answers = answers + Pair(false, newAnswer)
-                newAnswer = ""
-            },
-            enabled = newAnswer.isNotBlank()
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("+")
+            OutlinedTextField(
+                value = newAnswer,
+                onValueChange = { newAnswer = it },
+                label = { Text("Add Option") },
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    answers = answers + Pair(false, newAnswer)
+                    newAnswer = ""
+                },
+                enabled = newAnswer.isNotBlank()
+            ) {
+                Text("+")
+            }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        AnswerEntryMultipleChoice(
+            answers = answers,
+            onClick = { answer ->
+                answers = answers.map {
+                    if (it.second == answer.second) it.copy(first = !it.first) else it
+                }.toSet()
+            },
+            onOptionDelete = { answer ->
+                answers = answers - answer
+            }
+        )
     }
-    AnswerEntryMultipleChoice(
-        answers = answers,
-        onClick = { answer ->
-            answers = answers.map {
-                if (it.second == answer.second) it.copy(first = !it.first) else it
-            }.toSet()
-        },
-        onOptionDelete = { answer ->
-            answers = answers - answer
-        },
-        modifier = modifier,
-        scrollState = scrollState
-    )
 }
 
 @Composable
@@ -86,10 +90,8 @@ fun AnswerEntryMultipleChoice(
     answers: Set<Pair<Boolean, String>>,
     onClick: (Pair<Boolean, String>) -> Unit,
     onOptionDelete: (Pair<Boolean, String>) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
-    Column(modifier = modifier.verticalScroll(scrollState)) {
+    Column {
         answers.forEach { answer ->
             Row(
                 modifier = Modifier

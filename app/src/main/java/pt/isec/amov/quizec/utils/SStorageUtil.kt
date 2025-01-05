@@ -3,10 +3,13 @@ package pt.isec.amov.quizec.utils
 import android.content.res.AssetManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
 import pt.isec.amov.quizec.QuizecApp
 import pt.isec.amov.quizec.model.QuizQuestion
+import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
+import java.io.File
 import java.io.InputStream
 
 class SStorageUtil {
@@ -70,6 +73,10 @@ class SStorageUtil {
                         .insert(QuizQuestion(updatedQuiz.id!!, question.id!!))
                 }
 
+                quiz.image?.let {
+                    uploadFile(dbClient, "quizzes", quiz.image)
+                }
+
                 quiz.id = updatedQuiz.id
                 onResult(null, quiz)
             } catch (e: Throwable) {
@@ -128,6 +135,15 @@ class SStorageUtil {
             }
         }
 
+        suspend fun saveHistoryDatabase(dbClient: SupabaseClient, history: History, onResult: (Throwable?) -> Unit) {
+            try {
+                dbClient.from("history").insert(history)
+                onResult(null)
+            } catch (e: Throwable) {
+                onResult(e)
+            }
+        }
+
         //TODO: add listener
         //private var listenerRegistration: ListenerRegistration? = null
 
@@ -166,8 +182,23 @@ class SStorageUtil {
             return inputStream
         }
 
-        fun uploadFile(inputStream: InputStream, imgFile: String) {
+        private suspend fun uploadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+            dbClient.storage.from(bucket).upload(
+                file,
+                File(file).readBytes()
+            )
+        }
 
+        suspend fun loadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+            val localFile = File(file)
+
+            if (localFile.exists()) {
+                return
+            }
+
+            val bbucket = dbClient.storage.from(bucket)
+            val bytes = bbucket.downloadAuthenticated(file)
+            localFile.writeBytes(bytes)
         }
     }
 }
