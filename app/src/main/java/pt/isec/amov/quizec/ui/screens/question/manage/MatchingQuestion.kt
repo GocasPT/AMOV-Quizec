@@ -32,8 +32,6 @@ fun MatchingQuestion(
     initialAnswer: Matching,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
     var leftSide by remember { mutableStateOf("") }
     var rightSide by remember { mutableStateOf("") }
@@ -45,8 +43,8 @@ fun MatchingQuestion(
     }
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(16.dp)
     ) {
         Row(

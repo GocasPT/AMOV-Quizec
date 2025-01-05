@@ -1,7 +1,9 @@
 package pt.isec.amov.quizec.model.question
 
+import androidx.compose.runtime.mutableStateListOf
+
 class QuestionList {
-    private val _list = mutableListOf<Question>()
+    private val _list = mutableStateListOf<Question>()
 
     fun getQuestionList(): List<Question> {
         //return _list // No order
@@ -21,5 +23,9 @@ class QuestionList {
         if (index != -1) {
             _list[index] = question
         }
+    }
+
+    fun clear() {
+        _list.clear()
     }
 }

@@ -1,7 +1,9 @@
 package pt.isec.amov.quizec.model.quiz
 
+import androidx.compose.runtime.mutableStateListOf
+
 class QuizList {
-    private val _list = mutableListOf<Quiz>()
+    private val _list = mutableStateListOf<Quiz>()
 
     fun getQuizList(): List<Quiz> {
         //return _list // No order
@@ -21,5 +23,9 @@ class QuizList {
 
     fun removeQuiz(quiz: Quiz) {
         _list.remove(quiz)
+    }
+
+    fun clear() {
+        _list.clear()
     }
 }

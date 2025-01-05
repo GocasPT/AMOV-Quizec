@@ -31,7 +31,6 @@ fun FillBlankQuestion(
     initialAnswer: FillBlank,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     questionTitle: String
 ) {
     var selectedWords by remember { mutableStateOf(initialAnswer.answers) }
@@ -49,7 +48,9 @@ fun FillBlankQuestion(
     }
 
     Column(
-        modifier = modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
         Text(
             text = buildAnnotatedString {
@@ -92,9 +93,9 @@ fun FillBlankQuestion(
         }
 
         Text(
-            text = "Question Text Preview: ${
+            text = "Question Text Preview: \n${
                 questionTitle.split(" ").mapIndexed { index, word ->
-                    if (selectedWords.contains(index to word)) "____" else word
+                    if (selectedWords.contains(index to word)) "_".repeat(word.length) else word
                 }.joinToString(" ")
             }"
         )

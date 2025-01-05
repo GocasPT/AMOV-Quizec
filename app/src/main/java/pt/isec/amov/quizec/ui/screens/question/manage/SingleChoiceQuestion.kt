@@ -34,8 +34,6 @@ fun SingleChoiceQuestion(
     initialAnswer: SingleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.answers) }
@@ -78,8 +76,6 @@ fun SingleChoiceQuestion(
         onOptionDelete = { answer ->
             answers = answers - answer
         },
-        modifier = modifier,
-        scrollState = scrollState
     )
 }
 
@@ -88,10 +84,8 @@ fun AnswerEntrySingleChoice(
     answers: Set<Pair<Boolean, String>>,
     onClick: (Pair<Boolean, String>) -> Unit,
     onOptionDelete: (Pair<Boolean, String>) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
-    Column(modifier = modifier.verticalScroll(scrollState)) {
+    Column {
         answers.forEach { answer ->
             Row(
                 modifier = Modifier

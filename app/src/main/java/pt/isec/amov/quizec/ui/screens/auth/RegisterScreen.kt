@@ -2,16 +2,29 @@ package pt.isec.amov.quizec.ui.screens.auth
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,70 +39,105 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
-import pt.isec.amov.quizec.model.User
-import pt.isec.amov.quizec.ui.viewmodels.QuizecAuthViewModel
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun RegisterScreen(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?,
+    clearError : () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        RegisterScreenLandscape(modifier = modifier, onSuccess = onSuccess, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenLandscape(
+            modifier = modifier,
+            onRegister = onRegister,
+            onSuccess = onSuccess,
+            onBack = onBack,
+            errorMessageText = errorMessageText,
+            clearError = clearError
+        )
     else
-        RegisterScreenPortrait(modifier = modifier, onSuccess = onSuccess, playerInfo = playerInfo, viewModel = viewModel)
+        RegisterScreenPortrait(
+            modifier = modifier,
+            onRegister = onRegister,
+            onSuccess = onSuccess,
+            onBack = onBack,
+            errorMessageText = errorMessageText,
+            clearError = clearError
+        )
 
 }
 
 @Composable
 fun RegisterScreenLandscape(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
 
 }
 
 @Composable
 fun RegisterScreenPortrait(
-    viewModel: QuizecAuthViewModel,
-    playerInfo: User,
+    onRegister: (String, String, String, String) -> Unit,
+    onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
+    errorMessageText : String?,
+    clearError: () -> Unit
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    var repeatPassword by remember { mutableStateOf("") }
+    val repeatPassword = remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
-
     var showRepeatPassword by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(viewModel.user.value) {
-        if (viewModel.user.value != null && viewModel.error.value == null) {
-            onSuccess()
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(errorMessageText) {
+        if(errorMessageText.equals("Success")) {
+            showDialog = true
         }
     }
-
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
+        Row(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .clickable { onBack() },
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Back to Login",
+                modifier = Modifier
+                    .size(24.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp))
+            Text(
+                text = "Back to Login",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,7 +158,7 @@ fun RegisterScreenPortrait(
             OutlinedTextField(
                 value = email.value,
                 onValueChange = { newText -> email.value = newText },
-                label = { Text("Name") },
+                label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(percent = 20),
                 singleLine = true,
@@ -155,9 +203,9 @@ fun RegisterScreenPortrait(
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
-                value = repeatPassword,
-                onValueChange = { newText -> repeatPassword = newText },
-                label = { Text("Password") },
+                value = repeatPassword.value,
+                onValueChange = { newText -> repeatPassword.value = newText },
+                label = { Text("Repeat Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(percent = 20),
@@ -189,39 +237,59 @@ fun RegisterScreenPortrait(
                 }
             )
 
-        }
-
-        if (viewModel.error.value != null) {
-            Text(
-                text = "Error: ${viewModel.error.value}",
-                modifier = Modifier
-                    .background(Color(255, 0, 0))
-                    .padding(16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                onClick = {
-                    viewModel.createUserWithEmail(name.value, email.value, password.value)
-
-//
-//                    if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && repeatPassword.isNotBlank() && (password.equals(repeatPassword))) {
-//                        User(name, email, password, repeatPassword)
-//                    } else {
-//                        errorMessage = "Please fill in the blanks."
-//                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("REGISTER")
+            if (showDialog) {
+                Dialog(onDismissRequest = { }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Registration Successful",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    showDialog = false
+                                    onSuccess()
+                                },
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        Button(
+            shape = RoundedCornerShape(percent = 20),
+            onClick = {
+                onRegister(name.value, email.value, password.value, repeatPassword.value)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9D1C1F)),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(),
+        ) {
+            Text("REGISTER")
+        }
+
+        SnackBar(
+            error = errorMessageText,
+            clearError = clearError,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }

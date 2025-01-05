@@ -5,9 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Question(
-    val id: Int,
+    val id: Int? = null,
     val content: String,
     @SerialName("image_url")
     val image: String?,
-    val answers: Answer
+    val answers: Answer,
+    @SerialName("user_id")
+    val user: String
 )

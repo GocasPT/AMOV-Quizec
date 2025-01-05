@@ -7,14 +7,15 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
-import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.question.QuestionList
-import pt.isec.amov.quizec.model.quiz.Quiz
-import pt.isec.amov.quizec.model.quiz.QuizList
-import pt.isec.amov.quizec.utils.QuestionIDGenerator
 
 class QuizecApp : Application() {
+    companion object {
+        private var instance: QuizecApp? = null
+
+        fun getInstance(): QuizecApp =
+            instance ?: throw IllegalStateException("QuizecApp not initialized")
+    }
+
     // Yes, the URL and Key are public safe, doesn't need to be hidden
     private val _dbClient: SupabaseClient by lazy {
         createSupabaseClient(
@@ -31,32 +32,8 @@ class QuizecApp : Application() {
     val dbClient: SupabaseClient
         get() = _dbClient
 
-    //TODO: add local data for testing (no database for now)
-    private val _questionList: QuestionList by lazy {
-        QuestionList().apply {
-            addQuestion(
-                Question(
-                    QuestionIDGenerator.getNextId(), "Are you insane?", null, Answer.TrueFalse(true)
-                )
-            )
-        }
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
     }
-
-    private val _quizList: QuizList by lazy {
-        QuizList().apply {
-            addQuiz(
-                Quiz(
-                    "XXXXX", "Quiz 0", null, listOf(
-                        _questionList.getQuestionList()[0]
-                    ), false, 0, false, true
-                )
-            )
-        }
-    }
-
-    val quizList: QuizList
-        get() = _quizList
-
-    val questionList: QuestionList
-        get() = _questionList
 }

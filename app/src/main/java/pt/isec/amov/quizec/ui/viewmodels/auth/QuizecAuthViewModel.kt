@@ -1,4 +1,4 @@
-package pt.isec.amov.quizec.ui.viewmodels
+package pt.isec.amov.quizec.ui.viewmodels.auth
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -7,19 +7,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import pt.isec.amov.quizec.model.User
 import pt.isec.amov.quizec.utils.SAuthUtil
 
 fun UserInfo.toUser(): User {
-    val displayName = this.userMetadata.toString()
+    val id = this.id
+    val displayName = try {
+        val metadata = JSONObject(this.userMetadata.toString())
+        metadata.optString("username", "n.d.")
+    } catch (e: Exception) {
+        "n.d."
+    }
     val strEmail = this.email ?: "n.d."
-    return User(displayName, strEmail)
+    return User(id, displayName, strEmail)
 }
 
-class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
+class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
     private val _user = mutableStateOf(dbClient.auth.currentUserOrNull()?.toUser())
     val user: MutableState<User?>
         get() = _user
@@ -28,28 +34,41 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
     val error: MutableState<String?>
         get() = _error
 
-    fun createUserWithEmail(email: String, password: String, name: String) {
-        if (email.isBlank() || password.isBlank() || name.isBlank())
+    fun signUpWithEmail(email: String, password: String, repeatedPassword: String, name: String) {
+        if (email.isBlank() || password.isBlank() || name.isBlank() || repeatedPassword.isBlank()) {
+            _error.value = "Please fill in the blanks."
             return
+        }
+
+        if (password != repeatedPassword) {
+            _error.value = "Passwords do not match."
+            return
+        }
 
         viewModelScope.launch {
             try {
-                SAuthUtil.createUserWithEmail(email, password)
-                _user.value = SAuthUtil.currentUser?.toUser()
+                SAuthUtil.signUpWithEmail(email, password, name)
+                _error.value = "Success"
             } catch (e: Exception) {
+                Log.e("AuthViewModel", e.message.toString())
                 _error.value = e.message
             }
         }
     }
 
     fun signInWithEmail(email: String, password: String) {
-        if (email.isBlank() || password.isBlank())
+        if (email.isBlank() || password.isBlank()) {
+            _error.value = "Email and password must be filled"
             return
+        }
+
         viewModelScope.launch {
             try {
                 SAuthUtil.signInWithEmail(email, password)
                 _user.value = SAuthUtil.currentUser?.toUser()
+                _error.value = null
             } catch (e: Exception) {
+                Log.e("AuthViewModel", e.message.toString())
                 _error.value = e.message
             }
         }
@@ -63,4 +82,7 @@ class QuizecAuthViewModel(val dbClient : SupabaseClient) : ViewModel() {
         }
     }
 
+    fun clearError() {
+        _error.value = null
+    }
 }
