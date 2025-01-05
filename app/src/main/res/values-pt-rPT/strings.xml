@@ -77,4 +77,6 @@
     <string name="fill_blank">Preencher os espaços em brancos</string>
     <string name="true_string">Verdadeiro</string>
     <string name="false_string">Falso</string>
+    <string name="quiz_ended">Quiz Acabou</string>
+    <string name="waiting_for_quiz_to_start">À espera que o quiz comece</string>
 </resources>

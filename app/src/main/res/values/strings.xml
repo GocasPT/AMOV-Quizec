@@ -89,4 +89,6 @@
     <string name="fill_blank">Fill in the Blank</string>
     <string name="true_string">True</string>
     <string name="false_string">False</string>
+    <string name="quiz_ended">Quiz Ended</string>
+    <string name="waiting_for_quiz_to_start">Waiting for quiz to start</string>
 </resources>

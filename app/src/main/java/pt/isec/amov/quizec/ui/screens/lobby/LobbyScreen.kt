@@ -20,9 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.jan.supabase.createSupabaseClient
+import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.ui.screens.quiz.live.QuizLiveScreen
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
@@ -51,7 +53,7 @@ fun LobbyScreen(
     ) {
         when {
             !hasStarted -> {
-                Text("Waiting for quiz to start")
+                Text(stringResource(R.string.waiting_for_quiz_to_start))
                 ContainedLoadingIndicator()
             }
 
@@ -85,7 +87,7 @@ fun LobbyScreen(
                         }
                     )
                 } ?: run {
-                    Text("Quiz Ended")
+                    Text(stringResource(R.string.quiz_ended))
                 }
             }
         }
