@@ -124,9 +124,8 @@ fun DragQuestionDisplay(
     onOrderChanged: (Set<Pair<Int, String>>) -> Unit
 ) {
     var currentAnswers by remember { mutableStateOf(selectedOrder) }
-    val shuffledAnswers = remember { answers.shuffled() } // Shuffle answers once and remember
+    val shuffledAnswers = remember { answers.shuffled() }
 
-    // Process text by replacing answer words with either the selected word or underscores
     val displayText = remember(currentAnswers) {
         var tempText = questionText
         answers.sortedByDescending { it.first }.forEach { (_, word) ->
@@ -143,7 +142,6 @@ fun DragQuestionDisplay(
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Display the text with blanks/filled words
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -157,7 +155,6 @@ fun DragQuestionDisplay(
             )
         }
 
-        // Word options
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -170,14 +167,11 @@ fun DragQuestionDisplay(
                         .clickable(
                             enabled = !isSelected,
                             onClick = {
-                                // Find the index of the clicked word in the original answers
                                 val originalIndex = answers.find { it.second == word }?.first
 
                                 if (originalIndex != null) {
-                                    // Check if there's an empty slot for this index in currentAnswers
                                     val emptySlot = currentAnswers.none { it.first == originalIndex }
                                     if (emptySlot) {
-                                        // Place the selected word in the correct position
                                         val newAnswers = (currentAnswers + Pair(originalIndex, word)).toSet()
                                         currentAnswers = newAnswers
                                         onOrderChanged(newAnswers)
