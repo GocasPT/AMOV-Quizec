@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -27,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
@@ -53,11 +51,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.jan.supabase.createSupabaseClient
+import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.Lobby
-import pt.isec.amov.quizec.model.question.Answer
-import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
@@ -223,6 +220,7 @@ fun HomeScreenLandscape(
                         QuizLobbyCard(
                             lobby = lobby,
                             onSelectQuiz = {},
+                            // people = viewModel.getPlayerCount(lobby.code).value
                             people = 10
                         )
                     }
@@ -287,8 +285,10 @@ fun HomeScreenPortrait(
                         .padding(12.dp),
                     contentAlignment = Alignment.BottomStart
                 ) {
+                    Log.d("HomeScreen", "username: $username")
+
                     Text(
-                        text = stringResource(R.string.welcome, username),
+                        text = stringResource(R.string.welcome) + username,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -393,7 +393,7 @@ fun QuizLobbyCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable {  },
+            .clickable { },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(
@@ -504,7 +504,7 @@ fun CardInfoPreview() {
     QuizLobbyCard(
         lobby = Lobby(
             code = "123456",
-            expiredAt = "2022-12-31T23:59:59Z".toInstant(),
+            expiredAt = Instant.parse("2022-12-31T23:59:59Z"),
             duration = 10,
             localRestricted = false,
             started = false,

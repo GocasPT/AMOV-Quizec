@@ -446,13 +446,11 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
-    //TODO: separate event handling and data manipulation (viewmodel and util)
     fun createLobby(
         quizId: Long,
         started: Boolean,
         localRestricted: Boolean,
         duration: Long
-        //TODO: add more parameters for the lobby (show on start/wait, location request, etc)
     ) {
         viewModelScope.launch {
             try {
@@ -475,10 +473,6 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
 
                 Log.d("QuizecViewModel", "createLobby: $resultLobby")
 
-                //TODO: check if lobby was created successfully in the database
-                // - if is because of the code, gen another one and try again
-                // - if server or unknown error, throw exception or something like that
-
                 _currentLobby.value = resultLobby
             } catch (e: Exception) {
                 Log.e("QuizecViewModel", "createLobby: ${e.message}")
@@ -486,21 +480,12 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
-    //TODO: separate event handling and data manipulation (viewmodel and util)
     fun joinLobby(lobbyCode: String) {
         viewModelScope.launch {
             try {
                 val lobby = dbClient.from(Constants.LOBBY_TABLE).select {
-                    filter {
-                        eq("lobby_code", lobbyCode)
-                    }
+                    filter { eq("lobby_code", lobbyCode) }
                 }.decodeSingleOrNull<Lobby>() ?: throw Exception("Lobby not found")
-
-                //TODO: check block
-                // - if user is the owner, throw exception(?)
-                // - if user is already in the lobby, throw exception(?)
-                // - if doesn't exist, throw exception(?)
-                // - if server or unknown error, throw exception or something like that
 
                 Log.d("QuizecViewModel", "joinLobby: $lobby")
 
@@ -525,6 +510,10 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
         }
     }
 
+    fun stopLobby() {
+
+    }
+
     fun getPlayerCount(lobbyCode: String): MutableState<Int> {
         val playerCount = mutableIntStateOf(0)
 
@@ -533,7 +522,6 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
             flow.collect {
                 _currentLobbyPlayerCount.intValue = it.size
 
-                //TODO: clear + add OR update/swap?
                 _currentLobbyPlayers.clear()
                 for (user in it)
                     _currentLobbyPlayers.add(user)

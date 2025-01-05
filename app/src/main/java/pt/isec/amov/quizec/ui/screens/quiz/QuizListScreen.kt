@@ -260,8 +260,6 @@ fun QuizCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 quiz.image?.let {
-                    //TODO: get image from string and "return" image/file
-                    //PLACE_HOLDER
                     Icon(Icons.Filled.AccountCircle, it)
                     Spacer(modifier = Modifier.padding(8.dp))
                 }

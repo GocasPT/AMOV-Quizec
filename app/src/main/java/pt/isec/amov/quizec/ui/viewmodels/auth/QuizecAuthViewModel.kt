@@ -25,7 +25,7 @@ fun UserInfo.toUser(): User {
     return User(id, displayName, strEmail)
 }
 
-class QuizecAuthViewModel(val dbClient: SupabaseClient) : ViewModel() {
+class QuizecAuthViewModel(dbClient: SupabaseClient) : ViewModel() {
     private val _user = mutableStateOf(dbClient.auth.currentUserOrNull()?.toUser())
     val user: MutableState<User?>
         get() = _user

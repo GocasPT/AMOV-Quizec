@@ -94,7 +94,6 @@ fun QuizLiveScreen(
                 }
             }
 
-            //TODO: isto tem q rodar
             Column(
                 modifier = Modifier
                     .padding(8.dp),
@@ -157,7 +156,6 @@ fun QuizLiveScreen(
                         onNextQuestion()
                     }
                 },
-                enabled = selectedAnswer != null
             ) {
                 Text(text = stringResource(R.string.next_question))
             }
@@ -194,11 +192,6 @@ fun CardQuestionInfo(
                         onResponse(Answer.TrueFalse(selectedOption))
                     }
                 )
-
-                //?TODO: check this
-                /*LaunchedEffect(Unit) {
-                    onResponse(selectedOption)
-                }*/
             }
 
             is Answer.SingleChoice -> {

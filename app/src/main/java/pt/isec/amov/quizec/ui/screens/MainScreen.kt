@@ -88,7 +88,6 @@ fun MainScreen(
         Log.d("Destination changed", destination.route.toString())
     }
 
-    //?TODO: can be improved?
     val items = listOf(
         BottomNavBarItem.Home,
         BottomNavBarItem.Quiz,
@@ -148,6 +147,10 @@ fun MainScreen(
                         viewModel.createLobby(quizId, started, localRestricted, duration)
                         navController.navigate(Strings.get(R.string.homeNav))
                     },
+                    onStopLobby = {
+                        viewModel.stopLobby()
+                        navController.navigate("Home")
+                    }
                     //onBack = { navController.popBackStack() }
                 )
             }

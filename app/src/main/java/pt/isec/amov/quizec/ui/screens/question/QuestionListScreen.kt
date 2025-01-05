@@ -135,8 +135,6 @@ fun QuestionCard(
                 verticalAlignment = Alignment.Bottom,
             ) {
                 question.image?.let {
-                    //TODO: get image from string and "return" image/file
-                    //PLACE_HOLDER
                     Icon(Icons.Filled.AccountCircle, "Question image")
                     Spacer(modifier = Modifier.padding(8.dp))
                 }

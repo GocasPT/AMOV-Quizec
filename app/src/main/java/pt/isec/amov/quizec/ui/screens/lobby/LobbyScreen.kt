@@ -41,7 +41,7 @@ fun LobbyScreen(
     LaunchedEffect(hasStarted) {
         if (hasStarted) {
             viewModel.fetchLobbyQuiz()
-            viewModel.clearAnswers() //!TODO
+            viewModel.clearAnswers()
         }
     }
 
@@ -79,7 +79,6 @@ fun LobbyScreen(
                         question = currentQuestion,
                         onAnswerSelected = { answer ->
                             Log.d("LobbyScreen", "Answer selected: $answer")
-                            //TODO: save answer
                             viewModel.saveAnswer(currentQuestion, answer)
                         },
                         onNextQuestion = {
