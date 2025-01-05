@@ -36,8 +36,6 @@ fun MultipleChoiceQuestion(
     initialAnswer: MultipleChoice,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
     var newAnswer by remember { mutableStateOf("") }
     var answers by remember { mutableStateOf(initialAnswer.answers) }
@@ -48,8 +46,7 @@ fun MultipleChoiceQuestion(
     }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = Modifier.padding(16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -83,9 +80,7 @@ fun MultipleChoiceQuestion(
             },
             onOptionDelete = { answer ->
                 answers = answers - answer
-            },
-            modifier = modifier,
-            scrollState = scrollState
+            }
         )
     }
 }
@@ -95,13 +90,8 @@ fun AnswerEntryMultipleChoice(
     answers: Set<Pair<Boolean, String>>,
     onClick: (Pair<Boolean, String>) -> Unit,
     onOptionDelete: (Pair<Boolean, String>) -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+    Column {
         answers.forEach { answer ->
             Row(
                 modifier = Modifier

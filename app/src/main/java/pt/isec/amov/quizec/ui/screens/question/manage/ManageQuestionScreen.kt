@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CameraAlt
@@ -246,6 +247,11 @@ fun ManageQuestionScreen(
             }
         )
 
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
+        ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -322,39 +328,30 @@ fun ManageQuestionScreen(
                     initialAnswer = questionAnswers as SingleChoice,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
-                    scrollState = scrollState
                 )
 
                 is MultipleChoice -> MultipleChoiceQuestion(
                     initialAnswer = questionAnswers as MultipleChoice,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
-                    scrollState = scrollState
                 )
 
                 is Matching -> MatchingQuestion(
                     initialAnswer = questionAnswers as Matching,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
-                    scrollState = scrollState
                 )
 
                 is Ordering -> OrderingQuestion(
                     initialAnswer = questionAnswers as Ordering,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
-                    scrollState = scrollState
                 )
 
                 is Drag -> DragQuestion(
                     initialAnswer = questionAnswers as Drag,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
                     questionTitle = questionContent
                 )
 
@@ -362,7 +359,6 @@ fun ManageQuestionScreen(
                     initialAnswer = questionAnswers as FillBlank,
                     onAnswerChanged = { questionAnswers = it },
                     saveEnabled = { saveEnabled = it },
-                    modifier = Modifier.weight(1f),
                     questionTitle = questionContent
                 )
             }
@@ -384,10 +380,12 @@ fun ManageQuestionScreen(
                     )
                 )
             },
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .align(Alignment.CenterHorizontally),
             enabled = saveEnabled && questionContent.isNotBlank()
         ) {
             Text(if (question == null) "Create Question" else "Save Changes")
         }
     }
-}
+}}

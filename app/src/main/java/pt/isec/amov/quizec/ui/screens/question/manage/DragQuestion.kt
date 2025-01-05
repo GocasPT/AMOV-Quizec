@@ -31,7 +31,6 @@ fun DragQuestion(
     initialAnswer: Drag,
     onAnswerChanged: (Answer) -> Unit,
     saveEnabled: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     questionTitle: String
 ) {
     var selectedWords by remember { mutableStateOf(initialAnswer.answers) }
@@ -49,7 +48,9 @@ fun DragQuestion(
     }
 
     Column(
-        modifier = modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
         Text(
             text = buildAnnotatedString {
