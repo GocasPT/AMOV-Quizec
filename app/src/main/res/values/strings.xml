@@ -66,4 +66,5 @@
     <string name="instant_start">Instant Start</string>
     <string name="location_restricted">Location Restricted</string>
     <string name="instant_score">Instant Score</string>
+    <string name="isec" translatable="false">ISEC</string>
 </resources>

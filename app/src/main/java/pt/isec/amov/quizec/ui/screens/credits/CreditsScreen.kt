@@ -112,7 +112,7 @@ fun CreditsScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "ISEC",
+                text = stringResource(R.string.isec),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
