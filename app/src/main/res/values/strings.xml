@@ -67,4 +67,6 @@
     <string name="location_restricted">Location Restricted</string>
     <string name="instant_score">Instant Score</string>
     <string name="isec" translatable="false">ISEC</string>
+    <string name="hint">"Hint: "</string>
+    <string name="letters">" letters"</string>
 </resources>

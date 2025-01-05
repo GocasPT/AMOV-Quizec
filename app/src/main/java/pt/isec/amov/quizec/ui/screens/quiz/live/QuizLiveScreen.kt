@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.model.question.QuestionType
+import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
@@ -177,6 +179,7 @@ fun CardQuestionInfo(
     var selectedOption by remember { mutableStateOf(defaultValue?.toBoolean() ?: false) }
     var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>>(Pair(false, "False")) }
     var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>(emptySet()) }
+    var selectedFilledAnswers by remember { mutableStateOf(setOf<Pair<Int, String>>()) }
 
     Column(
         modifier = Modifier
@@ -221,190 +224,20 @@ fun CardQuestionInfo(
                 )
             }
 
-
-            is Answer.Drag -> TODO()
-            is Answer.FillBlank -> TODO()
-            is Answer.Matching -> TODO()
+            is Answer.Matching -> {}
             is Answer.Ordering -> TODO()
-        }
+            is Answer.Drag -> TODO()
 
-//        when(question.answers.answerType) {
-//            QuestionType.TRUE_FALSE -> YesNoQuestionDisplay(
-//                selectedOption = selectedOption,
-//                onOptionSelected = { selectedOption = it }
-//            )
-//
-//            QuestionType.SINGLE_CHOICE -> SingleChoiceDisplay(
-//                answers = question.answers as Set<Pair<Boolean, String>>,
-//                selectedOption = selectedAnswer,
-//                onOptionSelected = { selectedAnswer = it }
-//            )
-//
-//            QuestionType.MULTIPLE_CHOICE -> MultipleChoiceDisplay(
-//                answers = question.answers as Set<Pair<Boolean, String>>,
-//                selectedOptions = selectedAnswers,
-//                onOptionSelected = { selectedAnswers = it }
-//            )
-//
-//            QuestionType.MATCHING -> TODO()
-//            QuestionType.ORDERING -> TODO()
-//            QuestionType.DRAG -> TODO()
-//            QuestionType.FILL_BLANK -> TODO()
-//        }
+            is Answer.FillBlank -> {
+                FillBlankQuestionDisplay(
+                    question = question,
+                    answersSelected = selectedFilledAnswers,
+                    onAnswersSelectedChange = { updatedAnswers ->
+                        selectedFilledAnswers = updatedAnswers
+                    }
+                )
+            }
+        }
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun QuizLiveScreenPreview() {
-    QuizLiveScreen(
-        question = Question(
-            id = 1,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.SingleChoice(
-                setOf(
-                    Pair(true, "20"),
-                    Pair(false, "21"),
-                    Pair(false, "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_TrueFalse() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.TrueFalse(true),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_SingleChoice() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = null,
-            answers = Answer.SingleChoice(
-                setOf(
-                    Pair(true, "20"),
-                    Pair(false, "21"),
-                    Pair(false, "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_MultipleChoice() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.MultipleChoice(
-                setOf(
-                    Pair(true, "20"),
-                    Pair(false, "21"),
-                    Pair(false, "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_Matching() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.Matching(
-                setOf(
-                    Pair("1", "20"),
-                    Pair("2", "21"),
-                    Pair("3", "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_Ordering() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.Ordering(
-                listOf(
-                    "20",
-                    "21",
-                    "22"
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_Drag() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.Drag(
-                setOf(
-                    Pair(1, "20"),
-                    Pair(2, "21"),
-                    Pair(3, "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardQuestionInfoPreview_FillBlank() {
-    CardQuestionInfo(
-        question = Question(
-            id = 2,
-            content = "Quantos anos tem o Buno?",
-            image = "Image URL",
-            answers = Answer.FillBlank(
-                setOf(
-                    Pair(1, "20"),
-                    Pair(2, "21"),
-                    Pair(3, "22"),
-                )
-            ),
-            user = "User"
-        )
-    )
 }
