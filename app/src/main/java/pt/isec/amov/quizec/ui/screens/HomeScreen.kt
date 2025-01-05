@@ -53,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isec.amov.quizec.R
+import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
@@ -84,6 +85,7 @@ fun HomeScreen(
         )
 }
 
+
 @Composable
 fun HomeScreenLandscape(
     viewModel: QuizecViewModel,
@@ -92,8 +94,143 @@ fun HomeScreenLandscape(
     onCreateLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    //TODO: implement
+    val code = remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.getLobbies()
+    }
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Welcome Image Section
+        item {
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.fundo_exemplo),
+                    contentDescription = "Quiz Image",
+                    contentScale = ContentScale.Crop
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Gray.copy(alpha = 0.8f)
+                                ),
+                                startY = 0f
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.welcome, username),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+
+        // Code Input Section
+        item {
+            Box(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                OutlinedTextField(
+                    value = code.value,
+                    onValueChange = { if (it.length <= 6) code.value = it },
+                    label = { Text(stringResource(R.string.join_quiz)) },
+                    textStyle = TextStyle(fontSize = 28.sp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(percent = 20),
+                    trailingIcon = {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = { onJoinLobby(code.value) },
+                            shape = CircleShape
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = "Join button")
+                        }
+                    }
+                )
+            }
+        }
+
+        // Create Room Section
+        item {
+            Box(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                ElevatedButton(
+                    onClick = onCreateLobby,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(stringResource(R.string.create_room))
+                }
+            }
+        }
+
+        // My Rooms Section
+        item {
+            Column(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = stringResource(R.string.my_rooms),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Gray,
+                )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(viewModel.currentLobbiesList) { lobby ->
+                        Log.d("HomeScreen", "lobby: $lobby")
+                        QuizLobbyCard(
+                            lobby = lobby,
+                            onSelectQuiz = {},
+                            people = 10
+                        )
+                    }
+                }
+            }
+        }
+    }
+
 }
+
 
 @Composable
 fun HomeScreenPortrait(
@@ -113,57 +250,61 @@ fun HomeScreenPortrait(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Column {
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.4f)
+                    .height(140.dp)
             ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.drawable.fundo_exemplo),
+                    contentDescription = "Quiz Image",
+                    contentScale = ContentScale.Crop
+                )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.5f)
-                ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.fundo_exemplo),
-                        contentDescription = "Quiz Image",
-                        contentScale = ContentScale.Crop
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Gray.copy(alpha = 0.8f)
-                                    ),
-                                    startY = 0f
-                                )
-                            )
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp),
-                        contentAlignment = Alignment.BottomStart
-                    ) {
-                        Text(
-                            text = stringResource(R.string.welcome, username),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
                         .fillMaxSize()
-                        .weight(0.5f)
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Gray.copy(alpha = 0.8f)
+                                ),
+                                startY = 0f
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.welcome, username),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     OutlinedTextField(
                         value = code.value,
@@ -182,249 +323,153 @@ fun HomeScreenPortrait(
                             }
                         }
                     )
+
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 2.dp,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+
+                    ElevatedButton(
+                        onClick = onCreateLobby,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(stringResource(R.string.create_room))
+                    }
                 }
             }
 
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.6f)
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopStart
             ) {
-                HorizontalDivider(
+                Text(
+                    text = stringResource(R.string.my_rooms),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.Gray,
-                    thickness = 2.dp,
-                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
-                ElevatedButton(
-                    onClick = onCreateLobby,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(stringResource(R.string.create_room))
-                }
+            }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.my_rooms),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray,
-                    )
-                }
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 LazyRow(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    contentPadding = PaddingValues(horizontal = 24.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(viewModel.currentLobbiesList) { lobby ->
                         Log.d("HomeScreen", "lobby: $lobby")
-
-                        Card(
-                            modifier = Modifier
-                                .size(200.dp, 150.dp)
-                                .clickable { },
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = CardDefaults.cardElevation(6.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.LightGray)
-                                    .padding(8.dp),
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.quizec_1080),
-                                    //painter = rememberAsyncImagePainter(lobby.image), // Requires Coil for async image loading
-                                    contentDescription = "fsdfds",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(80.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = lobby.code,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Owner: ${lobby.ownerUUID}",
-                                    fontSize = 12.sp,
-                                    color = Color.DarkGray
-                                )
-                            }
-                        }
+                        QuizLobbyCard(
+                            lobby = lobby,
+                            onSelectQuiz = {},
+                            people = 10
+                        )
                     }
-
-
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun QuizLobbyCard(
-    quiz: Quiz,
+    lobby: Lobby,
     onSelectQuiz: (Quiz) -> Unit,
-    ) {
+    people: Int,
+) {
     Card(
         modifier = Modifier
-            .size(200.dp, 150.dp)
-            .clickable { /* Navigate to quiz details */ },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.LightGray)
-                .padding(8.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = quiz.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = quiz.title,
-                fontSize = 12.sp,
-                color = Color.DarkGray
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun HomeScreenPortrait_V2(
-    modifier: Modifier = Modifier,
-    ) {
-
-    val code = remember { mutableStateOf("") }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
             .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {  },
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFBDA9A9),
+        )
     ) {
-        Box (
+        Box(
             modifier = Modifier
                 .height(180.dp)
         ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxSize(),
-                painter = painterResource(R.drawable.fundo_exemplo),
-                contentDescription = "Quiz Image",
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Gray.copy(alpha = 0.8f)
-                            ),
-                            startY = 0f,
-                        )
-                    )
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                contentAlignment = Alignment.BottomStart
+                    .background(Color.LightGray)
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = "Welcome, TIAGO",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-        }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = lobby.code,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = if (lobby.started) "LIVE" else "WAITING",
+                        color = if (lobby.started) Color.Red else Color(0xFF36AD36),
+                    )
+                }
 
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            OutlinedTextField(
-                value = code.value,
-                onValueChange = { if (it.length <= 6) code.value = it },
-                label = {
-                    Text("JOIN QUIZ:")
-                },
-                textStyle = TextStyle(fontSize = 48.sp),
-                singleLine = true,
-                shape = RoundedCornerShape(percent = 20),
-                trailingIcon = {
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        shape = CircleShape,
-                        onClick = { /*TODO:???*/ },
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "${lobby.expiredAt} | ${lobby.duration}:00",
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Gray
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = if (lobby.localRestricted) "Restricted" else "Public",
+                        fontSize = 12.sp,
+                        color = if (lobby.started) Color.Red else Color(0xFF36AD36),
+                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.Check, "Floating action button.")
+                        Icon(
+                            imageVector = Icons.Filled.People,
+                            contentDescription = "People",
+                            tint = Color.DarkGray
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = people.toString(),
+                            fontSize = 12.sp,
+                            color = Color.DarkGray
+                        )
                     }
                 }
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            HorizontalDivider(thickness = 2.dp)
-            ElevatedButton(
-                onClick = {
-                    //TODO: popup/modal OR QuizListScreen?
-                    //TODO: ???
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text("CREATE ROOM ")
             }
-
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        username = "Tiago",
-        onJoinLobby = {},
-        onCreateLobby = { _, _ -> },
-        modifier = Modifier.fillMaxSize()
-    )
 }
