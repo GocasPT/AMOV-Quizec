@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
+import pt.isec.amov.quizec.ui.screens.question.manage.DragQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MatchingQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
@@ -174,6 +175,8 @@ fun CardQuestionInfo(
     var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>(emptySet()) }
     var selectedFilledAnswers by remember { mutableStateOf(setOf<Pair<Int, String>>()) }
     var selectedOrder by remember { mutableStateOf(listOf<String>()) }
+    var matchedPairs by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var draggedItems by remember { mutableStateOf<Set<Pair<Int, String>>>(emptySet()) }
 
     Column(
         modifier = Modifier
@@ -238,7 +241,18 @@ fun CardQuestionInfo(
             }
 
             is Answer.Matching -> {
-                MatchingQuestionDisplay()
+                MatchingQuestionDisplay(
+                    answers = question.answers.pairs,
+                    selectedMatches = matchedPairs,
+                    onMatchSelected = { matches ->
+                        matchedPairs = matches
+                        onResponse(Answer.Matching(
+                            matchedPairs.map { (left, right) ->
+                                Pair(left, right)
+                            }.toSet()
+                        ))
+                    }
+                )
             }
 
             is Answer.Ordering -> {
@@ -258,7 +272,15 @@ fun CardQuestionInfo(
             }
 
             is Answer.Drag -> {
-
+                DragQuestionDisplay(
+                    questionText = question.content,
+                    answers = question.answers.answers,
+                    selectedOrder = draggedItems,
+                    onOrderChanged = { newOrder ->
+                        draggedItems = newOrder
+                        onResponse(Answer.Drag(newOrder))
+                    }
+                )
             }
 
             is Answer.FillBlank -> {
