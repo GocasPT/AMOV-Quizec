@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Quizec</string>
-    <string name="remove">Remove</string>
+    <string name="remove">Remover</string>
     <string name="add">Adicionar</string>
     <string name="create_quiz">Criar Quiz</string>
     <string name="save_changes">Guardar Alterações</string>
@@ -15,4 +14,44 @@
     <string name="repeat_password">Repetir Password</string>
     <string name="registration_successful">Registado com Sucesso</string>
     <string name="register">Registo</string>
+    <string name="made_by">"Elaborado por: "</string>
+    <string name="course">Curso</string>
+    <string name="school_year">Ano Letivo</string>
+    <string name="degree">Licenciatura</string>
+    <string name="computer_engineering">Engenharia Informática</string>
+    <string name="date">"Data: "</string>
+    <string name="answer">"Resposta: "</string>
+    <string name="score">"Pontuação: "</string>
+    <string name="select_the_words">Seleciona as palavras</string>
+    <string name="to_scramble">" para baralhar"</string>
+    <string name="fill_in_the_blanks">Preenche os espaços em branco</string>
+    <string name="by_selecting_the_words_from_the_text_above">" selecionando as palavras do texto abaixo"</string>
+    <string name="question_text_preview">"Pré-visualização Texto Questão: "</string>
+    <string name="new_question">Nova Questão</string>
+    <string name="edit_question">Editar Questão</string>
+    <string name="create_question">Criar Questão</string>
+    <string name="question">Questão</string>
+    <string name="add_pair">Adiciona Par</string>
+    <string name="add_option">Adicionar Opção</string>
+    <string name="question_type">Tipo Questão</string>
+    <string name="false_option">Falso</string>
+    <string name="true_option">Verdadeiro</string>
+    <string name="type">"Tipo: "</string>
+    <string name="duplicate">Duplicar</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Apagar</string>
+    <string name="next_question">Questão Seguinte</string>
+    <string name="correct_answers">"Respostas corretas: "</string>
+    <string name="correct_order">"Ordem correta: "</string>
+    <string name="correct_answer">Resposta correta:</string>
+    <string name="sign_out">Terminar Sessão</string>
+    <string name="credits_text">Créditos</string>
+    <string name="welcome">"Bem-vindo, "</string>
+    <string name="join_quiz">"ENTRAR QUIZ: "</string>
+    <string name="create_room">CRIAR SESSÃO</string>
+    <string name="my_rooms">Sessão</string>
+    <string name="quiz_time">Duração Quiz</string>
+    <string name="instant_start">Inicio Instantaneo</string>
+    <string name="location_restricted">Restringir Localização</string>
+    <string name="instant_score">Resultado Instantaneo</string>
 </resources>

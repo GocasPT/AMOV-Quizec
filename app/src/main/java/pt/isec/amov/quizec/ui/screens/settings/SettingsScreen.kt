@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isec.amov.quizec.R
 
 @Composable
 fun SettingsScreen(
@@ -27,12 +29,12 @@ fun SettingsScreen(
             Button(
                 onClick = onSignOut
             ) {
-                Text("Sign Out")
+                Text(stringResource(R.string.sign_out))
             }
             Button(
                 onClick = onCredits
             ) {
-                Text("Credits")
+                Text(stringResource(R.string.credits_text))
             }
         }
     }
