@@ -33,6 +33,7 @@ import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.ui.screens.question.manage.FillBlankQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MatchingQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
+import pt.isec.amov.quizec.ui.screens.question.manage.OrderingQuestionDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
 
@@ -174,6 +175,7 @@ fun CardQuestionInfo(
     var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>>(Pair(false, "False")) }
     var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>(emptySet()) }
     var selectedFilledAnswers by remember { mutableStateOf(setOf<Pair<Int, String>>()) }
+    var selectedOrder by remember { mutableStateOf(listOf<String>()) }
 
     Column(
         modifier = Modifier
@@ -246,9 +248,25 @@ fun CardQuestionInfo(
                 MatchingQuestionDisplay()
             }
 
-            is Answer.Ordering -> {}
+            is Answer.Ordering -> {
+                OrderingQuestionDisplay(
+                    order = question.answers.order,
+                    onOrderChange = { updatedOrder ->
+                        selectedOrder = updatedOrder
 
-            is Answer.Drag -> {}
+                        //onResponse(selectedOrder)
+                        onResponse(
+                            Answer.Ordering(selectedOrder)
+                        )
+
+                    }
+
+                )
+            }
+
+            is Answer.Drag -> {
+
+            }
 
             is Answer.FillBlank -> {
                 FillBlankQuestionDisplay(
