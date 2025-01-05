@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -54,8 +55,8 @@ fun RegisterScreen(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    errorMessageText : String?,
-    clearError : () -> Unit
+    errorMessageText: String?,
+    clearError: () -> Unit
 ) {
 
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -76,6 +77,7 @@ fun RegisterScreen(
             errorMessageText = errorMessageText,
             clearError = clearError
         )
+
 }
 
 @Composable

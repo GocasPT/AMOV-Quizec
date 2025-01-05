@@ -1,7 +1,6 @@
 package pt.isec.amov.quizec.utils
 
 import android.content.res.AssetManager
-import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.storage.storage
 import pt.isec.amov.quizec.QuizecApp
@@ -74,7 +73,7 @@ class SStorageUtil {
                 }
 
                 quiz.image?.let {
-                    uploadFile(dbClient, "quizzes", quiz.image)
+                    uploadFile("quizzes", quiz.image)
                 }
 
                 quiz.id = updatedQuiz.id
@@ -113,7 +112,6 @@ class SStorageUtil {
         }
 
         suspend fun deleteQuizDatabase(
-            dbClient: SupabaseClient,
             quiz: Quiz,
             onResult: (Throwable?) -> Unit
         ) {
@@ -135,7 +133,7 @@ class SStorageUtil {
             }
         }
 
-        suspend fun saveHistoryDatabase(dbClient: SupabaseClient, history: History, onResult: (Throwable?) -> Unit) {
+        suspend fun saveHistoryDatabase(history: History, onResult: (Throwable?) -> Unit) {
             try {
                 dbClient.from("history").insert(history)
                 onResult(null)
@@ -182,14 +180,14 @@ class SStorageUtil {
             return inputStream
         }
 
-        private suspend fun uploadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+        private suspend fun uploadFile(bucket: String, file: String) {
             dbClient.storage.from(bucket).upload(
                 file,
                 File(file).readBytes()
             )
         }
 
-        suspend fun loadFile(dbClient: SupabaseClient, bucket: String, file: String) {
+        suspend fun loadFile(bucket: String, file: String) {
             val localFile = File(file)
 
             if (localFile.exists()) {

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -56,7 +57,7 @@ fun QuizShowScreen(
     val expandIndividual = remember(questionList) { mutableStateListOf(*Array(questionList.size) {false}) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -88,6 +89,18 @@ fun QuizShowScreen(
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit Quiz",
+                    tint = Color.Gray
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    onCreateLobby(quiz.id!!.toLong())
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Create Lobby",
                     tint = Color.Gray
                 )
             }
