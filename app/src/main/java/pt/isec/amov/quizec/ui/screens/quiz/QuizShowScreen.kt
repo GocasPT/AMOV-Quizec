@@ -112,14 +112,16 @@ fun QuizShowScreen(
             fontWeight = FontWeight.Bold
         )
 
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            model = quiz.image ?: R.drawable.fundo_exemplo,
-            contentDescription = "quizImage",
-            contentScale = ContentScale.Crop,
-        )
+        quiz.image?.let {
+            AsyncImage(
+                model = quiz.image,
+                contentDescription = "Quiz's image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+            )
+        }
 
         Row(
             modifier = Modifier

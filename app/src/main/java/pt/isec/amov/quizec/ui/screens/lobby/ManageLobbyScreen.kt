@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import io.github.jan.supabase.createSupabaseClient
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
@@ -68,17 +70,11 @@ fun ManageLobbyScreen(
     var sliderLocation by remember { mutableStateOf(60f) }
     var isInstantScore by remember { mutableStateOf(true) }
 
-    //verificar isto
-//    val sendIntent = Intent(Intent.ACTION_SEND).apply {
-//        putExtra(Intent.EXTRA_TEXT, text)
-//        type = "text/plain"
-//    }
-//    val shareIntent = Intent.createChooser(sendIntent, null)
-
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (isNewLobby)
             ExposedDropdownMenuBox(
@@ -138,41 +134,8 @@ fun ManageLobbyScreen(
                 contentDescription = null,
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
-                painter = painterResource(R.drawable.quizec_1080),
-                //painter = rememberImagePainter(quiz.image),
+                painter = rememberImagePainter(selectedQuiz?.image),
             )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "QUIZ ID", //!TODO: change this
-                    fontSize = 42.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Normal,
-                )
-                Button(
-                    onClick = { /*TODO*/ },
-                    //TODO: when share, disable settings inputs
-                    //startActivity(context, shareIntent, null)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = null,
-                    )
-                }
-            }
-
         }
 
         Column(

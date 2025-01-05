@@ -52,6 +52,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.jan.supabase.createSupabaseClient
+import kotlinx.datetime.toInstant
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.question.Answer
@@ -359,7 +361,6 @@ fun HomeScreenPortrait(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                contentAlignment = Alignment.Center
             ) {
                 LazyRow(
                     modifier = Modifier
@@ -472,4 +473,37 @@ fun QuizLobbyCard(
             }
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        viewModel = QuizecViewModel(
+            createSupabaseClient("", "") {}
+        ),
+        username = "User",
+        onJoinLobby = {},
+        onCreateLobby = {}
+    )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun CardInfoPreview() {
+    QuizLobbyCard(
+        lobby = Lobby(
+            code = "123456",
+            expiredAt = "2022-12-31T23:59:59Z".toInstant(),
+            duration = 10,
+            localRestricted = false,
+            started = false,
+            ownerUUID = "someUUID",
+            quizId = 1L
+        ),
+        onSelectQuiz = {},
+        people = 10
+    )
 }

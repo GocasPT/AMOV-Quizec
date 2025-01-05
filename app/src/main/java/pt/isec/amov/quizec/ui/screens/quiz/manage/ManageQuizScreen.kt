@@ -199,24 +199,35 @@ fun ManageQuizScreen(
                 }
             }
 
-            Column (
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (picture != null) {
-                    Log.d("PictureDebug", "Picture URI: $picture")
-                    AsyncImage(
-                        model = picture,
-                        contentDescription = "Quiz's image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp),
-                    )
-                }
+            quiz?.image?.let {
+                AsyncImage(
+                    model = picture,
+                    contentDescription = "Quiz's image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                )
             }
+//
+//            Column (
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .fillMaxWidth(),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                if (picture != null) {
+//                    Log.d("PictureDebug", "Picture URI: $picture")
+//                    AsyncImage(
+//                        model = picture,
+//                        contentDescription = "Quiz's image",
+//                        contentScale = ContentScale.Crop,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(120.dp),
+//                    )
+//                }
+//            }
 
 //            if (showDialog) {
 //                AlertDialog(
