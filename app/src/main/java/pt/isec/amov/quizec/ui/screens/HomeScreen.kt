@@ -140,7 +140,7 @@ fun HomeScreenLandscape(
                     contentAlignment = Alignment.BottomStart
                 ) {
                     Text(
-                        text = stringResource(R.string.welcome, username),
+                        text = stringResource(R.string.welcome) + username,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

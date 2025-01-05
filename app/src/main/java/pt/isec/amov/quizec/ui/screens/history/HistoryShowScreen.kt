@@ -30,25 +30,19 @@ fun HistoryShowScreen(
     ) {
         item {
             Text(
-                text = stringResource(R.string.user_id, history.userId),
+                text = stringResource(R.string.quiz) + history.quiz.title,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
         item {
             Text(
-                text = stringResource(R.string.quiz, history.quiz.title),
+                text = stringResource(R.string.score) + scoreValue,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
         item {
             Text(
-                text = stringResource(R.string.score, scoreValue),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-        item {
-            Text(
-                text = stringResource(R.string.date, history.date),
+                text = stringResource(R.string.date) + history.date,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -64,7 +58,7 @@ fun HistoryShowScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.answer, answer.toString()),
+                        text = stringResource(R.string.answer) + answer.toString(),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
