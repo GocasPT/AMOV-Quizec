@@ -5,11 +5,14 @@ import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import io.github.jan.supabase.realtime.PrimaryKey
 import io.github.jan.supabase.realtime.selectAsFlow
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import pt.isec.amov.quizec.QuizecApp
+import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.User
 
 @Serializable
@@ -30,25 +33,30 @@ class SRealTimeUtil {
                 filter = FilterOperation("lobby_code", FilterOperator.EQ, lobbyCode)
             )
 
-            Log.d("SRealTimeUtil", "dataFlow: $dataFlow")
+            Log.d("SRealTimeUtil", "[getFlowPlayer] dataFlow: $dataFlow")
 
             return dataFlow.map { lobbyUsers ->
                 lobbyUsers.map { lobbyUser ->
-                    Log.d("SRealTimeUtil", "lobbyUser: $lobbyUser")
-                    Log.d("SRealTimeUtil", "userUUID: ${lobbyUser.user_id}")
-
-                    val user = dbClient.from(Constants.PROFILES_TABLE).select {
+                    dbClient.from(Constants.PROFILES_TABLE).select {
                         filter { eq("id", lobbyUser.user_id) }
                     }.decodeSingle<User>()
-
-                    Log.d("SRealTimeUtil", "user: $user")
-
-                    //TODO: set user email
-                    //user.email =
-
-                    user
                 }
             }
+        }
+
+        @OptIn(SupabaseExperimental::class)
+        fun observerIfLobbyHaveStarted(lobbyCode: String): Flow<Boolean> {
+            val dataFlow = dbClient.from("lobby").selectSingleValueAsFlow(
+                PrimaryKey<Lobby>("lobby_code") {
+                    it.code
+                },
+            ) {
+                eq("lobby_code", lobbyCode)
+            }
+
+            Log.d("SRealTimeUtil", "[observerIfLobbyHaveStarted] dataFlow: $dataFlow")
+
+            return dataFlow.map { it.started }
         }
     }
 }

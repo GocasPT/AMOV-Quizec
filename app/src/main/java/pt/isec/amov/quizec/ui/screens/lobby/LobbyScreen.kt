@@ -38,7 +38,10 @@ fun LobbyScreen(
             ContainedLoadingIndicator()
         } else {
             viewModel.getPlayerCount()
-            Text("Lobby has started")
+            if (viewModel.currentLobby.value!!.started)
+                Text("Lobby has started")
+            else
+                Text("Lobby has not started")
             //TODO: display quiz/question carrousel
         }
     }

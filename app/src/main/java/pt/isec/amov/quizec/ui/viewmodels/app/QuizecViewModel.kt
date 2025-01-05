@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pt.isec.amov.quizec.model.Lobby
 import pt.isec.amov.quizec.model.User
@@ -36,6 +37,9 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
     private var _currentLobby = mutableStateOf<Lobby?>(null)
     val currentLobby: State<Lobby?> get() = _currentLobby
+
+    private var _currentLobbyStarted = mutableStateOf(false)
+    val currentLobbyStarted: State<Boolean> get() = _currentLobbyStarted
 
     private var _currentLobbyPlayerCount = mutableIntStateOf(0)
     val currentLobbyPlayerCount: State<Int> get() = _currentLobbyPlayerCount
@@ -168,7 +172,14 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 Log.d("QuizecViewModel", "createLobby: $quizId, $duration")
 
                 val resultLobby = dbClient.from("lobby").insert(
-                    Lobby(CodeGen.genLobbyCode(), SAuthUtil.currentUser!!.id, quizId, duration)
+                    Lobby(
+                        CodeGen.genLobbyCode(),
+                        SAuthUtil.currentUser!!.id,
+                        quizId,
+                        false,
+                        duration,
+                        null
+                    )
                 ) { select() }.decodeSingleOrNull<Lobby>()
 
                 Log.d("QuizecViewModel", "createLobby: $resultLobby")
@@ -211,6 +222,11 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
 
                 _currentLobby.value = lobby
 
+                SRealTimeUtil.observerIfLobbyHaveStarted(lobby.code).collectLatest {
+                    Log.d("QuizecViewModel", "[_currentLobbyStarted] joinLobby: $it")
+                    _currentLobbyStarted.value = it
+                }
+
                 Log.d("QuizecViewModel", "currentLobby: $_currentLobby")
             } catch (e: Exception) {
                 Log.e("QuizecViewModel", "joinLobby: ${e.message}")
@@ -222,8 +238,6 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
         viewModelScope.launch {
             val flow: Flow<List<User>> = SRealTimeUtil.getFlowPlayer(currentLobby.value!!.code)
             flow.collect {
-                Log.d("QuizecViewModel", "getPlayerCount: $it")
-
                 _currentLobbyPlayerCount.intValue = it.size
 
                 //TODO: clear + add OR update/swap?

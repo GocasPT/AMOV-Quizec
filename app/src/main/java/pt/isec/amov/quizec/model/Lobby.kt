@@ -1,5 +1,6 @@
 package pt.isec.amov.quizec.model
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,6 +12,8 @@ data class Lobby(
     val ownerUUID: String,
     @SerialName("quiz_id")
     val quizId: Long,
-    val duration: Long,
     val started: Boolean = false,
+    val duration: Long,
+    @SerialName("expired_at")
+    val expiredAt: Instant?,
 )
