@@ -63,9 +63,6 @@ fun QuizListScreen(
     onDuplicateQuiz: (Quiz) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("All") }
-    val filterOptions = listOf("True / False", "Single Choice")
 
     Box(
         modifier = Modifier
