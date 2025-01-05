@@ -1,7 +1,5 @@
 package pt.isec.amov.quizec.ui.screens.quiz.live
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -22,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,46 +29,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.question.Answer
 import pt.isec.amov.quizec.model.question.Question
-import pt.isec.amov.quizec.model.question.QuestionType
 import pt.isec.amov.quizec.ui.screens.question.manage.MultipleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.SingleChoiceDisplay
 import pt.isec.amov.quizec.ui.screens.question.manage.YesNoQuestionDisplay
 
-val questionTestSINGLE =  Question(
-    id = 2,
-    content = "Quantos anos tem o Buno?",
-    image = "Image URL",
-    answers = Answer.SingleChoice(
-        setOf(
-            Pair(true, "20"),
-            Pair(false, "21"),
-            Pair(false, "22"),
-        )
-    ),
-    user = "User"
-)
-
-val questionTrueFalse = Question(
-    id = 1,
-    content = "O Buno tem 20 anos?",
-    image = "Image URL",
-    answers = Answer.TrueFalse(true),
-    user = "User"
-)
-
-@Preview(showBackground = true)
 @Composable
 fun QuizLiveScreen(
-    question: Question = questionTestSINGLE,
+    question: Question,
     onAnswerSelected: (String) -> Unit = {},
     onNextQuestion: () -> Unit = {}
 ) {
-    var selectedAnswer by remember { mutableStateOf<String?>(null) }
+    var selectedAnswer by remember {
+        mutableStateOf<String?>(
+            if (question.answers is Answer.TrueFalse) "false" else null
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -164,7 +138,11 @@ fun QuizLiveScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        CardQuestionInfo(question = question)
+                        CardQuestionInfo(
+                            question = question,
+                            defaultValue = selectedAnswer,
+                            onResponse = { selectedAnswer = it }
+                        )
                     }
                 }
             }
@@ -181,7 +159,8 @@ fun QuizLiveScreen(
                         onAnswerSelected(it)
                         onNextQuestion()
                     }
-                }
+                },
+                enabled = selectedAnswer != null
             ) {
                 Text(text = stringResource(R.string.next_question))
             }
@@ -191,12 +170,13 @@ fun QuizLiveScreen(
 
 @Composable
 fun CardQuestionInfo(
-    question: Question = questionTestSINGLE
+    question: Question,
+    defaultValue: String? = null,
+    onResponse: (String) -> Unit = {}
 ){
-    var selectedOption by remember { mutableStateOf(false) }
-    var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>?>(null) }
-
-    var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>( setOf()) }
+    var selectedOption by remember { mutableStateOf(defaultValue?.toBoolean() ?: false) }
+    var selectedAnswer by remember { mutableStateOf<Pair<Boolean, String>>(Pair(false, "False")) }
+    var selectedAnswers by remember { mutableStateOf<Set<Pair<Boolean, String>>>(emptySet()) }
 
     Column(
         modifier = Modifier
@@ -208,24 +188,37 @@ fun CardQuestionInfo(
             is Answer.TrueFalse -> {
                 YesNoQuestionDisplay(
                     selectedOption = selectedOption,
-                    onOptionSelected = { selectedOption = it }
+                    onOptionSelected = {
+                        selectedOption = it
+                        onResponse(it.toString())
+                    }
                 )
+
+                LaunchedEffect(Unit) {
+                    onResponse(selectedOption.toString())
+                }
             }
 
             is Answer.SingleChoice -> {
-//                SingleChoiceDisplay(
-//                    answers = question.answers,
-//                    selectedOption = selectedAnswer!!,
-//                    onOptionSelected = { selectedAnswer = it }
-//                )
+                SingleChoiceDisplay(
+                    answers = question.answers.answers,
+                    selectedOption = selectedAnswer,
+                    onOptionSelected = { selectedAnswer = it }
+                )
             }
 
             is Answer.MultipleChoice -> {
-//                MultipleChoiceDisplay(
-//                    answers = question.answers as Set<Pair<Boolean, String>>,
-//                    selectedOptions = selectedAnswers,
-//                    onOptionsSelected = { selectedAnswers = it }
-//                )
+                MultipleChoiceDisplay(
+                    answers = question.answers.answers,
+                    selectedOptions = selectedAnswers,
+                    onOptionsSelected = {
+                        selectedAnswers = if (selectedAnswers.contains(it)) {
+                            selectedAnswers - it
+                        } else {
+                            selectedAnswers + it
+                        }
+                    }
+                )
             }
 
 
@@ -260,4 +253,158 @@ fun CardQuestionInfo(
 //        }
     }
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizLiveScreenPreview() {
+    QuizLiveScreen(
+        question = Question(
+            id = 1,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.SingleChoice(
+                setOf(
+                    Pair(true, "20"),
+                    Pair(false, "21"),
+                    Pair(false, "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_TrueFalse() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.TrueFalse(true),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_SingleChoice() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = null,
+            answers = Answer.SingleChoice(
+                setOf(
+                    Pair(true, "20"),
+                    Pair(false, "21"),
+                    Pair(false, "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_MultipleChoice() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.MultipleChoice(
+                setOf(
+                    Pair(true, "20"),
+                    Pair(false, "21"),
+                    Pair(false, "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_Matching() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.Matching(
+                setOf(
+                    Pair("1", "20"),
+                    Pair("2", "21"),
+                    Pair("3", "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_Ordering() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.Ordering(
+                listOf(
+                    "20",
+                    "21",
+                    "22"
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_Drag() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.Drag(
+                setOf(
+                    Pair(1, "20"),
+                    Pair(2, "21"),
+                    Pair(3, "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardQuestionInfoPreview_FillBlank() {
+    CardQuestionInfo(
+        question = Question(
+            id = 2,
+            content = "Quantos anos tem o Buno?",
+            image = "Image URL",
+            answers = Answer.FillBlank(
+                setOf(
+                    Pair(1, "20"),
+                    Pair(2, "21"),
+                    Pair(3, "22"),
+                )
+            ),
+            user = "User"
+        )
+    )
 }
