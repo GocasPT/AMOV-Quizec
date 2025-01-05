@@ -13,6 +13,8 @@ data class Lobby(
     @SerialName("quiz_id")
     val quizId: Long,
     val started: Boolean = false,
+    @SerialName("local_restricted")
+    val localRestricted: Boolean = false,
     val duration: Long,
     @SerialName("expired_at")
     val expiredAt: Instant?,

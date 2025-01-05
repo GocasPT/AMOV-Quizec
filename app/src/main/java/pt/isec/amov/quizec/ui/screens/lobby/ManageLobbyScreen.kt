@@ -44,14 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.jan.supabase.createSupabaseClient
 import pt.isec.amov.quizec.R
-import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.viewmodels.app.QuizecViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageLobbyScreen(
     viewModel: QuizecViewModel,
-    quiz: Quiz?,
     isNewLobby: Boolean = true,
     onCreateLobby: (Long, Boolean, Boolean, Long) -> Unit,
     modifier: Modifier = Modifier
@@ -76,11 +74,11 @@ fun ManageLobbyScreen(
 //    val shareIntent = Intent.createChooser(sendIntent, null)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        isNewLobby.let {
+        if (isNewLobby)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,7 +121,16 @@ fun ManageLobbyScreen(
                     }
                 }
             }
-        }
+        else
+            Text(
+                text = "${selectedQuiz?.title}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+            )
 
         Column(
             modifier = Modifier
@@ -131,7 +138,7 @@ fun ManageLobbyScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            quiz?.image?.let {
+            selectedQuiz?.image?.let {
                 Image(
                     modifier = Modifier
                         .height(120.dp)
@@ -194,7 +201,7 @@ fun ManageLobbyScreen(
                     valueRange = 0f..240f,
                 )
                 Text(
-                    text = "${sliderTime.toInt()} s",
+                    text = "${sliderTime.toInt()} min",
                 )
             }
 
@@ -277,10 +284,11 @@ fun ManageLobbyScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //!TODO: disable button when selectedQuiz is null
                 Button(
                     onClick = {
                         onCreateLobby(
-                            1, //TODO: selectedQuiz.id.toLong(),
+                            selectedQuiz!!.id!!.toLong(),
                             instantStart,
                             isLocationRestricted,
                             sliderTime.toLong()
@@ -349,17 +357,22 @@ fun Demo_ExposedDropdownMenuBox() {
 
 @Preview(showBackground = true)
 @Composable
-fun ManageLobbyScreenPreview() {
+fun ManageLobbyScreenPreview_SelectQuiz() {
     ManageLobbyScreen(
         viewModel = QuizecViewModel(
             createSupabaseClient("", "") {}
         ),
-        quiz = Quiz(
-            id = 1,
-            title = "Quiz test",
-            image = null,
-            owner = "batata",
-            questions = emptyList(),
+        isNewLobby = false,
+        onCreateLobby = { _, _, _, _ -> },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ManageLobbyScreenPreview_PreSelectedQuiz() {
+    ManageLobbyScreen(
+        viewModel = QuizecViewModel(
+            createSupabaseClient("", "") {}
         ),
         isNewLobby = true,
         onCreateLobby = { _, _, _, _ -> },

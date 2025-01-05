@@ -435,20 +435,24 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     fun createLobby(
         quizId: Long,
         started: Boolean,
-        localRestrited: Boolean,
+        localRestricted: Boolean,
         duration: Long
         //TODO: add more parameters for the lobby (show on start/wait, location request, etc)
     ) {
         viewModelScope.launch {
             try {
-                Log.d("QuizecViewModel", "createLobby: $quizId, $duration")
+                Log.d(
+                    "QuizecViewModel",
+                    "createLobby: $quizId, $started, $localRestricted, $duration"
+                )
 
                 val resultLobby = dbClient.from("lobby").insert(
                     Lobby(
                         CodeGen.genLobbyCode(),
                         SAuthUtil.currentUser!!.id,
                         quizId,
-                        false,
+                        started,
+                        localRestricted,
                         duration,
                         null
                     )
