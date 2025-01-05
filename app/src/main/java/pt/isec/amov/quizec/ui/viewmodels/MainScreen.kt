@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.User
+import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.model.question.Question
 import pt.isec.amov.quizec.model.quiz.Quiz
 import pt.isec.amov.quizec.ui.screens.HomeScreen
@@ -96,7 +97,6 @@ fun MainScreen(
         BottomNavBarItem.Settings
     )
 
-    //TODO: viewModel get the data and the screen wait until receive data
     LaunchedEffect(Unit) {
         viewModel.clearData()
         withContext(Dispatchers.IO) {
@@ -135,7 +135,28 @@ fun MainScreen(
                 }
                 .decodeList<Question>().let { list ->
                     list.forEach {
+                        it.image?.let { image ->
+                            viewModel.getQuestionImage(image)
+                        }
                         viewModel.questionList.addQuestion(it)
+                    }
+                }
+        }
+
+        withContext(Dispatchers.IO) {
+            viewModel.dbClient
+                .from("history")
+                .select() {
+                    filter {
+                        eq("user_id", user!!.id)
+                    }
+                }
+                .decodeList<History>().let { list ->
+                    list.forEach {
+                        it.quiz.image?.let { image ->
+                            viewModel.getQuizImage(image)
+                        }
+                        viewModel.historyList.addHistory(it)
                     }
                 }
         }
@@ -271,9 +292,6 @@ fun MainScreen(
 
             composable("History") {
                 QuizHistoryScreen(
-                    onLoad = {
-                        viewModel.getHistory(user!!.id)
-                    },
                     onCreateDummy = {
                         viewModel.createDummyHistory(user!!.id)
                     },

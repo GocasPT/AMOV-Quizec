@@ -177,7 +177,7 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
             userId = userId!!,
             quiz = QuizSnapshot(
                 title = "Dummy Quiz History",
-                image = null,
+                image = "/data/user/0/pt.isec.amov.quizec/files/image903666447683273588.jpg",
                 owner = "ddcd359b-c73a-4ff1-8ee2-3c361a23ea91"
             ),
             answers = listOf(
@@ -282,26 +282,12 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                     if (e != null) {
                         Log.d("QuizecViewModel", "Error saving history: $e")
                     }
-                }
-            } catch (e: Throwable) {
-                Log.d("QuizecViewModel", "Error saving history: $e")
-            }
-        }
-    }
-
-    fun getHistory(userId: String?) {
-        viewModelScope.launch {
-            try {
-                SStorageUtil.getHistoryDatabase(dbClient, userId) { e, historyListDB ->
-                    if (e != null) {
-                        Log.d("QuizecViewModel", "Error getting history: $e")
-                    } else {
-                        historyList.clear()
-                        historyList.setHistoryList(historyListDB!!)
+                    else {
+                        historyList.addHistory(addHistory)
                     }
                 }
             } catch (e: Throwable) {
-                Log.d("QuizecViewModel", "Error getting history: $e")
+                Log.d("QuizecViewModel", "Error saving history: $e")
             }
         }
     }
@@ -312,6 +298,16 @@ class QuizecViewModel(val dbClient: SupabaseClient) : ViewModel() {
                 SStorageUtil.loadFile(dbClient, "quizzes", imageName)
             } catch (e: Throwable) {
                 Log.d("QuizecViewModel", "Error getting quiz image: $e")
+            }
+        }
+    }
+
+    fun getQuestionImage(imageName: String) {
+        viewModelScope.launch {
+            try {
+                SStorageUtil.loadFile(dbClient, "questions", imageName)
+            } catch (e: Throwable) {
+                Log.d("QuizecViewModel", "Error getting question image: $e")
             }
         }
     }

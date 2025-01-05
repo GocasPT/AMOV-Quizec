@@ -38,21 +38,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import pt.isec.amov.quizec.R
 import pt.isec.amov.quizec.model.history.History
 import pt.isec.amov.quizec.ui.components.CustomList
 
 @Composable
 fun QuizHistoryScreen(
-    onLoad: () -> Unit,
     onCreateDummy : () -> Unit,
     onSelectHistory : (History) -> Unit,
     historyList: List<History>,
 ) {
-
-    LaunchedEffect(Unit) {
-        onLoad()
-    }
 
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
@@ -161,9 +157,7 @@ fun QuizHistoryCard(
                             )
                         )
                         .fillMaxSize(),
-                    //TODO: get image from string and "return" image/file
-                    //painter = painterResource(it),
-                    painter = painterResource(R.drawable.quizec_1080),
+                    painter = rememberAsyncImagePainter(it),
                     contentDescription = "Quiz Image",
                     contentScale = ContentScale.FillWidth
                 )

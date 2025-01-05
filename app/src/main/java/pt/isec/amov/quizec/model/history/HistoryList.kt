@@ -16,15 +16,15 @@ class HistoryList {
         return _list.sortedBy { it.quiz.title }
     }
 
-    fun addQuestion(history: History) {
+    fun addHistory(history: History) {
         _list.add(history)
     }
 
-    fun removeQuestion(history: History) {
+    fun removeHistory(history: History) {
         _list.remove(history)
     }
 
-    fun updateQuestion(history: History) {
+    fun updateHistory(history: History) {
         val index = _list.indexOfFirst { it.id == history.id }
         if (index != -1) {
             _list[index] = history

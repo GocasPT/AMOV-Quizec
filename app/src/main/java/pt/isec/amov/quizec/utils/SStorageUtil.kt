@@ -130,22 +130,6 @@ class SStorageUtil {
             }
         }
 
-        suspend fun getHistoryDatabase(dbClient: SupabaseClient, userId: String?, onResult: (Throwable?, List<History>?) -> Unit) {
-            try {
-                val historyList = dbClient
-                    .from("history")
-                    .select {
-                        filter {
-                            eq("user_id", userId!!)
-                        }
-                    }
-                    .decodeList<History>()
-                onResult(null, historyList)
-            } catch (e: Throwable) {
-                onResult(e, null)
-            }
-        }
-
         //TODO: add listener
         //private var listenerRegistration: ListenerRegistration? = null
 
