@@ -60,7 +60,7 @@ fun ManageLobbyScreen(
     val context = LocalContext.current
     val availableQuizes = viewModel.quizList
     var expanded by remember { mutableStateOf(false) }
-    var selectedQuiz = viewModel.currentQuiz
+    var selectedQuiz by remember { mutableStateOf(viewModel.currentQuiz) }
 
     var sliderTime by remember { mutableStateOf(30f) }
     var instantStart by remember { mutableStateOf(false) }
@@ -99,7 +99,8 @@ fun ManageLobbyScreen(
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        value = selectedQuiz.toString(),
+                        value = selectedQuiz?.title
+                            ?: "Selecione um questionário", //TODO: resource lang
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

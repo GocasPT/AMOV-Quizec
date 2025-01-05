@@ -188,19 +188,19 @@ fun MainScreen(
                         quiz = viewModel.currentQuiz!!,
                         questionList = viewModel.questionList,
                         onBack = { navController.popBackStack() },
+                        onCreateQuestion = { //!TODO
+                            /*viewModel.selectQuiz(null)
+                            navController.navigate("manageQuiz")*/
+                        },
                         onEdit = { quiz ->
                             viewModel.selectQuiz(quiz)
                             navController.navigate("manageQuiz")
                         },
                         onCreateLobby = { code ->
-                            viewModel.createLobby(
-                                code,
-                                false,
-                                false,
-                                120
-                            ) //TODO: receive all parameters to config lobby
+                            viewModel.quizList.find { it.id == code.toInt() }
+                                ?.let { it1 -> viewModel.selectQuiz(it1) }
+                            navController.navigate("setup-lobby")
                         },
-                        onCreateQuestion = { /* TODO */ },
                     )
                 }
             }

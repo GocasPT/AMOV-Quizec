@@ -72,55 +72,64 @@ class QuizecViewModel(private val dbClient: SupabaseClient) : ViewModel() {
     }
 
     suspend fun fetchQuiz() {
+        Log.d("QuizecViewModel", "fetchQuiz: ${SAuthUtil.currentUser!!.id}")
+
         dbClient.from(QUIZ_TABLE).select {
             filter { eq("owner", SAuthUtil.currentUser!!.id) }
-        }
-            .decodeList<Quiz>().let { quizList ->
-                quizList.forEach { quiz ->
-                    val questions = dbClient
-                        .from(QUESTION_TABLE)
-                        .select(Columns.raw("*, quiz_question!inner(*)")) {
-                            filter {
-                                eq("quiz_question.quiz_id", quiz.id!!)
-                            }
+        }.decodeList<Quiz>().let { quizList ->
+            quizList.forEach { quiz ->
+                val questions = dbClient
+                    .from(QUESTION_TABLE)
+                    .select(Columns.raw("*, quiz_question!inner(*)")) {
+                        filter {
+                            eq("quiz_question.quiz_id", quiz.id!!)
                         }
-                        .decodeList<Question>()
-
-                    quiz.questions = questions
-                    quiz.image?.let {
-                        getQuizImage(it)
                     }
-                    _quizList.addQuiz(quiz)
+                    .decodeList<Question>()
+
+                quiz.questions = questions
+                quiz.image?.let {
+                    getQuizImage(it)
                 }
+                _quizList.addQuiz(quiz)
             }
+        }
+
+        Log.d("QuizecViewModel", "_quizList: ${_quizList.getQuizList()}")
     }
 
     suspend fun fetchQuestion() {
+        Log.d("QuizecViewModel", "fetchQuestion: ${SAuthUtil.currentUser!!.id}")
+
         dbClient.from(QUESTION_TABLE).select {
             filter { eq("user_id", SAuthUtil.currentUser!!.id) }
-        }
-            .decodeList<Question>().let { list ->
-                list.forEach {
-                    it.image?.let { image ->
-                        getQuestionImage(image)
-                    }
-                    _questionList.addQuestion(it)
+        }.decodeList<Question>().let { list ->
+            list.forEach {
+                it.image?.let { image ->
+                    getQuestionImage(image)
                 }
+                _questionList.addQuestion(it)
             }
+        }
+
+        Log.d("QuizecViewModel", "_questionList: ${_questionList.getQuestionList()}")
     }
 
     suspend fun fetchHistory() {
+        Log.d("QuizecViewModel", "fetchHistory: ${SAuthUtil.currentUser!!.id}")
+
         dbClient.from(HISTORY_TABLE).select {
             filter { eq("user_id", SAuthUtil.currentUser!!.id) }
-        }
-            .decodeList<History>().let { list ->
-                list.forEach {
-                    it.quiz.image?.let { image ->
-                        getQuizImage(image)
-                    }
-                    _historyList.addHistory(it)
+        }.decodeList<History>().let { list ->
+            list.forEach {
+                it.quiz.image?.let { image ->
+                    getQuizImage(image)
                 }
+                _historyList.addHistory(it)
             }
+        }
+
+        Log.d("QuizecViewModel", "_historyList: ${_historyList.getHistoryList()}")
     }
 
     fun clearData() {
