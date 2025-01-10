@@ -8,9 +8,11 @@ Trabalho prático feita por:
 - Tiago Figueiredo
 - Bruno Amado
 
-Nota:
+Nota: 72%
 
 ## Funções em falta
 
--   [ ] Nada :)
+-   [ ] Acabar com o lobby (UI)
+-   [ ] Localização restrita
+-   [ ] Melhoria na UI
 
